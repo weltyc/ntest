@@ -1,0 +1,7 @@
+75 2.4
+JA s30 -100 +100 0 0 1 0 -1 0
+JA s26 0 0 0 0 1 1 -1 1
+BookWriteFormat 2
+WinnerGetsEmpties 0
+EdmundLevel  1
+DrawTreeLimit 3.0 3.25
