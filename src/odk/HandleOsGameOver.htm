@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>HandleOsGameOver</TITLE>
+</HEAD>
+<BODY>
+
+<H1>HandleOsGameOver</H1>
+
+<P><strong>ggsstream::HandleOsGameOver(const 
+<A HREF="CMsgOsMatchDelta.htm">CMsgOsMatchDelta</A>* pmsg, const string& idg)</strong></P>
+<P>This is a dummy message, sent by BaseOsMatchDelta() when a game ends.
+Game over messages are sent even if the match terminates abnormally (e.g. one player leaves).
+They are sent only if the game data idToGame[idg] exists (if you were playing in or watching the game).</P>
+
+<H2>Normal Response</H2>
+
+<P>Override this function in CODKStream:</P>
+<UL>
+<LI>Learn from the game.</LI>
+<LI>Update the games list by calling BaseOsGameOver()</LI>
+</UL>
+<P>BaseOsGameOver() deletes the games from the games list.
+Therefore call BaseOsGameOver() <em>after</em> you have done any game-specific
+processing.
+</P>
+
+<H2>Sample Code</H2>
+
+<PRE>
+<P>LearnGame is a user-defined function:</P>
+void CODKStream::HandleOsGameOver(const CMsgOsMatchDelta* pmsg,const string& idg) {
+	if (pmsg->match.IsPlaying(GetLogin()))
+		LearnGame(idToGame[idg]);
+	BaseOsGameOver(pmsg, idg);
+}
+
+</PRE>
+
+
+</BODY>
+</HTML>

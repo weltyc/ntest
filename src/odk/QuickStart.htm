@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>QuickStart Guide</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Getting Started</H1>
+
+<H2>Compile the unaltered source code</H2>
+<P>This is the first release and so far is known only to compile on one machine (mine)
+with one compiler (Visual C++ 5.0). Therefore you should first check that the
+unaltered source code compiles on your machine. If it doesn't compile
+<A HREF="mailto:welty@welty.netkonect.co.uk">email me</A>, I would like to get it to
+work on more machines.</P>
+<UL>
+<LI>Download the source and put it in a single directory</LI>
+<LI>Compile it, all files are needed.</LI>
+</UL>
+
+
+<H2>Connect to GGS</H2>
+
+<UL>
+<LI>In the file 'main.cpp' in the line</P>
+<PRE>	if (err = gs.Login("greedy","password")) {</PRE>
+<P>Make the first parameter your program's login (8 characters max), the second parameter your program's
+password.</P></LI>
+<LI>In the file 'ODKStream.cpp' in the line</P>
+<PRE>	if (pmsg->sFrom=="n2") {</PRE>
+<P>Change "n2" to your (human) login. This login
+controls the program; when it tells the program something, 
+the program issues it as a command to GGS.</P>
+</LI>
+<LI>Recompile and run the code. Your program should connect to GGS.
+It should print the latest news.</LI>
+<LI>Log on using your controller login. Tell your program 'ta 8 ant'.
+It should challenge ant to a game of Othello.</LI>
+</UL>
+
+<H2>Basic modifications</H2>
+
+<UL>
+<LI>Replace the GetMove() function with your own, see <A HREF="GetMove.htm">GetMove</A>.</LI>
+<LI>(optional) Insert an ODKStream::<A HREF="HandleOsRequestDelta.htm">HandleOsRequestDelta()</A>
+	function to automatically accept or decline incoming match requests</LI>
+<LI>(optional) Insert an ODKStream::<A HREF="HandleOsGameOver.htm">HandleOsGameOver()</A>
+	function to learn from the game</LI>
+<LI>(optional) Insert an ODKStream::<A HREF="HandleOsMatchDelta.htm">HandleOsMatchDelta()</A>
+	function to do things when matches start and end</LI>
+</UL>
+
+<H2>Tips</H2>
+
+<P>If your program doesn't have a learning book (i.e. learn from its mistakes in games)
+try 'rand' games which have a random starting position.</P>
+<P>To write a very strong program, check out the papers by Michael Buro.</P>
+<P>In ODK arrays, index 0 is for white and 1 is for black. This allows you to use
+game.pos.board.fBlackMove as the index.</P>
+
+</BODY>
+</HTML>

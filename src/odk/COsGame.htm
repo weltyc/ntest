@@ -1,0 +1,57 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsGame</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsGame</H1>
+
+<P>The COsGame class includes everything that is known about a game -
+players, positions, clocks, game type, and so on.</P>
+
+<H2>Normal Usage</H2>
+
+<P>You will need to give your program whatever information it needs to
+make a move (in its GetMove() routine) and to learn from a game (if it
+does so). This includes converting the position into
+your program's internal format; see <A HREF="COsPosition.htm">COsPosition</A>
+ and <A HREF="COsBoard.htm">COsBoard</A> for some useful functions.<P>
+<P>The game can also be stored or loaded. GGF ("Generic Game File")
+is the standard file format. This file format is used by GGF so you can
+also use the << and >> operators to load and save games downloaded
+from GGS.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD>string sPlace</TD><TD>Location of the game, e.g. "GGS/os"</TD></TR>
+<TR><TD>string sDateTime</TD><TD>Date and time of the game, e.g. "2001-2-26 18:48 EST".</TD></TR>
+<TR><TD>COsPlayerInfo pis[2]</TD><TD>Information about the players. WHITE is pis[0].</TD></TR>
+<TR><TD><A HREF="COsPosition.htm">COsPosition</A> posStart</TD><TD>Starting position (board, clocks) for the game.</TD></TR>
+<TR><TD><A HREF="COsPosition.htm">COsPosition</A> pos</TD><TD>Current position (board, clocks) for the game.</TD></TR>
+<TR><TD><A HREF="COsMoveListItem.htm">COsMoveList</A> ml</TD><TD>vector of COsMoveListItems for the game so far.</TD></TR>
+<TR><TD><A HREF="COsMatchType.htm">COsMatchType</A> mt</TD><TD>Game type information, see COsMatchType for details.</TD></TR>
+<TR><TD>double dResult</TD><TD>Only for games that are finished.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>Clear()</TD><TD>Clear the game and all variables.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Modification</EM></TD></TR>
+<TR><TD>Update()</TD><TD>Update the game with a COsMoveListItem.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Information</EM></TD></TR>
+<TR><TD>GameOver()</TD><TD>Return true if the game is over.</TD></TR>
+<TR><TD>ToMove()</TD><TD>Return true if the player with the given logon is to move.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+<TR><TD>InLogbook()</TD><TD>Reads from a stream in logbook.gam format (Logistello opening book).</TD></TR>
+<TR><TD>InIOS()</TD><TD>Reads from a stream in IOS format.</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

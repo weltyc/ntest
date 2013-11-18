@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>HandleOsMatchDelta</TITLE>
+</HEAD>
+<BODY>
+
+<H1>HandleOsMatchDelta</H1>
+
+<P><strong>ggsstream::HandleOsMatchDelta(const 
+<A HREF="CMsgOsMatchDelta.htm">CMsgOsMatchDelta</A>* pmsg)</strong></P>
+<P>/os sends this message when a match begins or ends. End-of-match messages are sent
+even if the match terminates abnormally (e.g. one player leaves).</P>
+
+<H2>Normal Response</H2>
+
+<P>Override this function in CODKStream:</P>
+<UL>
+<LI>Prepare for a match and clean up afterwards.</LI>
+<LI>Update the matches list by calling BaseOsMatchDelta()</LI>
+</UL>
+<P>BaseOsMatchDelta() updates the match list. For match end messages it also
+calls HandleOsGameOver() which deletes the games from the games list.
+Therefore call BaseOsMatchDelta() <em>after</em> you have done any game-specific
+processing. Learning is better handled in HandleOsGameOver() as you will
+get one message per game rather than one message per match.
+</P>
+
+<H2>Sample Code</H2>
+
+<P>StartMatch is a user-defined function:</P>
+<PRE>
+void CODKStream::HandleOsMatchDelta(const CMsgOsMatchDelta* pmsg) {
+	if (pmsg->fPlus) {
+		StartMatch(pmsg->match);
+	}
+	BaseOsMatchDelta(pmsg);
+}
+</PRE>
+
+
+</BODY>
+</HTML>

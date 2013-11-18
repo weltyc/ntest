@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsBoard</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsBoard</H1>
+
+<P>The COsBoard class includes the current board position - board type,
+position, and color to move.</P>
+
+<H2>Normal Usage</H2>
+
+<P>Convert the board to your program's internal format:</P>
+<UL>
+<LI>If you use a mailbox representation with no dummy border, use the GetText() function.</LI>
+<LI>If you use a mailbox representation with one row of dummy border on each edge, use sBoard.</LI> 
+<LI>If you use any other representation, use the Piece() function.</LI>
+</UL>
+
+<H2>Notes</H2>
+
+<P>The board is stored as a character array with dummy character border. Characters
+used include the class enum values</P>
+<P>enum { BLACK = '*', WHITE='O', EMPTY='-', DUMMY='d', UNKNOWN='?' };</P>
+<P>This convention is also used for the GetText(), Piece(), and SetText() functions.</P>
+
+<H2>Variables</H2>
+
+<TABLE BORDER>
+<TR><TD><A HREF="COsBoardType.htm">COsBoardType</A></TD><TD>bt</TD><TD>Board type (size and shape).</TD></TR>
+<TR><TD>string</TD><TD>sBoard</TD><TD>Pieces on the board, with dummy character buffer.</TD></TR>
+<TR><TD>bool</TD><TD>fBlackMove</TD><TD>True if it is black's move</TD></TR>
+</TABLE>
+
+<H2>Functions</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>void</TD><TD>Clear()</TD><TD>Clear all information from the board, including board type.</TD></TR>
+<TR><TD>void</TD><TD>Initialize(const COsBoardType& bt)</TD><TD>Set up the board for a given board type.</TD></TR>
+<TR><TD>void</TD><TD>SetText(const char* sBoard)</TD><TD>Sets pieces (or empty) in playable squares, one character per square.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Getting Pieces</EM></TD></TR>
+<TR><TD>char*</TD><TD>GetText(char* sBoard, bool& fBlackMove, bool fTrailingNull=true) const</TD><TD>Returns and outputs pieces (or empty) in playable squares,
+							one character per square. The calling function allocates the memory.
+							A trailing '\0' will be appended if fTrailingNull==true (the default).</TD></TR>
+<TR><TD>char</TD><TD>Piece(int row, int col) const</TD><TD>Return the piece in a given square.</TD></TR>
+<TR><TD>void</TD><TD>SetPiece(int row, int col, char piece)</TD><TD>Set the piece in a given square.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Move Information</EM></TD></TR>
+<TR><TD>bool</TD><TD>GameOver() const</TD><TD>Returns true if neither player has a legal move.</TD></TR>
+<TR><TD>bool</TD><TD>HasLegalMove() const</TD><TD>Returns true if current player has a legal move.</TD></TR>
+<TR><TD>int</TD><TD>IsMoveLegal(const COsMove& move) const</TD><TD>Returns nonzero if the move is legal.</TD></TR>
+<TR><TD>int</TD><TD>NPass() const</TD><TD>0 = no passes, 1=player to move must pass, 2=both players must pass.</TD></TR>
+<TR><TD>vector&lt;COsMove&gt;</TD><TD>GetMoves(bool fMover=true) const</TD><TD>Returns all legal moves, empty vector if player must pass.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Piece count Information</EM></TD></TR>
+<TR><TD>void</TD><TD>GetPieceCounts(int& nBlack, int& nWhite, int& nEmpty) const</TD><TD>Outputs number of black, white, and empty squares.</TD></TR>
+<TR><TD>int</TD><TD>NetBlackSquares() const</TD><TD>Returns # black squares - # white squares.</TD></TR>
+<TR><TD>int</TD><TD>Result(bool fAnti=false) const</TD><TD>Return # black squares - # white squares, with empties going to the winner.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Other</EM></TD></TR>
+<TR><TD>void</TD><TD>Update(const COsMove& mv)</TD><TD>Updates the board with a move.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>void</TD><TD>In(istream& is)</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>void</TD><TD>Out(ostream& is) const</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+<TR><TD>void</TD><TD>OutFormatted(ostream& os) const</TD><TD>Write to a stream in human-readable format, useful for debugging.</TD></TR>
+
+</TABLE>
+
+</BODY>
+</HTML>

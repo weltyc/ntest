@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>HandleOsRequestDelta</TITLE>
+</HEAD>
+<BODY>
+
+<H1>HandleOsRequestDelta</H1>
+<P><strong>ggsstream::HandleOsRequestDelta(const 
+<A HREF="CMsgOsRequestDelta.htm">CMsgOsRequestDelta</A>* pmsg)</strong></P>
+<P>This function is called both
+when a new challenge is issued and when an old challenge is cancelled. Challenges are
+normally directed at a specific player but can also be generic.</P>
+<P>Challenges are cancelled if the are accepted, declined, or one of the players leaves GGS.</P>
+
+<H2>Normal Response</H2>
+
+<P>Override this function in CODKStream:</P>
+<UL>
+<LI>Update the challenges list by calling BaseOsRequestDelta()</LI>
+<LI> If it is a new
+challenge directed at the bot, the bot should either accept ( << "ts accept " << idr )
+or decline ( << "ts decline " << idr ). If it declines it should give a reason.</LI>
+</UL>
+<P>This is designed to be easy; see the commented-out sample code in ODKStream.cpp.
+CMsgOsRequest has a number of RequireXXX() functions to help you.
+If the request is of the proper type they will return true otherwise they return false and
+send a reason back to the challenger.</P>
+
+<H2>Sample Code</H2>
+
+<PRE>
+void CODKStream::HandleOsRequestDelta(const CMsgOsRequestDelta* pmsg) {
+	BaseOsRequestDelta(pmsg);
+
+	if (pmsg->fPlus && pmsg->IAmChallenged()) {
+		if (pmsg->RequireBoardSize(8) && pmsg->RequireKomi(false) && pmsg->RequireAnti(false))
+			(*this) << "t /os accept " << pmsg->idr << "\n";
+		else
+			(*this) << "t /os decline " << pmsg->idr << "\n";
+
+		flush();
+	}
+}
+</PRE>
+<P>This rejects requests for anti games (player with the most discs loses),
+komi games (where the players must guess the outcome of the game) and any game not
+played on an 8x8 board.</P>
+
+
+</BODY>
+</HTML>

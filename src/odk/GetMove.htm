@@ -1,0 +1,29 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>GetMove</TITLE>
+</HEAD>
+<BODY>
+
+<H1>GetMove</H1>
+
+<P>The GetMove function is called from the standard message handlers for
+the CMsgOsJoin and CMsgOsUpdate messages when it is your turn to move.</P>
+
+<H2>Normal Response</H2>
+
+<P>Return a move, and optionally a numerical evaluation of the position,
+in the form of a <A HREF="COsMoveListItem.htm">COsMoveListItem</A>.
+Set mli.mv.fPass = true if you need to pass; set mli.mv.fPass=false and
+mli.mv.row and mli.mv.col if you place a piece. <strong>(row,col) = (0,0) is the top
+left square on the board.</strong></P>
+<P>Find how the pieces are set on the board (game.pos.board),
+probably using the <A HREF="COsBoard.htm">COsBoard</A> functions Piece() or GetText().</P>
+<P>You may also need your time remaining, (game.pos.cks[game.pos.board.fBlackMove]),
+ see <A HREF="COsClock.htm">COsClock</A></P>
+<P>The game type is available as game.gt, see
+<A HREF="COsMatchType.htm">COsMatchType</A></P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>CMsgOsMatchDelta</TITLE>
+</HEAD>
+<BODY>
+
+<H1>CMsgOsMatchDelta : public <A HREF="CMsgOs.htm">CMsgOs</A></H1>
+
+<P>This structure is used in the <A HREF="HandleOsMatchDelta.htm">HandleOsMatchDelta</A>
+ and <A HREF="HandleOsGameOver.htm">HandleOsGameOver</A> messages.</P>
+
+<H2>Notes</H2>
+<P>Synchro matches consist of two games, non-synchro matches consist of one game. 
+If a match has id .23, its game id is .23 (non-synchro) or .23.0 and .23.1 (synchro).</P>
+
+<H2>Members</H2>
+<TABLE BORDER>
+<TR><TD>bool</TD><TD>fPlus</TD><TD>true if beginning a new match, false if ending an old match</TD></TR>
+<TR><TD><A HREF="COsMatch.htm">COsMatch</A></TD><TD>match</TD><TD>the match data (players, game type, rated?)</TD></TR>
+<TR><TD>COsResult</TD><TD>result</TD><TD>result of the match, end match messages only</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

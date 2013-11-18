@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsBoardType</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsBoardType</H1>
+
+<P>The COsBoardType class tells the shape of the board - size and whether it is octagonal.</P>
+
+<H2>Normal Usage</H2>
+
+<P>Use when looping over all squares in the board.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD>int n</TD><TD>Board size</TD></TR>
+<TR><TD>bool fOcto</TD><TD>true if the board is octagonal.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>Clear()</TD><TD>Clear all information from the board type.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Information</EM></TD></TR>
+<TR><TD>DummyCorner()</TD><TD>Returns true if the square is cut off in an octagonal board.</TD></TR>
+<TR><TD>MaxRand()</TD><TD>Return the maximum number of preplaced discs in rand games.</TD></TR>
+<TR><TD>NPlayableSquares()</TD><TD>Returns the number of black/white/empty squares.</TD></TR>
+<TR><TD>NTotalSquares()</TD><TD>Returns the number of squares used to store the whole board,
+								including the dummy squares on the border.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+
+</TABLE>
+
+
+</BODY>
+</HTML>

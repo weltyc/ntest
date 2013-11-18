@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsClock</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsClock</H1>
+
+<P>The COsClock class tells a player's remaining time in a game.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD>double tCurrent</TD><TD>Time remaining for this move</TD></TR>
+<TR><TD>double tIncrement</TD><TD>Time added to the clock after player makes a move.</TD></TR>
+<TR><TD>double tGrace</TD><TD>If the player loses on time, he has this much additional time to avoid a wipeout.</TD></TR>
+<TR><TD>int iTimeout</TD><TD><P>0 = player has not timed-out</P><P>1 = player has timed out but can avoid a wipeout</P><P>2 = player was wiped-out on time</P></TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>COsClock()</TD><TD>Create a clock - blank or with a specified (row,col)</TD></TR>
+<TR><TD>Clear()</TD><TD>Clear all information from the game type.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Modification</EM></TD></TR>
+<TR><TD>Update()</TD><TD>Updates the clock with a given amount of elapsed time.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Information</EM></TD></TR>
+<TR><TD>TimeToMove()</TD><TD>Returns the time remaining for this move, given the time so far for this move.
+								Also outputs what the new iTimeout value would be.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Comparison</EM></TD></TR>
+<TR><TD><=, ==, >=</TD><TD>Comparison operators are true if and only if all 3 time elements compare that way.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+<TR><TD>InIOS()</TD><TD>Reads from a stream in the IOS format.</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

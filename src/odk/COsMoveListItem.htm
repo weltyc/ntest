@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsMoveListItem</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsMoveListItem</H1>
+
+<P>A COsMoveListItem contains all information about a move in a game. A vector of them
+is stored in a game as a COsMoveList.</P>
+
+<H2>Notes</H2>
+
+<P>When you are creating a mli (for returning from the GetMove() function) you must fill
+in the mv member.</P>
+<P>If you have requested trust mode, you must fill in the tElapsed member;
+if not, GGS will fill it in for you.</P>
+<P>If you are in a komi game and are making the initial move, you must fill in the dEval member.
+Otherwise it is optional, but it is recommended as it will help you debug your program.</P>
+<P>When you receive a COsMoveListItem from GGS it will have a move and an elapsed time; dEval will
+be 0 if none was sent with the move.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD><A HREF="COsMove.htm">COsMove</A> mv</TD><TD>The move</TD></TR>
+<TR><TD>double tElapsed</TD><TD>Time taken to make the move.</TD></TR>
+<TR><TD>double dEval</TD><TD>Numerical evaluation of the move.</TD></TR>
+
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

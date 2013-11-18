@@ -1,0 +1,38 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>CMsg</TITLE>
+</HEAD>
+<BODY>
+
+<H1>CMsg</H1>
+
+<P>The framework parses all messages from GGS and /os, and sends them out as a CMsg subclass.</P>
+<P>This page describes the base class and the handling sequence</P>
+
+<H2>Message</H2>
+
+<H3>Message Posting</H3>
+
+<P>CMsg::Post() is called when a message is parsed.</P>
+<P>The default CMsg::Post() handler calls Handle() and then deletes the message. Edit the Post()
+function to modify this behaviour, e.g. to post the messages to the Windows message queue</P>
+
+<H3>Message Handling</H3>
+
+<P>Message handlers for specific messages are in the CMsgXXX::Handle() functions.
+The default is to call CMsg::Handle(). Edit the CMsgXXX::Handle() functions to change this.</P>
+<P>The default for CMsg::Handle() is to output the message to cout. Edit
+CMsg::Handle() to change this.</P>
+
+<H2>Variables</H2>
+
+<TABLE BORDER>
+<TR><TD>ggsstream*</TD><TD>pgs</TD><TD>pointer to the ggsstream originating the message</TD></TR>
+<TR><TD>string</TD><TD>sFrom</TD><TD>string containing message sender, e.g. "/os"</TD></TR>
+<TR><TD>string</TD><TD>sRawText</TD><TD>the entire text of the message including sFrom but not the terminal "READY"</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

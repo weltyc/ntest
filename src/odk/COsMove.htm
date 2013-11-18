@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsMove</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsMove</H1>
+
+<P>A COsMove contains the move played on the board - whether it is a pass, and if not
+the square played.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD>bool fPass</TD><TD>True if move is a pass</TD></TR>
+<TR><TD>int row, col</TD><TD>Row and col of move; (0,0) is the top-left.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>COsMove()</TD><TD>Create a move.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Modification</EM></TD></TR>
+<TR><TD>SetIOS()</TD><TD>Sets the move to be the given IOS move (11..88)</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>ODK Reference</TITLE>
+</HEAD>
+<BODY>
+
+<H1>ODK Reference</H1>
+
+<H2>GGS Classes</H2>
+
+<TABLE>
+<TR><TD>CGGSAlias</TD><TD>One alias, parsed from the 'alias' message</TD></TR>
+<TR><TD>CGGSWhoUser</TD><TD>One user, parsed from the 'who' message</TD></TR>
+</TABLE>
+
+<H2>GGS Messages</H2>
+
+<TABLE>
+<TR><TD><A HREF="CMsg.htm">CMsg</A></TD><TD>Base message class</TD></TR>
+<TR><TD>CMsgGGSAlias</TD><TD>Response to an 'alias' command</TD></TR>
+<TR><TD>CMsgGGSErr</TD><TD>GGS error message</TD></TR>
+<TR><TD>CMsgGGSFinger</TD><TD>Response to a 'finger' command</TD></TR>
+<TR><TD>CMsgGGSHelp</TD><TD>Response to a 'help' command, sometimes also sent on startup</TD></TR>
+<TR><TD>CMsgGGSTell</TD><TD>Someone is talking to you</TD></TR>
+<TR><TD>CMsgGGSUnknown</TD><TD>GGS sent an unknown message</TD></TR>
+<TR><TD>CMsgGGSUser</TD><TD>User logs in to/out of GGS</TD></TR>
+</TABLE>
+
+<H2>/os Classes</H2>
+
+<TABLE>
+<TR><TD><A HREF="COsBoard.htm">COsBoard</A></TD><TD>board, board type, and color to move</TD></TR>
+<TR><TD><A HREF="COsBoardType.htm">COsBoardType</A></TD><TD>board shape and size</TD></TR>
+<TR><TD><A HREF="COsClock.htm">COsClock</A></TD><TD>remaining time for one player</TD></TR>
+<TR><TD>COsFingerRating</TD><TD>rating type and rating for one player from a finger message</TD></TR>
+<TR><TD><A HREF="COsGame.htm">COsGame</A></TD><TD>all information for one game</TD></TR>
+<TR><TD><A HREF="COsMatchType.htm">COsMatchType</A></TD><TD>board type and match type (anti, synchro, etc.)</TD></TR>
+<TR><TD><A HREF="COsMatch.htm">COsMatch</A></TD><TD>Information about a match (but not including game data)</TD></TR>
+<TR><TD><A HREF="COsMove.htm">COsMove</A></TD><TD>pass or square to play</TD></TR>
+<TR><TD>COsMoveList</TD><TD>vector of <A HREF="COsMoveListItem.htm">COsMoveListItems</A></TD></TR>
+<TR><TD><A HREF="COsMoveListItem.htm">COsMoveListItem</A></TD><TD>move, time taken, and evaluation</TD></TR>
+<TR><TD><A HREF="COsPlayerInfo.htm">COsPlayerInfo</A></TD><TD>name and rating</TD></TR>
+<TR><TD><A HREF="COsPosition.htm">COsPosition</A></TD><TD>board, clocks, komi stuff</TD></TR>
+<TR><TD>COsRankData</TD><TD>one line of response from the 'rank' command</TD></TR>
+<TR><TD>COsRating</TD><TD>rating and standard deviation in rating</TD></TR>
+<TR><TD>COsRatingType</TD><TD>board type, anti, rand</TD></TR>
+<TR><TD>COsRequest</TD><TD>a match challenge</TD></TR>
+<TR><TD>COsStoredGame</TD><TD>information about a stored game</TD></TR>
+</TABLE>
+
+<H2>/os Message classes</H2>
+
+<TABLE>
+<TR><TD><A HREF="CMsgOs.htm">CMsgOs</A></TD><TD>Base /os message class</TD></TR>
+<TR><TD>CMsgOsComment</TD><TD>Someone commented on a game</TD></TR>
+<TR><TD>CMsgOsEnd</TD><TD>Sent at the end of each game of a synchro match</TD></TR>
+<TR><TD>CMsgOsErr</TD><TD>/os error message</TD></TR>
+<TR><TD>CMsgOsFinger</TD><TD>Response to a 'finger' command</TD></TR>
+<TR><TD>CMsgOsJoin</TD><TD>You have joined (are playing or watching) a game</TD></TR>
+<TR><TD><A HREF="CMsgOsMatchDelta.htm">CMsgOsMatchDelta</A></TD><TD>A match starts or ends</TD></TR>
+<TR><TD>CMsgOsRank</TD><TD>Response to a 'rank' command (get a player's ranking)</TD></TR>
+<TR><TD>CMsgOsRatingUpdate</TD><TD>Rating update after a rated game ends</TD></TR>
+<TR><TD><A HREF="CMsgOsRequestDelta.htm">CMsgOsRequestDelta</A></TD><TD>Someone challenged someone else to a match</TD></TR>
+<TR><TD>CMsgOsStored</TD><TD>Response to a 'stored' command (unfinished games)</TD></TR>
+<TR><TD>CMsgOsTop</TD><TD>Response to a 'top' command (list top-ranked players)</TD></TR>
+<TR><TD>CMsgOsTrustViolation</TD><TD>Trust violation in a game</TD></TR>
+<TR><TD>CMsgOsUnknown</TD><TD>Unknown /os message</TD></TR>
+<TR><TD>CMsgOsUpdate</TD><TD>Someone moved in a game you are playing/watching</TD></TR>
+<TR><TD>CMsgOsWatch</TD><TD>Response to a 'watch' command (# of players watching games)</TD></TR>
+<TR><TD>CMsgOsWatchChange</TD><TD>Someone has started/stopped watching a game you are playing</TD></TR>
+</TABLE>
+
+<H2>Handlers for /os messages</H2>
+
+<P>Partial list</P>
+
+<TABLE>
+<TR><TD><A HREF="HandleOsGameOver.htm">HandleOsGameOver</A></TD><TD>A game ended and you were watching or playing</TD></TR>
+<TR><TD><A HREF="HandleOsMatchDelta.htm">HandleOsMatchDelta</A></TD><TD>A match starts or ends</TD></TR>
+<TR><TD><A HREF="HandleOsRequestDelta.htm">HandleOsRequestDelta</A></TD><TD>Someone challenged someone else to a match</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>

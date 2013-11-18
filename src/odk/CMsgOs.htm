@@ -1,0 +1,34 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>CMsgOs</TITLE>
+</HEAD>
+<BODY>
+
+<H1>CMsgOs : public <A HREF="CMsg.htm">CMsg</A></H1>
+
+<P>Messages from the Othello server (/os) are subclasses of CMsgOs.</P>
+<P>CMsgOs member functions allow you to access the list of games, matches, and match requests.</P>
+<P>Some subclasses have UpdateOs() functions that update the lists.
+The default message handlers in OsMsgHandlers.cpp
+and call UpdateOs() if needed, and call CMsgOs::Handle().</P>
+
+<H2>Normal Response</H2>
+
+<P>The default message handler calls CMsg::Handle(); edit the Handle() code to change this.</P>
+
+<H2>Members</H2>
+<TABLE BORDER>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Handler</EM></TD></TR>
+<TR><TD>void Handle()</TD><TD>Default handler for /os messages (default calls CMsg::Handle())</TD></TR>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Access to persistent data</EM></TD></TR>
+<TR><TD>COsGame* PGame(const string& idg) const</TD><TD>Return a pointer to a game, or NULL if no such game</TD></TR>
+<TR><TD>COsMatch* PMatch(const string& idm) const</TD><TD>Return a pointer to a match, or NULL if no such match</TD></TR>
+<TR><TD>COsRequest* PRequest(const string& idr) const</TD><TD>Return a pointer to a match request, or NULL if no such request</TD></TR>
+<TR><TD>COs& Os() const</TD><TD>Return the COs object that holds the games, matches, and requests.</TD></TR>
+</TABLE>
+
+
+</BODY>
+</HTML>

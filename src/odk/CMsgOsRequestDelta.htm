@@ -1,0 +1,47 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>CMsgOsRequestDelta</TITLE>
+</HEAD>
+<BODY>
+
+<H1>CMsgOsRequestDelta : public <A HREF="CMsgOs.htm">CMsgOs</A></H1>
+
+<P>This is a match request, challenging someone to a game. This message is sent both
+when a new challenge is issued and when an old challenge is cancelled. Challenges are
+normally directed at a specific player but can also be generic.</P>
+<P>Challenges are withdrawn if the are accepted, declined, or one of the players leaves GGS.</P>
+
+<H2>Variables</H2>
+
+<TABLE BORDER>
+<TR><TD>bool</TD><TD>fPlus</TD><TD>true if a new match request is being issued, false if an old match request is being withdrawn</TD></TR>
+<TR><TD>string</TD><TD>idr</TD><TD>/os id of the request</TD></TR>
+<TR><TD>COsRequest</TD><TD>request</TD><TD>The request data</TD></TR>
+</TABLE>
+
+<H2>Functions</H2>
+
+<TABLE BORDER>
+<TR><TD>bool</TD><TD>IAmChallenged()</TD><TD>returns true if I am the specific target of the challenge</TD></TR>
+<TR><TD>bool</TD><TD>IAmChallenging()</TD><TD>returns true if I have issued the challenge</TD></TR>
+<TR><TD>bool</TD><TD>RequireAnti()</TD><TD>Require the game be anti, or not anti (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireBoardSize()</TD><TD>Require a board size (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireEqualClocks()</TD><TD>Require both players have the same time control (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireKomi()</TD><TD>Require the game be komi, or not komi (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireMaxOpponentClock()</TD><TD>Require a maximum for the challenger's time (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireMinMyClock()</TD><TD>Require a minimum for the challenged player's time control (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireRand()</TD><TD>Require the game be rand, or not rand (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireRated()</TD><TD>Require the game be rated, or not rated (see below)</TD></TR>
+<TR><TD>bool</TD><TD>RequireSynch()</TD><TD>Require the game be synch, or not synch (see below)</TD></TR>
+</TABLE>
+
+<P>The Require functions all return true if the request fits the requirements, or false otherwise.
+If false, they also send a descriptive message to the challenger telling him why the request
+was declined.</P>
+<P>For example, an "anti" game is one in which the winner is the player with the <em>fewest</em> discs.
+RequireAnti(true) requires that the game be anti . RequireAnti(false) requires that the game not be anti.</P>
+
+<H2>See Also</H2>
+<P><A HREF="HandleOsRequestDelta.htm">HandleOsRequestDelta</A></P>

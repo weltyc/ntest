@@ -1,0 +1,40 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsGameType</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsGameType</H1>
+
+<P>The COsGameType class includes information about the type of game.</P>
+
+<H2>Members</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Variables</EM></TD></TR>
+<TR><TD><A HREF="COsBoardType.htm">CBoardType</A> bt</TD><TD>Board type (size and shape)</TD></TR>
+<TR><TD>bool fAnti</TD><TD>true if the game is anti (player with the most discs loses).</TD></TR>
+<TR><TD>bool fKomi</TD><TD>true if the game is komi (players estimate winning margin).</TD></TR>
+<TR><TD>bool fRand</TD><TD>true if the game is rand (random initial board setup).</TD></TR>
+<TR><TD>bool fSynch</TD><TD>true if the game is synch (players play 2 games starting from
+							the same initial board configuration but with opposite colors).</TD></TR>
+<TR><TD>int nRandDiscs</TD><TD>number of preplaced discs for rand games.</TD></TR>
+
+<TR><TD>bool fBlack</TD><TD>true if the challenger will play black.</TD></TR>
+<TR><TD>bool fWhite</TD><TD>true if the challenger will play white.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>Clear()</TD><TD>Clear all information from the game type.</TD></TR>
+
+<TR><TD COLSPAN=2 ALIGN="CENTER"><EM>I/O</EM></TD></TR>
+<TR><TD>In()</TD><TD>Reads from a stream in the GGF format, normally use the >> operator.</TD></TR>
+<TR><TD>Out()</TD><TD>Write to a stream in GGF format, normally use the << operator.</TD></TR>
+
+</TABLE>
+
+
+
+</BODY>
+</HTML>

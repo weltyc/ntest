@@ -1,0 +1,40 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>ODK Internals</TITLE>
+</HEAD>
+<BODY>
+
+<H1>Internals</H1>
+
+<P>This page discusses how the ODK is put together.</P>
+
+<H2>GGS and /os</H2>
+
+<P>GGS is divided into two parts: GGS (which is a chat server) and
+/os (which controls everything related to Othello). The ODK turns messages from
+these servers into message objects (subclasses of CMsg); to handle any message simply
+edit the code in OsMsgHandlers.cpp or GGSMsgHandlers.cpp. The code is designed so that
+you will not have to modify GGS and Os files other than the MsgHandlers files.</P>
+
+<H2>OsObjects</H2>
+
+<P>Many of the OsObjects 'work' - boards, positions, clocks, and games know how
+to update themselves, for instance.</P>
+
+<H2>Responding to messages</H2>
+
+<P>To respond to messages you need to put text to *pggsstream, a subclass of iostream.
+You must flush the stream(pggsstream->flush()) before the message is sent to GGS.
+The file recv.txt is a log of
+all communication between your computer and GGS and can help you track down errors.</P>
+<P>The ODK should handle reading from the stream and turning the input into messages.</P>
+<P>The input stream fails if the connection
+closes or there is an error on the connection. When the stream fails ggsstream::Process() will
+return; if you are using the standard code from main.cpp the program terminates
+after ggsstream::Process() returns. The standard way to close the connection and end the
+program is to call pggsstream->Logout().</P>
+
+</BODY>
+</HTML>

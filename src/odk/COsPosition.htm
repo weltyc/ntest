@@ -1,0 +1,41 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Developer Studio">
+<META HTTP-EQUIV="Content-Type" content="text/html; charset=iso-8859-1">
+<TITLE>COsPosition</TITLE>
+</HEAD>
+<BODY>
+
+<H1>COsPosition</H1>
+
+<P>The COsPosition class includes the current state of play in a game -
+board position and clock settings.</P>
+
+<H2>Normal Usage</H2>
+
+<P>Convert the position to your program's internal format. Use 
+<A HREF="COsBoard.htm">COsBoard</A> and <A HREF="COsClock.htm">COsClock</A>
+functions to do so.</P>
+
+<H2>Variables</H2>
+
+<TABLE BORDER>
+<TR><TD><A HREF="COsBoard.htm">COsBoard</A></TD><TD>board</TD><TD>Board type, position on the board, and color to move.</TD></TR>
+<TR><TD><A HREF="COsClock.htm">COsClock</A></TD><TD>cks[2]</TD><TD>Time remaining in the game; cks[0] is WHITE.</TD></TR>
+</TABLE>
+
+<H2>Functions</H2>
+
+<TABLE BORDER>
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Creation</EM></TD></TR>
+<TR><TD>void</TD><TD>Clear()</TD><TD>Clear the position and all elements.</TD></TR>
+
+<TR><TD COLSPAN=3 ALIGN="CENTER"><EM>Modification</EM></TD></TR>
+<TR><TD>void</TD><TD>Update(const COsMoveListItem& mli)</TD><TD>Update the position with a move.</TD></TR>
+<TR><TD>void</TD><TD>Update(const COsMoveList& ml, int nMoves=100000)</TD><TD>Update the position with the first nMoves moves from a list of moves.</TD></TR>
+<TR><TD>void</TD><TD>UpdateKomiSet(const COsMoveListItem mlis[2])</TD><TD>Update the position after komi has been set.</TD></TR>
+<TR><TD>void</TD><TD>Calculate(const COsGame& game, int nMoves=100000)</TD><TD>Calculate the position in a game after nMoves moves.</TD></TR>
+</TABLE>
+
+</BODY>
+</HTML>
