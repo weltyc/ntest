@@ -1,0 +1,171 @@
+<HTML>
+<HEAD>
+    <META NAME="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
+    <TITLE>Ntest Modes</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#ffffc0" LINK="#0000ff" VLINK="#800080" ALINK="#ff00ff">
+<H1>
+    Ntest Modes</H1>
+
+<H2> [g]ame mode</H2>
+'g' mode plays a game or series of games.
+<BR>
+The first character after the 'g' is the black player: 'h' for human, '1' for
+computer 1, '2' for computer 2.
+<BR>
+The second character after the 'g' is the white player.
+<BR>
+You may append a '*' to have the players alternate colors (if they are playing
+more than one game).
+<P>Examples:
+    <BR>
+    &nbsp;
+<TABLE BORDER ID="Table1">
+    <TR>
+        <TD>gh2</TD>
+        <TD>&nbsp;human plays black, computer2 plays white</TD>
+    </TR>
+    <TR>
+        <TD>g11</TD>
+        <TD>self-play computer1</TD>
+    </TR>
+    <TR>
+        <TD>g12*</TD>
+        <TD>play computer1 vs computer2, alternating colors</TD>
+    </TR>
+</TABLE>
+<H2>[a]nalyze mode</H2>
+'a' mode analyzes a game or series of games and adds it/them to computer 1's
+book.
+<BR>
+The character after the 'a' is the game format:
+<BR>
+&nbsp;
+<TABLE BORDER ID="Table2">
+    <TR>
+        <TD>g</TD>
+        <TD>GGF format</TD>
+    </TR>
+    <TR>
+        <TD>i</TD>
+        <TD>IOS format</TD>
+    </TR>
+    <TR>
+        <TD>l</TD>
+        <TD>logbook format</TD>
+    </TR>
+</TABLE>
+<P>The games are read from standard input. If an opening file is specified on the command
+    line, only games matching that opening will be analyzed. A game matches the
+    opening if any position in the game is a reflection of the position at the end
+    of the opening file.
+</P>
+
+<P>To analyze the games in mygames.ggf at a depth of 20, type:
+</P>
+<code>Ntest ag s20 &lt; mygames.ggf</code>
+
+<p>To save the output in analysis.txt so you can read it, type:</p>
+<code>Ntest ag s20 &lt; mygames.ggf &gt; analysis.txt</code>
+
+<H2>[n]egamax mode</H2>
+
+<P>Checks computer 1's book for transpositions. This is done automatically anyway
+    if the negamax flag is set in parameters.txt. This may mean additional searches
+    need to be done to calculate deviations for all positions.</P>
+
+<H2>[e]dmund mode</H2>
+
+<P>Checks computer 1's book for Edmund nodes. These are nodes where the best
+    deviation is better than the best played line in the WLD sense. It then plays a
+    game from each of the found Edmund nodes. This process of playing new games can
+    create new Edmund nodes, so if Edmund games were played it's good idea to run
+    this mode again afterwards.</P>
+
+<P>Optionally you can give an edmund mode after the 'e', for instance "NTest e7" is
+    the most agressive mode and takes the longest. The edmund mode is a sum of the
+    following flags:</P>
+<ul>
+    <li>
+        1 Edmundize probable solve nodes
+    <li>
+        2 Edmundize midgame nodes
+    <li>
+        4 Edmundize draw nodes even if a draw has already been played
+    </li>
+</ul>
+<p>If no mode is specified the default mode is 1 (Edmundize probable solve nodes,
+    don't edmundize midgame nodes, and don't fill out the draw tree).</p>
+
+<P>It is strongly recommended that you negamax the book before and after running
+    this mode (setting the negamax flag for computer1 in params.txt will do this).</P>
+
+<H2>[m]erge books</H2>
+<p>Merges coefficients/merge.book into the main computer's book. This allows you to create a book
+in multiple threads or on multiple machines to add games faster. Ntest is single-threaded so this
+    is how you use multiple cores.</p>
+<H2>[d]raw tree search</H2>
+<p>Looks at the starting position (or, if an opening file is specified, from the opening file position)
+and plays out deviations to expand the draw tree. Deviations will be played if they are</p>
+<ul>
+    <li>scored as a draw and have an unplayed deviation with |score| &le; 3.00</li>
+    <li>scored as not a draw, with |score|  &le; 3.50</li>
+</ul>
+<p>The limits 3.00 and 3.50 can be changed in the <a href="Parameters.htm">parameters file</a>.</p>
+<H2>[i]nternet mode</H2>
+
+<P>Tells Ntest to play on the GGS server. To do this, create a file named
+    "password.txt" with two entries. The first is the password that your version of
+    ntest will use to play. The second is your login on GGS (<em>not</em> the bot's
+    login - this is the login that will control the bot). For example, if <CODE>password.txt</CODE>
+    contains <CODE>socks smelly</CODE> then the user "smelly" will control Ntest.</P>
+
+<P>Then connect Ntest to the internet. Your version of Ntest will use the login
+    (depth)(your name). smelly's version of s12 will play under the name <CODE>s12smell</CODE>
+    - GGS logins are limited to 8 characters.</P>
+
+<p>Example:</p>
+<code>Ntest i s12</code>
+
+<P>smelly logs into GGS and sees s12smell logged in. He tells s12smell<PRE>
+mso
+ta 8 ant
+</PRE>
+If ant's available for a game, the game starts and smelly can watch. When
+s12smell has played enough games, smelly tells s12smell<pre>
+quit</pre>
+s12smell then logs out and quits (saving the book).</p>
+<p>To build a book quickly you can run the program overnight on the internet. I suggest</p><pre>
+	mso
+	ts request +
+	alias aa ts open 0; ts open 1; ta s8
+	repeat 10 aa</pre>
+which will set the program to accept generic challenges and challenge everyone on the server every 10 seconds.
+
+<H2>Speed [t]est</H2>
+<p>Runs ntest's internal speed test</p>
+
+<H2>Test [o]nly</H2>
+<p>Ntest runs internal verification code every time it runs. This mode quits after the verification.</p>
+
+<H2>[p]osvalues mode</H2>
+<p>This is used by ntest's coefficient calculator; most users will not need it.
+Calculates values for captured.pos using computer 1 and stores the result in
+captured.pv. Will try to start where it left off if you use 'pa' instead of
+'p'.</p>
+
+<H2>[!] Calculate MPC statistics</H2>
+Generally a bad idea to overwrite the MPC files, don't use this option.
+
+<H2>[?] Nuke Book entries</H2>
+
+<P>Removes all book entries with fewer than n empties. This reduces the size of the
+    book if the book is getting too big, but obviously there can be problems if you
+    chop off too much of the book.</P>
+
+<P>The program will request the number of entries from the user. For s26 I chopped
+    it off at 23 empties and the book size dropped about 40%.</P>
+
+
+</BODY>
+</HTML>

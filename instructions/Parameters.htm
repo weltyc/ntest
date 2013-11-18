@@ -1,0 +1,88 @@
+<HTML>
+	<HEAD>
+		<TITLE>Editing Parameters.txt</TITLE>
+		<META NAME="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
+	</HEAD>
+	<BODY TEXT="#000000" BGCOLOR="#ffffc0" LINK="#0000ff" VLINK="#800080" ALINK="#ff00ff">
+		<H1>Editing Parameters.txt</H1>
+		<P>You can tune Ntest in a number of ways by editing the file <CODE>parameters.txt</CODE>.</P>
+		<H2>Line 1: Machine Parameters</H2>
+		The format of the first line is
+		<BR>
+		&lt;RAM for hashtable in MB&gt;&nbsp; &lt;speed of computer in GHz&gt;
+		<BR>
+		I use 70MB hashtable on a 128 MB machine and 7MB hashtable on a 64MB machine. 
+		If the hard drive starts thrashing, you've set it too high.
+		<H2>Lines 2 and 3: Computer 1 and 2</H2>
+		Ntest now has 2 computer player slots, so you can play different books against 
+		each other. To specify parameters for computers 1 and 2, you edit the second 
+		and third line of params.txt. An example line looks like this:
+		<P>
+		JA s21 100 -100 0 0 1 1 -1 -1
+		<P>The parameters are, in order,
+			<table BORDER=1>
+				<TR>
+					<TH>
+						coefficient set</TH><TD>JA currently.</TD>
+				</TR>
+				<TR>
+					<TH>
+						search params</TH><TD>see <A HREF="SearchParams.htm">SearchParams</A></TD>
+				</TR>
+				<TR>
+					<TH>
+						blackDrawValue, whiteDrawValue</TH><TD>In the example, the black draw value is 
+						+100 discs (black seeks draws) and the white draw value is -100 discs (white 
+						avoids draws). Another popular value is 0, which is the way wzebra works. 
+						(Full-strength Zebra has black seeks/avoids draws options just like ntest).</TD>
+				</TR>
+				<TR>
+					<TH>
+						blackRand, whiteRand</TH><TD>These both use my screwy rand system where 
+						randomness is 2<SUP>rand</SUP> discs, so 0 means 1 disc randomness.</TD>
+				</TR>
+				<TR>
+					<TH>
+						book flag</TH><TD>if set to 0, the computer will play without using a book (and 
+						will not add the games to book).</TD>
+				</TR>
+				<TR>
+					<TH>
+						negamax flag</TH><TD>if set to 1, the computer will check its book for 
+						transpositions when it loads it.</TD>
+				</TR>
+				<TR>
+					<TH>
+						display book values for me, opponent</TH><TD>if set to 0, will display no book 
+						info. -1 to display all info.</TD>
+				</TR>
+			</table>
+		</P>
+		<H2>Line 4+: Additional options</H2>
+		Additional options can be given below the first 3 lines of parameters.txt, one 
+		per line. An example line is
+		<PRE>BookWriteFormat 2</PRE>
+		which will store the book in compressed format.
+		<table BORDER=2>
+			<tr>
+				<th>
+					Option line</th><th>Default</th><th>Description</th></tr>
+			<tr>
+				<th>
+					BookWriteFormat #</th><td>2</td>
+				<td>1: store in old uncompressed format.
+				<br> 2: store in compressed format</td>
+			</tr>
+			<tr>
+				<th>EdmundLevel #</th><td>1</td>
+				<td>Sets the default edmund level for redoing close games. See  <a href="Modes.htm">Modes</a>
+                    to understand Edmund levels.</td>
+			</tr>
+            <tr>
+                <th>DrawTreeLimit {draw} {deviation}</th>
+                <td>draw=3.00<br> deviation=3.50</td>
+                <td></td>
+            </tr>
+		</table>
+	</BODY>
+</HTML>

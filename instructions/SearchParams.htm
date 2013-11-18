@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Visual Studio .NET 7.1">
+<TITLE>Ntest Search Params</TITLE>
+</HEAD>
+<BODY TEXT="#000000" BGCOLOR="#ffffc0" LINK="#0000ff" VLINK="#800080" ALINK="#ff00ff">
+<H1>Search Params</H1>
+If no search params are specified on the command line, the search depth for computer 1 is taken 
+from <A href="Parameters.htm">parameters.txt</A>.
+<BR>
+&nbsp;
+<TABLE BORDER cellSpacing="3" cellPadding="3" ID="Table1">
+	<TR>
+		<TD>s&lt;depth&gt;</TD>
+		<TD>"selective" search to &lt;depth&gt; in midgame; higher in endgame.<p>
+		This is the most common setting for Ntest (and the setting used by NBoard)</p></TD>
+	</TR>
+	<TR>
+		<TD>f&lt;depth&gt;</TD>
+		<TD>"fixed depth" (sort of)</TD>
+	</TR>
+	<TR>
+		<TD>t&lt;depth&gt;</TD>
+		<TD>"turbo endgame" - same as s in midgame but with deeper searches in the endgame</TD>
+	</TR>
+	<TR>
+		<TD>a&lt;seconds&gt;&nbsp;
+			<BR>
+			[;&lt;WLD depth&gt;]</TD>
+		<TD>spend &lt;seconds&gt; each search on 'a'verage.Optionally force WLD solve at a 
+			given depth</TD>
+	</TR>
+	<TR>
+		<TD>m&lt;minutes&gt;</TD>
+		<TD>take a maximum of &lt;minutes&gt; per game ('m'atch time)</TD>
+	</TR>
+</TABLE>
+<P>Each &lt;search params&gt; gets its own book. You can rename the books (e.g. 
+rename the book, play a game at match time, then rename the book back). If you 
+rename a fixed-ply book and make it deeper, the program will reevaluate all 
+book positions at the deeper depth next time it starts up. So I never do this, 
+except from/to match time.</P>
+</BODY>
+</HTML>

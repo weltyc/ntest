@@ -1,0 +1,52 @@
+<HTML>
+	<HEAD>
+		<TITLE>Ntest Instructions</TITLE>
+		<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+		<META NAME="Author" CONTENT="welty">
+		<META NAME="GENERATOR" CONTENT="Mozilla/4.05 [en] (WinNT; I) [Netscape]">
+	</HEAD>
+	<BODY TEXT="#000000" BGCOLOR="#ffffc0" LINK="#0000ff" VLINK="#800080" ALINK="#ff00ff">
+		<H1>Ntest Instructions</H1>
+		<H2>Introduction</H2>
+		This is for Ntest's command-line interface. For a graphical user interface click 
+		on NBoard.exe.
+		<P>
+			Ntest no longer needs to go in a specific directory. Just unzip it somewhere. 
+			This version of Ntest ships with a small book generated at depth s30 (30-ply 
+			midgame). Ntest has a different book for each depth. You can use the many 
+			self-play features of Ntest to generate your own book at a level you choose.
+		</P>
+		<p>To tweak Ntest for maximum performance and to set the depth for computer2 in 
+			computer/computer matches, <a href="Parameters.htm">edit parameters.txt</a></p>
+		<H2>
+			Running Ntest</H2>
+		the command line is
+		<BR>
+		Ntest &lt;<A href="Modes.htm">mode</A>&gt; &lt;<A href="SearchParams.htm">search params</A>&gt; &lt;# games&gt; &lt;opening&gt;
+		<H3>
+			# games (optional):</H3>
+		only used in game mode. Ntest will save its book every so often, so you can 
+		kill the program (control-c) and not lose the whole book.
+		
+		<H3>opening&nbsp; (optional):</H3>
+		<P>filename containing a GGF file with an opening. If specified, games will start 
+		from the final position in the first game of the GGF file. Otherwise games 
+		start from the standard starting position.</P>
+		<P>In Analysis mode, only games matching the final position of the opening file
+		will be analyzed.</P>
+		<H2>
+			Notes</H2>
+		<OL>
+		<LI>When playing as human type '?' for a current list of cheat codes. There 
+		aren't many, but the "load" and "save" will save in GGF format for an opening 
+		file or for review in NBoard.</LI>
+		<LI>You can have the computer force a specific opening (or openings). The file 
+			"black.ggf" (in the directory where you typed the command to start the program) 
+			contains one or more openings the computer will play as black. The file 
+			"white.ggf" contains the openings the computer will play as white.
+			</LI>
+			</OL>
+<H2>Copyright</H2>
+Chris Welty 1999-2013.
+	</BODY>
+</HTML>
