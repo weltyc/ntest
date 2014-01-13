@@ -2,11 +2,14 @@
 //	All Rights Reserved
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
-
+#ifdef _WIN32
 #pragma once
+#endif
 #include "flipfuncBB.h"
 #include "FastFlipTables.h"
+#ifdef _WIN32
 #pragma warning (disable: 4049)
+#endif
 
 u64 FlipFunctionBBWhite0(TConfig* configs) {
 	configs[ 0]-=    1;

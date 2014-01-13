@@ -3,6 +3,8 @@
 
 #include "types.h"
 
+#include <cstring>
+
 #include "ggsstream.h"
 #include "GGSMessage.h"
 #include "OsMessage.h"
@@ -28,7 +30,7 @@ int ggsstream::Connect(const string& sServer, int nPort) {
 		return kErrConnected;
 	}
 	
-	int err;
+	int err = 0;
 
 	psockbuf=new sockbuf();
 	if (psockbuf) {
@@ -168,7 +170,9 @@ void ggsstream::Process(){
 	while (get(c)) {
 		switch(c) {
 		case '\a':
+#ifdef _WIN32
 			MessageBeep(-1);
+#endif
 			break;
 		case '\r':
 			ProcessLine(sLine);
@@ -453,7 +457,6 @@ void ggsstream::BaseOsGameOver(const CMsgOsMatchDelta* pmsg, const string& idg) 
 //	when we join the game,  when komi is set in a game,
 //	and when a move is undone in a game.
 void ggsstream::BaseOsJoin(const CMsgOsJoin* pmsg) {
-	map<string,COsGame>::iterator i=idToGame.find(pmsg->idg);
 	idToGame[pmsg->idg]=pmsg->game;
 }
 

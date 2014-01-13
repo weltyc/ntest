@@ -10,7 +10,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#ifdef _WIN32
 #include <io.h>
+#else
+#include <cstdlib>
+#include <cstring>
+#endif
 #include <ctype.h>
 #include <sstream>
 #include <iomanip>
@@ -116,7 +121,7 @@ void CleanPlayers() {
 
 void Init() {
 	setbuf(stdout, 0);
-	srand(unsigned int(RANDSEED));
+	srand(static_cast<unsigned int>(RANDSEED));
 
 	InitFastFlip();
 	InitFastFlipPatterns();
@@ -173,14 +178,16 @@ void TestIsOpeningOf() {
 	TEST(IsOpeningOf(gOpening, gGame));
 
 	COsMoveListItem mli;
-	mli.In(istringstream("F5"));
+    istringstream m("F5");
+	mli.In(m);
 	gOpening.Update(mli);
 	TEST(!IsOpeningOf(gOpening, gGame));
 
 	gGame.Update(mli);
 	TEST(IsOpeningOf(gOpening, gGame));
 
-	mli.In(istringstream("D6"));
+    istringstream n("D6");
+	mli.In(n);
 	gGame.Update(mli);
 	TEST(IsOpeningOf(gOpening, gGame));
 }
@@ -529,7 +536,11 @@ int __cdecl main(int argc, char**argv, char**envp) {
 				break;	// it's done when creating computer1
 							  }
 			case kExternalViewer: {
+#ifdef _WIN32
 				CGameX gamex(cd1);
+#else
+                cerr << "mode not currently supported!\n";
+#endif
 				break;
 								  }
 			default:
@@ -568,7 +579,7 @@ TMode ParseCommandLine(int argc, char* argv[], const char*& submode,
 					  CComputerDefaults& cd, int& nGames) {
 	// defaults
 	TMode mode=kExternalViewer;
-	submode='\0';
+	submode="\0";
 	nGames=1;
 
 	// overrides by command line

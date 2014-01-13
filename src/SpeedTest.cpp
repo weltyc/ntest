@@ -4,7 +4,7 @@
 // Copying.txt and GPL.txt for details.
 
 // test source file
-
+#include <cstring>
 #include <fstream>
 #include <string>
 #include <iomanip>

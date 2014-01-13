@@ -16,11 +16,14 @@ public:
 
 	enum TCheatcode {kCheatNone, kCheatUndo, kCheatAutoplay, kCheatContinue, kCheatSwitch};
 
+    virtual ~CPlayer() {};
+
 	// game playing
 	virtual void StartMatch(const COsMatch& match);
 	virtual TCheatcode  Update(COsGame& game, int flags, COsMoveListItem& mli);
 	virtual TCheatcode  GetMove(COsGame& game, int flags, COsMoveListItem& mli)=0;
 	virtual void EndGame(const COsGame& game);
+
 
 	// display info
 	void SetName(const char* newName);

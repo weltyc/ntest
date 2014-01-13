@@ -29,6 +29,7 @@ public:
 	void SetString(const std::string& s);
 
 	// I/O
+	void In(std::istringstream& is);
 	void In(std::istream& is);
 	void Out(std::ostream& os) const;
 

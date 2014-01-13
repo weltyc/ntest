@@ -48,4 +48,4 @@ const CMap	mapsJ[]= {
 
 const int	nMapsJ=sizeof(mapsJ)/sizeof(CMap);
 
-#endif _H_PATTERNJ
+#endif  //_H_PATTERNJ

@@ -35,7 +35,7 @@ void SetMatchTime(double atMatch);
 class CCalcParams {
 public:
 	CCalcParams();
-
+    virtual ~CCalcParams() {}
 	// new functioms
 	virtual void SetAbortTime(const CNodeStats& nsStart, int nEmpty, double tRemaining) const;
 	virtual bool RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, double tRemaining) const;

@@ -3,7 +3,9 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
-#include <math.h>
+#include <algorithm>
+#include <cstdlib>
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 

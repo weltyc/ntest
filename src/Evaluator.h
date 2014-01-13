@@ -14,7 +14,6 @@
 
 #include "pattern/Patterns.h"
 #include "pattern/Pattern.h"
-#include "pattern/PatternJ.h"
 #include "pattern/types.h"
 
 #include "Pos2.h"

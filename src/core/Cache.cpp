@@ -5,6 +5,9 @@
 
 // Cache for transposition table and move ordering
 
+#include <algorithm>
+#include <cstring>
+
 #include "../n64/types.h"
 #include "../n64/qssert.h"
 #include "options.h"
@@ -82,7 +85,7 @@ bool CCacheData::Load(int aHeight, int aPrune, int nEmpty, CValue alpha, CValue 
 					   int& aiFastestFirst, CValue& searchAlpha, CValue& searchBeta, CValue& value) {
 
 	if (printCacheStores)
-		printf("Loading from cache at %lx: [%hd, %hd] at height %d/%d - window is (%hd,%hd)\n",this,lBound, uBound, height, aPrune, searchAlpha, searchBeta);
+		printf("Loading from cache at %p: [%hd, %hd] at height %d/%d - window is (%hd,%hd)\n", static_cast<void*>(this),lBound, uBound, height, aPrune, searchAlpha, searchBeta);
 	//	printf("Loading from cache: [%hd, %hd] at height %d/%d - window is (%hd,%hd)\n",lBound, uBound, height, aPrune, searchAlpha, searchBeta);
 
 	aBestMove=bestMove;
@@ -118,7 +121,7 @@ bool CCacheData::Load(int aHeight, int aPrune, int nEmpty, CValue alpha, CValue 
 bool CCacheData::AlphaCutoff(int aHeight, int aPrune, int nEmpty, CValue alpha) const {
 
 	if (printCacheStores)
-		printf("Checking Alpha Cutoff from cache at %lx: [%hd, %hd] at height %d/%d - alpha is %d\n",this,lBound, uBound, height, aPrune, alpha);
+		printf("Checking Alpha Cutoff from cache at %p: [%hd, %hd] at height %d/%d - alpha is %d\n",static_cast<void*>(const_cast<CCacheData*>(this)),lBound, uBound, height, aPrune, alpha);
 	//	printf("Loading from cache: [%hd, %hd] at height %d/%d - window is (%hd,%hd)\n",lBound, uBound, height, aPrune, searchAlpha, searchBeta);
 
 	return (Loadable(aHeight, aPrune, nEmpty) && uBound<=alpha);
@@ -173,7 +176,7 @@ void CCacheData::Store(int aHeight, int aPrune, int anEmpty, CMove aBestMove, in
 		}
 
 		if (printCacheStores)
-			printf("Added to cache at %lx: [%hd, %hd] at height %d - window was (%hd,%hd)\n",this,lBound, uBound, height,searchAlpha, searchBeta);
+			printf("Added to cache at %p: [%hd, %hd] at height %d - window was (%hd,%hd)\n",static_cast<void*>(this),lBound, uBound, height,searchAlpha, searchBeta);
 		//	printf("Added to cache: [%hd, %hd] at height %d - window was (%hd,%hd)\n",lBound, uBound, height,searchAlpha, searchBeta);
 	}
 }
@@ -194,11 +197,11 @@ void CCacheData::Clear() {
 	lBound=uBound=0;
 }
 
-void CCacheData::Initialize(const CBitBoard& aBoard, int aheight, int aPrune, int nEmpty) {
+void CCacheData::Initialize(const CBitBoard& aBoard, int aheight, int aPrune, int vnEmpty) {
 	board=aBoard;
 	height=aheight;
 	iPrune=aPrune;
-	nEmpty=nEmpty;
+	nEmpty=vnEmpty;
 	fStale=false;
 	lBound=-kInfinity;
 	uBound= kInfinity;
@@ -217,7 +220,7 @@ void CCacheData::Print(bool blackMove) const {
 /////////////////////////////////////////////////
 
 CCache::CCache(u4 anbuckets) {
-	fprintf(stderr, "Creating cache with %d buckets (%d MB)\n",anbuckets, anbuckets*sizeof(CCacheData)>>20);
+	fprintf(stderr, "Creating cache with %d buckets (%lu MB)\n",anbuckets, anbuckets*sizeof(CCacheData)>>20);
 	nBuckets=anbuckets;
 	mask=nBuckets-1;
 	buckets=new CCacheData[nBuckets];
@@ -258,7 +261,7 @@ void CCache::SetStale() {
 }
 
 void CCache::PrintStats() const {
-	printf(" cache: %6ld queries, %6ld read moves, %6ld read values, %6ld writes\n",
+	printf(" cache: %6d queries, %6d read moves, %6d read values, %6d writes\n",
 		queries, readMoves, readValues, writes);
 }
 

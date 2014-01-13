@@ -13,7 +13,8 @@
 #ifdef __unix__
 
 #ifndef _ASSERT
-#define _ASSERT
+#include <cassert>
+#define _ASSERT(x) assert(x)
 #endif
 
 #endif //__unix__

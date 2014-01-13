@@ -5,9 +5,17 @@
 
 // board header file
 
+#ifndef __CORE_BITBOARD_H
+#define __CORE_BITBOARD_H
+#ifdef _WIN32
 #pragma once
 
 #include <crtdbg.h>
+#else
+
+#include <cassert>
+#define _ASSERT(x) assert(x)
+#endif
 #include <stdio.h>
 #include "../n64/utils.h"
 class CMoves;
@@ -17,6 +25,7 @@ class CBitBoard {
 public:
 	u64 empty, mover;
 
+    CBitBoard() : empty(0), mover(0) {}
 	// Set to starting position
 	void Initialize();
 	void Initialize(const char* boardText, bool fBlackMove=true);
@@ -95,3 +104,5 @@ public:
 };
 
 void TestBitBoard();
+
+#endif  // __CORE_BITBOARD_H

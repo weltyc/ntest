@@ -392,7 +392,7 @@ void TestFindQuestionableNode() {
 }
 
 extern void HashInit();
-extern void HashChunk(const void* p, int size);
+extern void HashChunk(const void* p, size_t size);
 extern u4 hash_a;
 
 static void TestHash(char* bytes, int length, u4 expected) {

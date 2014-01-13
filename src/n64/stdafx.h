@@ -3,16 +3,18 @@
 // are changed infrequently
 //
 
+#ifdef _WIN32
 #pragma once
+#include <tchar.h>
+#include <intrin.h>
+#include <direct.h>
+#endif 
 
 #include <stdio.h>
-#include <tchar.h>
 #include <sstream>
 #include <iostream>
-#include <intrin.h>
 #include <fstream>
 #include <vector>
-#include <direct.h>
 #include <ctime>
 #include <algorithm>
 #include <iomanip>

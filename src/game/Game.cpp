@@ -7,7 +7,9 @@
 
 
 #include <stdio.h>
+#ifdef _WIN32
 #include <io.h>
+#endif
 #include <math.h>
 #include <sstream>
 #include <fstream>
@@ -87,7 +89,7 @@ void CGame::SetInfo() {
 * @return 1 if load failed, 0 if load succeeded
 */
 int CGame::Load(const std::string& fn) {
-	ifstream is(fn);
+	ifstream is(fn.c_str());
 	if (!is) {
 		cerr << "can't read file " << fn << "\n";
 		return 1;

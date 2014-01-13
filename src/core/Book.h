@@ -47,6 +47,7 @@ class CBookValue {
 public:
 	CValue vHeuristic, vMover, vOpponent;
 
+    CBookValue() : vHeuristic(0), vMover(0), vOpponent(0), fSet(false), fAssigned(false), fWldProven(false) {}
 	// setting v values
 	void Clear();
 	void SetLeaf(CValue v, bool afWLDSolved);
@@ -137,9 +138,9 @@ protected:
 	CBookValue values;
 	u4 nGames[2];
 
-	bool fRoot:1;	// true if has been the root of a search tree => branch or solved
+    bool fRoot;	// true if has been the root of a search tree => branch or solved
 
-	bool m_fWritten:1;	// used while writing the book to determine whether the node has already been written
+    bool m_fWritten;	// used while writing the book to determine whether the node has already been written
 	void SetWritten(bool fWritten=true) { m_fWritten=fWritten; };
 	bool GetWritten() const { return m_fWritten; };
 
@@ -304,13 +305,16 @@ inline bool CBookValue::Draw() const {
 inline bool CBookValue::Loss() const {
 	return fWldProven && vHeuristic<0;
 }
-
+#ifdef _MSC_VER
 #pragma warning(disable: 4800) 
+#endif
 //! Return true if the node is proven WLD or proven exact ("Proven" means 100%)
 inline bool CBookValue::IsProven() const {
 	return fWldProven;
 }
+#ifdef _MSC_VER
 #pragma warning(default: 4800)
+#endif
 
 inline const CHeightInfo& CBookData::Hi() const {
 	return hi;

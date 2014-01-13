@@ -5,7 +5,9 @@
 
 // moves source file
 
-
+#include <inttypes.h>
+#include <cstring>
+#include <cstdlib>
 #include <sstream>
 
 #include "Moves.h"
@@ -107,14 +109,14 @@ void CMove::Test() {
 	}
 	{
 		CMove mv(5,3);
-		COsMove osmv(mv);
+		COsMove osmv(static_cast<string>(mv));
 		TEST(!osmv.Pass());
 		TEST(osmv.Row()==5);
 		TEST(osmv.Col()==3);
 	}
 	{
 		CMove mv("pass");
-		COsMove osmv(mv);
+		COsMove osmv(static_cast<string>(mv));
 		TEST(osmv.Pass());
 	}
 }
@@ -176,7 +178,7 @@ bool CMoves::HasBest() const {
 bool CMoves::GetNext(CMove& move) {
 	int square;
 	//! masks are for corners, non-cx squares, and all remaining squares.
-	const __int64 masks[3]= {0x8100000000000081i64, 0x3C3CFFFFFFFF3C3Ci64, -1i64};
+	const int64_t masks[3]= {0x8100000000000081ULL, 0x3C3CFFFFFFFF3C3CULL, -1LL};
 
 	if (moveToCheck<0) {
 		square=bestMove.Square();
@@ -185,7 +187,7 @@ bool CMoves::GetNext(CMove& move) {
 	else {
 		for (; moveToCheck<=kCX; moveToCheck=TCheck(moveToCheck+1)) {
 			// find which of the movelist's u4s contains a move of this type (if any)
-			const __int64* pMask=masks+moveToCheck;
+			const int64_t* pMask=masks+moveToCheck;
 			u64 potentialMoves = all & *pMask;
 			if (potentialMoves) {
 				square = lowBitIndex(potentialMoves);
@@ -211,12 +213,12 @@ void CMoves::TestGetNext() {
 	CMove move;
 	CMoves moves;
 	
-	moves.Set(1i64);
+	moves.Set(1LL);
 	TestGetNextOne(moves, 0);
 	TEST(moves.GetNext(move)==false);
 
 	move.Set(043);
-	moves.Set(-1i64);
+	moves.Set(-1LL);
 	moves.SetBest(move);
 	const int results[] = {
 			043,	// best

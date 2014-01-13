@@ -26,7 +26,7 @@ inline int finalScore(u64 mover, u64 enemy) {
 	return int(bitCount(mover)-bitCount(enemy));
 }
 
-const int INFINITY=65;
+const int OTH_INFINITY=65;
 
 
 int solve1(u64 mover, u64 enemy, int sq) {
@@ -56,7 +56,7 @@ inline static int solve1Flip(u64 oldMover, u64 oldEnemy, u64 flip, int sqMove, i
 }
 
 int solve2(int alpha, int beta, u64 mover, u64 enemy, int sq1, int sq2) {
-	int score = -INFINITY;
+	int score = -OTH_INFINITY;
 	u64 flip;
 
 	flip = flips(sq1, mover, enemy);
@@ -79,12 +79,12 @@ int solve2(int alpha, int beta, u64 mover, u64 enemy, int sq1, int sq2) {
 		return score;
 	}
 
-	if (score > -INFINITY) {
+	if (score > -OTH_INFINITY) {
 		return score;
 	}
 
 	// pass
-	score = INFINITY;
+	score = OTH_INFINITY;
 	flip = flips(sq1, enemy, mover);
 	if (flip) {
 		score = solve1Flip(enemy, mover, flip, sq1, sq2);
@@ -105,7 +105,7 @@ int solve2(int alpha, int beta, u64 mover, u64 enemy, int sq1, int sq2) {
 		return score;
 	}
 
-	if (score < INFINITY) {
+	if (score < OTH_INFINITY) {
 		return score;
 	}
 
@@ -159,7 +159,7 @@ int solveNFlipParity(int newAlpha, int newBeta, u64 oldMover, u64 oldEnemy, u64 
 
 int solveNParity(int alpha, int beta, u64 mover, u64 enemy, u64 parity, EndgameSearch* search, bool hasPassed) {
 
-	int score = -INFINITY;
+	int score = -OTH_INFINITY;
 
 	// search with good parity
 	for(Empty* empty = search->start.next; empty; empty  = empty -> next) {
@@ -199,7 +199,7 @@ int solveNParity(int alpha, int beta, u64 mover, u64 enemy, u64 parity, EndgameS
 		}
 	}
 
-	if (score > -INFINITY) {
+	if (score > -OTH_INFINITY) {
 		return score;
 	}
 	if (hasPassed) {
@@ -353,7 +353,7 @@ inline int solveMobility(int alpha, int beta, u64 mover, u64 enemy, u64 parity, 
 	int moveScores[32];
 	int nMoves=orderMoves(moveScores, -beta, -alpha, mover, enemy, parity, search);
 
-	int score = -INFINITY;
+	int score = -OTH_INFINITY;
 
 	for (int i=0; i<nMoves; i++) {
 		Empty* empty = moveEmpty(search, moveScores[i]);
@@ -388,7 +388,7 @@ inline int solveMobility(int alpha, int beta, u64 mover, u64 enemy, u64 parity, 
 	return score;
 }
 
-static int solveHashMobility(int alpha, int beta, u64 mover, u64 enemy, u64 parity, EndgameSearch* search, bool hasPassed) {
+int solveHashMobility(int alpha, int beta, u64 mover, u64 enemy, u64 parity, EndgameSearch* search, bool hasPassed) {
 	// hash check. Could either return a value or narrow [alpha, beta].
 	const int originalAlpha = alpha;
 	const int originalBeta = beta;
@@ -413,7 +413,7 @@ static int solveHashMobility(int alpha, int beta, u64 mover, u64 enemy, u64 pari
 
 	int score = solveMobility(alpha, beta, mover, enemy, parity, search);
 
-	if (score == -INFINITY) {
+	if (score == -OTH_INFINITY) {
 		if (hasPassed) {
 			score = finalScore(mover, enemy);
 		}

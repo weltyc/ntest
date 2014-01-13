@@ -11,7 +11,10 @@
 #if _WIN32
 #include <winsock.h>
 #else
-#include <sockets.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netdb.h>
+#define SOCKET int
 #endif
 
 class sockbuf : public std::streambuf {

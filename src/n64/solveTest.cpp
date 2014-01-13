@@ -192,17 +192,17 @@ public:
 
 static std::vector<SolveTest> getSolverTests(int depth, bool withResults) {
 	std::vector<SolveTest> tests;
-	std::ostringstream os = std::ostringstream();
+	std::ostringstream os;
 	if (withResults) {
-		os << "src/resource/solver" << depth << ".txt";
+		os << "resource/solver" << depth << ".txt";
 	}
 	else {
-		os << "src/resource/solver" << depth << "Positions.txt";
+		os << "resource/solver" << depth << "Positions.txt";
 	}
 
-	std::ifstream in(os.str());
+	std::ifstream in(os.str().c_str());
 	if (!in.is_open()) {
-		fail("unable to find solver positions file");
+		fail(("unable to find solver positions file " + os.str()).c_str());
 	}
 	while(in.good()) {
 		std::string line;

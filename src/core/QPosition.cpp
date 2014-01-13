@@ -7,6 +7,8 @@
 
 
 #include <algorithm>
+#include <cstring>
+#include <cstdlib>
 #include "../odk/OsObjects.h"
 #include "../n64/utils.h"
 #include "../n64/qssert.h"

@@ -19,6 +19,8 @@ public:
 	virtual void Handle()=0;
 	virtual void In(std::istream& is);
 
+    virtual ~CMsg() {};
+
 	ggsstream* pgs;
 	std::string sFrom;
 	std::string sRawText;

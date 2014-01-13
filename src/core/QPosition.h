@@ -7,7 +7,11 @@
 
 // Position and Moves and Move class header file
 
+#ifndef __CORE_QPOSITION_H
+#define __CORE_QPOSITION_H
+#ifdef _WIN32
 #pragma once
+#endif
 
 #include "Moves.h"
 #include "BitBoard.h"
@@ -87,3 +91,4 @@ inline void CQPosition::NDiscs(int& nBlack, int& nWhite, int& nEmpty) const {
 }
 inline bool CQPosition::CalcMoves(CMoves& moves) const { return m_bb.CalcMoves(moves); };
 inline bool CQPosition::operator==(const CQPosition& pos2) const { return m_bb==pos2.m_bb; };
+#endif  // __CORE_QPOSITION_H

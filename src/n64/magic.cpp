@@ -174,12 +174,12 @@ int magic_main() {
 
   printf("const u64 RMagic[64] = {\n");
   for(square = 0; square < 64; square++)
-    printf("  0x%llxULL,\n", find_magic(square, RBits[square], 0));
+    printf("  0x%llxULL,\n", static_cast<unsigned long long>(find_magic(square, RBits[square], 0)));
   printf("};\n\n");
  
   printf("const u64 BMagic[64] = {\n");
   for(square = 0; square < 64; square++)
-    printf("  0x%llxULL,\n", find_magic(square, BBits[square], 1));
+    printf("  0x%llxULL,\n", static_cast<unsigned long long>(find_magic(square, BBits[square], 1)));
   printf("};\n\n");
  
   return 0;

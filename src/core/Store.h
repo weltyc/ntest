@@ -1,8 +1,11 @@
-#include <string>
-#include <vector>
-
 #ifndef H_Store
 #define H_Store
+
+#include <cerrno>
+#include <cstdio>
+#include <memory>
+#include <vector>
+#include <string>
 
 //! Abstract interface for a stream to write information (FILE* or memory)
 class Writer {
@@ -161,4 +164,4 @@ public:
 	}
 };
 
-#endif H_Store
+#endif  //H_Store
