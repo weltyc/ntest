@@ -3,8 +3,9 @@
 // are changed infrequently
 //
 
-#ifdef _WIN32
 #pragma once
+
+#ifdef _WIN32
 #include <tchar.h>
 #include <intrin.h>
 #include <direct.h>

@@ -4,12 +4,12 @@
 // Copying.txt and GPL.txt for details.
 
 // board header file
+#pragma once
 
 #ifndef __CORE_BITBOARD_H
 #define __CORE_BITBOARD_H
-#ifdef _WIN32
-#pragma once
 
+#ifdef _WIN32
 #include <crtdbg.h>
 #else
 

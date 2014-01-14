@@ -1,5 +1,6 @@
-#ifdef _WIN32
 #pragma once
+
+#ifdef _WIN32
 #include <intrin.h>
 #endif
 
@@ -165,9 +166,6 @@ u64 koggeStoneFlips(int sq, u64 mover, u64 enemy);
 // Copying.txt and GPL.txt for details.
 
 // utility stuff
-
-#pragma once
-
 #ifndef _H_UTILS
 #define _H_UTILS
 

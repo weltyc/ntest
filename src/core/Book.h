@@ -138,9 +138,9 @@ protected:
 	CBookValue values;
 	u4 nGames[2];
 
-    bool fRoot;	// true if has been the root of a search tree => branch or solved
+    bool fRoot:1;	// true if has been the root of a search tree => branch or solved
 
-    bool m_fWritten;	// used while writing the book to determine whether the node has already been written
+    bool m_fWritten:1;	// used while writing the book to determine whether the node has already been written
 	void SetWritten(bool fWritten=true) { m_fWritten=fWritten; };
 	bool GetWritten() const { return m_fWritten; };
 

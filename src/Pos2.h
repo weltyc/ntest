@@ -94,4 +94,9 @@ inline void Pos2::PassBase() {
 	m_fBlackMove=!m_fBlackMove;
     m_bb.mover = ~(m_bb.mover | m_bb.empty);
 }
+
+inline void Pos2::PassBB() {
+	m_fBlackMove = !m_fBlackMove;
+	m_bb.InvertColors();
+}
 #endif // #ifdef H_POS2

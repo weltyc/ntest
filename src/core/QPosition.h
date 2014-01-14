@@ -6,12 +6,10 @@
 // Quick position header file
 
 // Position and Moves and Move class header file
+#pragma once
 
 #ifndef __CORE_QPOSITION_H
 #define __CORE_QPOSITION_H
-#ifdef _WIN32
-#pragma once
-#endif
 
 #include "Moves.h"
 #include "BitBoard.h"

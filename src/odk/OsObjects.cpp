@@ -12,22 +12,6 @@
 
 using namespace std;
 
-void COsMove::In(istringstream& is) {
-	char cCol;
-
-	is >> cCol;
-	cCol=toupper(cCol);
-	fPass= cCol=='P';
-	if (fPass) {
-		while (isalpha(is.peek()) && is>>cCol) {};
-	}
-	else {
-		col=cCol-'A';
-		is >> row;
-		row--;
-	}
-}
-
 void COsMove::In(istream& is) {
 	char cCol;
 

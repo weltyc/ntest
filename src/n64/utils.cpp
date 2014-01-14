@@ -507,7 +507,8 @@ char GetAnswer(const char* prompt, const char* answers, int repeatAfter, FILE* f
 	while (1) {
 		fputs(prompt, fp);
 		for (ntimes=0; (ntimes<repeatAfter) || !repeatAfter; ntimes++)  {
-			assert(scanf("%499s",input));
+			int count = scanf("%499s", input);
+			assert(count);
 			str_upper(input);
 			if ((finder=strpbrk(input, answers)))
 				return *finder;

@@ -2,9 +2,8 @@
 //	All Rights Reserved
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
-#ifdef _WIN32
 #pragma once
-#endif
+
 #include "flipfuncBB.h"
 #include "FastFlipTables.h"
 #ifdef _WIN32
