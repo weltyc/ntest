@@ -17,7 +17,8 @@
 #include "crtdbg.h"				// include _ASSERT() macro
 
 #elif defined(__GNUC__)	// Gnu C compiler
-#define _ASSERT(x)	
+#include <cassert>
+#define _ASSERT(x) assert(x)
 
 #else	// unknown compiler
 #define _ASSERT(x)	
@@ -29,7 +30,7 @@
 ////////////////////////////////////////////////////////////
 
 typedef unsigned short u2;
-typedef unsigned long u4;
+typedef unsigned u4;
 
 ////////////////////////////////////////////////////////////
 // Error codes

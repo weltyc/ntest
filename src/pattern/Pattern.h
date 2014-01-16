@@ -28,7 +28,7 @@ struct CUpdate {
 // numerical patterns can also be accomodated: set nI to 0 and iToSq[0] to the number of patterns
 
 struct CPattern {
-	char* name;
+	const char* name;
 	int nI;
 	int iToSq[16];
 	int symmetries[8];

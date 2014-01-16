@@ -8,6 +8,7 @@
 ////////////////////////////////////////////////////
 
 CHeightInfo::CHeightInfo() {
+    height=iPrune=fWLD=0;
 }
 
 CHeightInfo::CHeightInfo(int aheight, int aiPrune, bool afWLD){

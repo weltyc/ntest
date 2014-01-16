@@ -1,4 +1,6 @@
 #include "stdafx.h"
+
+#include <cstring>
 #include <iostream>
 
 // in MSVC, break into the debugger if we're in debug mode and have a test failure

@@ -1,4 +1,7 @@
 #include "stdafx.h"
+#include <cassert>
+#include <cstring>
+#include <string>
 
 const static char* header = "  7 6 5 4 3 2 1 0\n";
 
@@ -447,7 +450,12 @@ u64 flipDiagonal(u64 bits) {
 
 #include <stdio.h>
 #include <sstream>
+#ifdef _MSC_VER
 #include "crtdbg.h"
+#else
+#include <cassert>
+#define _ASSERT(a) assert(a)
+#endif
 
 int Sign(int n) {
 	if (n<0)
@@ -497,11 +505,12 @@ char GetAnswer(const char* prompt, const char* answers, int repeatAfter, FILE* f
 	int ntimes;
 
 	while (1) {
-		fprintf(fp, prompt);
+		fputs(prompt, fp);
 		for (ntimes=0; (ntimes<repeatAfter) || !repeatAfter; ntimes++)  {
-			scanf("%499s",input);
+			int count = scanf("%499s", input);
+			assert(count);
 			str_upper(input);
-			if (finder=strpbrk(input, answers))
+			if ((finder=strpbrk(input, answers)))
 				return *finder;
 		}
 	}
@@ -537,20 +546,4 @@ int TextToValue(char c) {
 	}
 }
 
-
-//! Return the base directory for the othello program, including the trailing \
-//!
-//! e.g. C:\dev\othello\ 
-static std::string GetBaseDir() {
-	return "src/resource/";
-//#if _WIN32
-//	std::string pathname=GetModuleFilename();
-//	size_t lastslash=pathname.rfind('\\');
-//	std::string baseDir(pathname, 0, lastslash+1);
-//	return baseDir;
-//#else
-//	return "./";
-//#endif
-}
-
-std::string fnBaseDir = GetBaseDir();
+std::string fnBaseDir("./");

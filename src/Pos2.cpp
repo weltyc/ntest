@@ -28,11 +28,6 @@
 
 using namespace std;
 
-inline void Pos2::PassBB() {
-	m_fBlackMove=!m_fBlackMove;
-	m_bb.InvertColors();
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // position variables
 ///////////////////////////////////////////////////////////////////////////////
@@ -382,16 +377,6 @@ void FPrintRow(FILE* fp, int row, int config, int nColors[3]) {
 
 	//print row number at right of row
 	fprintf(fp, "%2d\n", row+1);
-}
-
-/**
-* Calculate moves and store them in moves
-*
-* @param [out] moves location to store moves
-* @return true if there are legal moves
-*/
-inline bool Pos2::CalcMoves(CMoves& moves) const {
-	return m_bb.CalcMoves(moves);
 }
 
 // CalcMovesAndPass - calc moves. decide if the mover needs to pass, and pass if he does

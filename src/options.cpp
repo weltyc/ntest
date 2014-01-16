@@ -7,9 +7,12 @@
 
 #include "n64/utils.h"
 #include "options.h"
+#ifdef _WIN32
 #include "windows.h"
+#endif
 
 int treeNEmpty;
+/*
  //! Get the file name (including full path) of the current executable
 static std::string GetModuleFilename() {
 	std::string sMFN;
@@ -43,7 +46,7 @@ static std::string GetModuleFilename() {
 
 	return sMFN;
 }
-
+*/
 // opponent's move?
 bool fTooting=false;
 bool fMyMove=false;

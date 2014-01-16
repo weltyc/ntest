@@ -3,6 +3,7 @@
 
 #include "types.h"
 
+#include <cstring>
 #include "OsMessage.h"
 #include "ggsstream.h"
 #include <strstream>

@@ -175,7 +175,7 @@ void CSmartBook::CorrectGame(const COsGame& game, int iGameType, int& nSearches,
 
 	nsStart.Read();
 
-	nMoves=game.ml.size();
+	nMoves=static_cast<int>(game.ml.size());
 
 	// correct from back to front so changes propagate
 	for (iMove=nMoves; iMove>=0; iMove--) {

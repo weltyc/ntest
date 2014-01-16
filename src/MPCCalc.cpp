@@ -53,7 +53,7 @@ void CalcMPCStats(CPlayerComputer* computer, int height) {
 	// read positions from file; analyze if we should
 	std::string fn(fnBaseDir);
 	fn+="captured.pos";
-	if (cpFile=fopen(fn.c_str(),"rb")) {
+	if ((cpFile=fopen(fn.c_str(),"rb"))) {
 		while (bb.Read(cpFile)) {
 			pos.Initialize(bb, true);
 			if (nbbs[bb.NEmpty()]++ < kMaxPositions)

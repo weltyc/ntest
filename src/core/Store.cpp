@@ -1,4 +1,9 @@
+#ifdef _WIN32
 #include <Windows.h>
+#endif
+
+#include <cstdlib>
+#include <cstring>
 #include "Store.h"
 #include <sstream>
 
@@ -31,20 +36,26 @@ static std::string TempPath(const std::string& path) {
 	else {
 		tempDir.assign(path, 0, loc);
 	}
+#ifdef _WIN32
 	char fnTemp[MAX_PATH+1];
 	GetTempFileNameA(tempDir.c_str(), "bk", 0, fnTemp);
 	fnTemp[MAX_PATH]=0;
 	return std::string(fnTemp);
+#else
+    char buff[] = "/tmp/tempbkXXXXX";
+    return std::string(mktemp(buff));
+#endif
+
 }
 
 FileWriter::FileWriter(const std::string& path) : m_permanentPath(path)
 	, m_tempPath(TempPath(path))
 	, m_file(new FileIo(m_tempPath, false)) {
-};
+}
 
 FileWriter::~FileWriter() {
 	m_file.reset(0);
-
+#ifdef _WIN32
 	if (!MoveFileExA(m_tempPath.c_str(), m_permanentPath.c_str(), MOVEFILE_REPLACE_EXISTING)) {
 		int err=GetLastError();
 		std::ostringstream os;
@@ -61,12 +72,18 @@ FileWriter::~FileWriter() {
 		}
 		os << "\n";
 		throw IOException(os.str(), m_permanentPath, err);
+    }
+#else
+	if (rename(m_tempPath.c_str(), m_permanentPath.c_str()) != 0) {
+		std::ostringstream os;
+		os << "WARNING: Can't save book file " << m_permanentPath << ' ' << strerror(errno) << std::endl;
+		throw IOException(os.str(), m_permanentPath, errno);
 	}
+#endif
 }
 
 size_t MemoryWriter::write(const void* data, size_t size, size_t count) {
-	char* pc = (char*)data;
-
+    const char* pc = reinterpret_cast<const char*>(data);
 	for (size_t i=0; i<size; i++) {
 		for (size_t j=0; j<count; j++) {
 			const char c = *pc;
@@ -79,7 +96,7 @@ size_t MemoryWriter::write(const void* data, size_t size, size_t count) {
 }
 
 size_t MemoryReader::read(void* data, size_t size, size_t count) {
-	char* pc = (char*) data;
+    char* pc = reinterpret_cast<char*>(data);
 
 	for (size_t j=0; j<count; j++) {
 		for (size_t i=0; i<size; i++) {

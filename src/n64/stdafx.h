@@ -5,14 +5,17 @@
 
 #pragma once
 
-#include <stdio.h>
+#ifdef _WIN32
 #include <tchar.h>
+#include <intrin.h>
+#include <direct.h>
+#endif 
+
+#include <stdio.h>
 #include <sstream>
 #include <iostream>
-#include <intrin.h>
 #include <fstream>
 #include <vector>
-#include <direct.h>
 #include <ctime>
 #include <algorithm>
 #include <iomanip>

@@ -3,6 +3,13 @@
 
 const bool debug = false;
 
+
+#if __GNUC__ >= 4
+inline u64 _byteswap_uint64(u64 a) {
+    return __builtin_bswap64(a);
+}
+#endif
+
 u64 hash(u64 a, u64 b) {
 	const u64 mix = 0xc6a4a7935bd1e995ULL;
 

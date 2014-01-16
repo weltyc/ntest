@@ -1,6 +1,11 @@
 #pragma once
 
+#ifdef _WIN32
 #include <intrin.h>
+#endif
+
+#include <inttypes.h>
+
 #include <string>
 
 #include "types.h"
@@ -41,14 +46,21 @@ inline u32 hi32(u64 n) {
 * @return number of '1' bits in the bitboard.
 */
 inline u64 bitCount(u64 bits) {
+#ifdef _WIN32
 #ifdef _M_AMD64
 	return __popcnt64(bits);
 #else
 	return __popcnt(u32(bits)) + __popcnt(u32(bits>>32));
 #endif
+#elif __GNUC__ >= 4
+    return __builtin_popcountll(bits);
+#else 
+#error "Unknown compiler"
+#endif
 }
 
 inline void storeLowBitIndex(unsigned long& result, u64 bits) {
+#ifdef _WIN32
 #ifdef _M_AMD64
 	_BitScanForward64(&result, bits);
 #else 
@@ -56,6 +68,11 @@ inline void storeLowBitIndex(unsigned long& result, u64 bits) {
 		_BitScanForward(&result, hi32(bits));
 		result+=32;
 	}
+#endif
+#elif __GNUC__ >= 4
+    result = bits? __builtin_ctzll(bits) : 0;
+#else
+#error "Unknown compiler"
 #endif
 }
 
@@ -97,7 +114,13 @@ inline u64 mask(int row, int col) {
 }
 
 inline u64 flipVertical(u64 a) {
+#ifdef _WIN32
 	return _byteswap_uint64(a);
+#elif __GNUC__ >= 4
+    return __builtin_bswap64(a);
+#else
+#errror "Unknown compiler"
+#endif
 }
 
 u64 flipHorizontal(u64 bits);
@@ -143,9 +166,6 @@ u64 koggeStoneFlips(int sq, u64 mover, u64 enemy);
 // Copying.txt and GPL.txt for details.
 
 // utility stuff
-
-#pragma once
-
 #ifndef _H_UTILS
 #define _H_UTILS
 
@@ -159,7 +179,6 @@ u64 koggeStoneFlips(int sq, u64 mover, u64 enemy);
 // for compatibility with unix-like OS
 #ifdef __unix__
 
-typedef long long __int64;
 #include <unistd.h>
 
 #endif //__unix__

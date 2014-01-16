@@ -23,9 +23,9 @@ CMPCStats::CMPCStats(const char* fnStats, int anPrunes) {
 	int nEmpty, nEmpties[kMaxTotPos], nPoints[kMaxTotPos];
 	double data[kMaxTotPos][kMaxMPCHeight];
 	char separator;
-	int nRead, nRows, dummy, row, col, height, nCut, nDataPoints, iPrune, iVersion;
+    int nRead, nRows, dummy, row, col, height, nCut, nDataPoints = 0, iPrune, iVersion;
 	int iStartCol;
-	double xx, xy, yy, c, sigma;
+    double xx = 0.0, xy = 0.0, yy = 0.0, c, sigma;
 
 	// open stats file
 	fpStats=fopen(fnStats,"r");
@@ -67,22 +67,24 @@ CMPCStats::CMPCStats(const char* fnStats, int anPrunes) {
 
 	// repeatedly read in a row
 	for (row=0, nRead=1; nRead>0 && row<kMaxTotPos; row++) {
-		nRead=fscanf(fpStats,"%d",&(nEmpties[row]));		nPoints[row]=0;
+        nRead=fscanf(fpStats,"%d",&(nEmpties[row]));
+        nPoints[row]=0;
 		if (EOF==fscanf(fpStats,"%c",&separator))
 			break;
 		if (separator=='\n') continue;
-		for (col=iStartCol; nRead; col++) {
+        for (col=iStartCol; nRead > 0; col++) {
 			if (col<=hMax) {
 				nRead=fscanf(fpStats,"%lf",&(data[row][col]));
-				if (nRead) {
+                if (nRead > 0) {
 					nPoints[row]++;
 					data[row][col]*=dMPCMultiplier;
 				}
 			}
 			else
 				nRead=fscanf(fpStats,"%d",&dummy);
-			fscanf(fpStats,"%c",&separator);
-			if (separator=='\n') break;
+            if (EOF == fscanf(fpStats,"%c",&separator))
+                break;
+            if (separator=='\n' || separator=='\r') break;
 		}
 	}
 	nRows=row;
@@ -252,7 +254,7 @@ CMPCStats* CMPCStats::GetMPCStats(char evalType,char aCoeffSet, int aPrune) {
 			case 'A':	hMaxMPC=25; break;
 			}
 		}
-		os << "src/resource/coefficients/mpc" << evalType << aCoeffSet << "_" << hMaxMPC << ".txt";
+		os << "coefficients/mpc" << evalType << aCoeffSet << "_" << hMaxMPC << ".txt";
 		try {
 			mpcs=new CMPCStats(os.str().c_str(), aPrune);
 		}

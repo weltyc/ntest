@@ -3,8 +3,8 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
+#ifdef _WIN32
 #pragma warning(disable: 4786)
-
 
 #if defined(_DEBUG) && defined(_MSC_VER)
 #define _CRTDBG_MAP_ALLOC
@@ -13,6 +13,8 @@
 #endif
 
 #include <Windows.h>
+#endif
+
 #include <errno.h>
 #include <stdio.h>
 #include <string>
@@ -207,7 +209,8 @@ CBookData::CBookData() {
 	hi.Clear();
 	nGames[0]=nGames[1]=0;
 	cutoff=kInfinity;
-	fRoot=false;
+    fRoot = false;
+    m_fWritten = false;
 	values.Clear();
 }
 
@@ -359,7 +362,7 @@ void HashLong(u4 x) {
 	}
 }
 
-void HashChunk(const void* p, int size) {
+void HashChunk(const void* p, size_t size) {
 	const u4* p4 = (u4*)p;
 	while (size>=4) {
 		HashLong(*p4);
@@ -382,7 +385,7 @@ void HashChunk(const void* p, int size) {
 //!
 //! \return value of fwrite(), i.e. 1 if successful and 0 if not
 //! \post updates hash values if write was sucessful, no guarantees as to effect on hash if write was unsuccessful.
-static int HashWrite(const void* data, size_t size, Writer& out) {
+static size_t HashWrite(const void* data, size_t size, Writer& out) {
 	HashChunk(data, size);
 	return out.write(data, size, 1);
 }
@@ -391,7 +394,7 @@ static int HashWrite(const void* data, size_t size, Writer& out) {
 //!
 //! \return value of fread(), i.e. 1 if successful and 0 if not
 //! \post updates hash values if fread was successful, doesn't if unsuccessful
-static int HashRead(void* data, size_t size, Reader& in) {
+static size_t HashRead(void* data, size_t size, Reader& in) {
 	const size_t result=in.read(data, size, 1);
 	if (result)
 		HashChunk(data, size);
@@ -411,7 +414,8 @@ void CBook::ReadErr() {
 //! Create an empty book
 //!
 //! Mostly for testing purposes. No file is assigned.
-CBook::CBook(): m_nHashErr(0), m_fAltered(false), m_tLastWrite(0), m_nEmptyMin(hSolverStart+1), m_os(0) {
+CBook::CBook(): m_fAltered(false), m_nEmptyMin(hSolverStart+1), m_tLastWrite(0), m_nHashErr(0), m_os(0) {
+    m_iBookFormat = 2;
 }
 
 //! Create a book from a file
@@ -431,19 +435,18 @@ CBook::CBook(): m_nHashErr(0), m_fAltered(false), m_tLastWrite(0), m_nEmptyMin(h
 //! \param filename file to read from, or "" to to store the book in memory only
 //! \param os (Nullable) std::ostream for warning messages.
 //! \post comments and errors will be written to os
-CBook::CBook(const char* filename, std::ostream* os) : m_nHashErr(0), m_fAltered(false), m_tLastWrite(0), m_nEmptyMin(hSolverStart+1), m_os(os) {
-	CBookData bd;
-
+CBook::CBook(const char* filename, std::ostream* os) : m_fAltered(false), m_nEmptyMin(hSolverStart+1), m_tLastWrite(0), m_nHashErr(0), m_os(os) {
 	if (filename) {
 		m_store = std::auto_ptr<Store>(new File(filename));
 		Read();
 	}
 	else {
 		m_store = std::auto_ptr<Store>(NULL);
+        m_iBookFormat = 2;
 	}
 }
 
-CBook::CBook(std::auto_ptr<Store> store, std::ostream* os) : m_nHashErr(0), m_fAltered(false), m_tLastWrite(0), m_nEmptyMin(hSolverStart+1), m_os(os) {
+CBook::CBook(std::auto_ptr<Store> store, std::ostream* os) : m_fAltered(false), m_nEmptyMin(hSolverStart+1), m_tLastWrite(0), m_nHashErr(0), m_os(os) {
 	m_store = store;
 	Read();
 }
@@ -478,7 +481,7 @@ void CBook::Read() {
 			switch(m_iBookFormat) {
 				case 1: ReadVersion1(*in); break;
 				case 2: ReadVersion2(*in); break;
-				default:throw std::string("This program can only read book formats 1 and 2"); break;
+				default:throw std::string("This program can only read book formats 1 and 2");
 			}
 
 			if (m_os) {
@@ -642,7 +645,7 @@ void CBook::ReadVersion1(Reader& in) {
 
 class CBookDataCompressed {
 public:
-	CBookDataCompressed() {};
+    CBookDataCompressed() { nGames[0] = 0; nGames[1] = 0; flags = 0; v = 0;};
 	CBookDataCompressed(const CBookData& bd);
 	operator CBookData() const;
 
@@ -658,7 +661,7 @@ CBookDataCompressed::CBookDataCompressed(const CBookData& bd) {
 	// heightinfo
 	flags=(bd.hi.fWLD?kWld:0)+(bd.hi.fKnownSolve?kKnownSolve:0)+(bd.IsProven()?kWldSolved:0)+(bd.fRoot?kRoot:0);
 	flags+=bd.hi.height<<4;
-	flags+=unsigned int(bd.hi.iPrune)<<10;
+	flags+=static_cast<unsigned int>(bd.hi.iPrune)<<10;
 
 	if (bd.IsBranch())
 		v=bd.cutoff;
@@ -713,7 +716,7 @@ void CBook::WriteTree2(Writer& out, const CMinimalReflection& mr, CBookData& bd)
 	CMoves moves;
 	CMove move;
 	CQPosition pos(mr, true);
-	const int pass=pos.CalcMovesAndPass(moves);
+    pos.CalcMovesAndPass(moves);
 
 	while (moves.GetNext(move)) {
 		CQPosition posSub(mr, true);
@@ -747,8 +750,7 @@ void CBook::WriteTree2(Writer& out, const CMinimalReflection& mr, CBookData& bd)
 //! Each tree may have subtrees which are denoted by a move byte (tells the move to root of subtree)
 //! If a tree has no more subtrees the move byte is -1.
 void CBook::WriteVersion2(Writer& out) {
-	map<CMinimalReflection, CBookData>::iterator i;
-	int nEmpties;
+    typedef map<CMinimalReflection, CBookData>::iterator BookIt;
 
 	int nSize=Size(), nVersion=2;
 
@@ -758,13 +760,13 @@ void CBook::WriteVersion2(Writer& out) {
 	else {
 		HashInit();
 
-		for (nEmpties=nEmptyBookMax-1; nEmpties>=0; nEmpties--) {
-			for (i=entries[nEmpties].begin(); i!=entries[nEmpties].end(); i++) {
+        for (int nEmpties=nEmptyBookMax-1; nEmpties>=0; nEmpties--) {
+            for (BookIt i=entries[nEmpties].begin(); i!=entries[nEmpties].end(); ++i) {
 				i->second.SetWritten(false);
 			}
 		}
-		for (nEmpties=nEmptyBookMax-1; nEmpties>=0; nEmpties--) {
-			for (i=entries[nEmpties].begin(); i!=entries[nEmpties].end(); i++) {
+        for (int nEmpties=nEmptyBookMax-1; nEmpties>=0; nEmpties--) {
+            for (BookIt i=entries[nEmpties].begin(); i!=entries[nEmpties].end(); ++i) {
 				if (!i->second.GetWritten()) {
 					// write the main tree
 					const CMinimalReflection mr(i->first);
@@ -1035,7 +1037,7 @@ static void PickRandomMove(vector<CMVPS>& mvs, int randomShift, CMoveValue& chos
 	nChoices=i;
 
 	// find random move
-	randNumber=u4((double)rand()/(double)(RAND_MAX+1)*randUsed);
+	randNumber=u4((double)rand()/(double)(RAND_MAX+1ULL)*randUsed);
 	QSSERT(randNumber<randUsed);
 	if (randNumber>=randUsed)
 		printf("Error in Negamax.cpp - randomization\n");
@@ -1273,7 +1275,6 @@ bool CBook::GetRandomMove(const CQPosition& pos, const CSearchInfo& si, CMVK& mv
 	if (fSolved) {
 		QSSERT(bd->Values().IsProven());
 	}
-	int vContempt=fSolved?0:si.vContempt;
 
 	GetSubnodes(pos, si.vContempt, mvs);
 	if (fPassBefore) {
@@ -1624,15 +1625,6 @@ void CBook::NegamaxPosition(CQPosition pos) {
 		QSSERT(0);
 }
 
-void CBook::EndgameError(const CQPosition& pos, const CBookData* bd, const CBookValue& bv) const {
-	// don't alarm people, mostly this is because someone made a mistake in endgame.
-	// but beware, there IS a bug and sometimes solved values are wrong
-	// display information about problem
-	cout << "------------- RED ALERT: Misvalued solve node -----------\n";
-	cout << "Node Value: " << bd->Values() << "\n";
-	cout << "Calculated value: " << bv << "\n";
-	pos.Print();
-}
 
 //! assign values to a position
 //!
@@ -1643,8 +1635,6 @@ void CBook::EndgameError(const CQPosition& pos, const CBookData* bd, const CBook
 //!
 //! \param bd [in/out] pointer to the book data that will be updated by this routine.
 void CBook::NegamaxPosition(CQPosition pos, CBookData* bd) {
-	int nEmpty=pos.NEmpty();
-
 	QSSERT(bd->Hi().height!=0);
 
 	// For branch nodes, get the max of the subnodes values
@@ -1765,7 +1755,7 @@ void CBook::RemoveTree(const CMinimalReflection& mr) {
 		CMoves moves;
 		CMove move;
 		CQPosition pos(mr, true);
-		const int pass=pos.CalcMovesAndPass(moves);
+		pos.CalcMovesAndPass(moves);
 
 		while (moves.GetNext(move)) {
 			CQPosition posSub(mr, true);

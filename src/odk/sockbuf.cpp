@@ -7,6 +7,12 @@
 #include <fstream>
 #include <iomanip>
 
+#ifndef _WIN32
+#include <unistd.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#endif
+
 using namespace std;
 
 sockbuf::sockbuf() {
@@ -49,10 +55,16 @@ sockbuf::~sockbuf() {
 }
 
 int sockbuf::connect(const string& sServer, int nPort) {
+#ifdef _WIN32
 	HOSTENT *hostent;
 	PROTOENT *protoent;
 	SOCKADDR_IN sa;
-	char *sProtocol="tcp";
+#else
+    struct hostent *hostent;
+    struct protoent *protoent;
+    struct sockaddr_in sa;
+#endif
+	const char *sProtocol="tcp";
 
 	if (err)
 		return err;
@@ -79,15 +91,20 @@ int sockbuf::connect(const string& sServer, int nPort) {
 		return kErrNoProtocol;
 	sa.sin_family=AF_INET;
 	sa.sin_port=htons(nPort);
-	sa.sin_addr.S_un.S_addr=*(u4*)hostent->h_addr_list[0];
+	sa.sin_addr.s_addr=*(u4*)hostent->h_addr_list[0];
 
 	// get socket
 	if (!(sock=socket(AF_INET, SOCK_STREAM, protoent->p_proto)))
 		return kErrNoSocket;
 	
 	// connect
+#ifdef _WIN32
 	if (::connect(sock,(SOCKADDR*)&sa,sizeof(sa))) {
 		closesocket(sock);
+#else
+	if (::connect(sock,reinterpret_cast<sockaddr *>(&sa),sizeof(sa))) {
+		close(sock);
+#endif
 		return kErrCantConnect;
 	}
 
@@ -97,7 +114,11 @@ int sockbuf::connect(const string& sServer, int nPort) {
 
 int sockbuf::disconnect() {
 	if (fConnected) {
+#ifdef _WIN32
 		closesocket(sock);
+#else
+        close(sock);
+#endif
 		fConnected=false;
 		return 0;
 	}
@@ -126,8 +147,8 @@ int sockbuf::underflow() {
 		_ASSERT(0);
 	}
 	int nrecv=recv(sock, p0, nGetSize,0);
-	if (nrecv==SOCKET_ERROR) {
 #if _WIN32
+	if (nrecv==SOCKET_ERROR) {
 		int wsaerr=WSAGetLastError();
 		if (wsaerr!=WSAEMSGSIZE) {
 			switch(wsaerr) {
@@ -145,11 +166,13 @@ int sockbuf::underflow() {
 			}
 			return EOF;
 		}
+    }
 #else	// not windows, don't know the error codes
+	if (nrecv==-1) {
 		err=kErrUnknown;
 		return EOF;
+    }
 #endif
-	}
 	if (nrecv==0) {
 		// connection closed
 		err=kErrConnectionClosed;
@@ -179,7 +202,7 @@ int sockbuf::overflow(int c) {
 	if (!fConnected || err)
 		return EOF;
 
-	int nSend=pptr()-pbase();
+	int nSend=static_cast<int>(pptr()-pbase());
 	int nSent=send(sock, pbase(), nSend,0);
 	bool fOK=nSend==nSent;
 

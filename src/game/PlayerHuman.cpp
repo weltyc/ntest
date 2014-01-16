@@ -1,5 +1,7 @@
 #include "PlayerHuman.h"
 
+#include <cstring>
+#include <cstdlib>
 #include <sstream>
 #include <fstream>
 #include "../n64/qssert.h"
@@ -21,7 +23,7 @@ bool CPlayerHuman::Save(const COsGame& game) {
 
 	ofstream os(fn.c_str());
 
-	bool fResult = (os << game)!=0;
+	bool fResult = (os << game).good();
 	cout << (fResult?"Saved ":"Failed to save ") << fn << "\n";
 
 	return fResult;
@@ -59,8 +61,11 @@ CPlayer::TCheatcode CPlayerHuman::GetMove(COsGame& game, int flags, COsMoveListI
 
 		// if the parent process has closed stdin, we need to exit
 		if (!cin)
+#ifdef _WIN32
 			_exit(0);
-
+#else
+            exit(0);
+#endif
 		for(i=0; i<sInput.length(); i++) {
 			sInput[i]=tolower(sInput[i]);
 		}
@@ -121,7 +126,11 @@ CPlayer::TCheatcode CPlayerHuman::GetMove(COsGame& game, int flags, COsMoveListI
 				}
 				else if (sInput=="quit") {
 					std::cout << "quitting" << std::endl;
-					_exit(0);
+#ifdef _WIN32
+                    _exit(0);
+#else
+                    exit(0);
+#endif
 				}
 				else if (sInput=="undo") {
 					return kCheatUndo;

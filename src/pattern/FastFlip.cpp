@@ -3,6 +3,8 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
+#include <cstdio>
+#include <iostream>
 #include "Patterns.h"
 
 #include "FastFlip.h"

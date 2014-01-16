@@ -5,6 +5,8 @@
 
 // board source code
 
+#include <cstring>
+
 #include "BitBoard.h"
 #include "Moves.h"
 #include "../n64/types.h"

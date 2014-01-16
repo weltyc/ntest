@@ -1,13 +1,15 @@
 #ifndef _H_N64_TYPES
 #define _H_N64_TYPES
 
-typedef unsigned char u1;
-typedef unsigned short u2;
-typedef unsigned long u4;
-typedef signed char i1;
-typedef signed short i2;
-typedef signed long i4;
-typedef __int64 i8;
+#include <inttypes.h>
+
+typedef uint8_t u1;
+typedef uint16_t u2;
+typedef uint32_t u4;
+typedef int8_t i1;
+typedef int16_t i2;
+typedef int32_t i4;
+typedef int64_t i8;
 
 const int N=8;
 const int NN=N*N;
@@ -15,8 +17,8 @@ const int NN=N*N;
 typedef i2 CValue;
 
 
-typedef unsigned long long u64;
-typedef long long i64;
-typedef unsigned long u32;
+typedef uint64_t u64;
+typedef int64_t i64;
+typedef uint32_t u32;
 
 #endif // _H_N64_TYPES

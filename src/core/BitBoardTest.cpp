@@ -75,8 +75,8 @@ static void TestComparison() {
 	CBitBoard a;
 	CBitBoard b;
 	a.mover=0xFFFFFFFF;
-	a.empty=0xFFFFFFFF00000000i64;
-	b.mover=0xFFFFFFFF00000000i64;
+	a.empty=0xFFFFFFFF00000000ULL;
+	b.mover=0xFFFFFFFF00000000ULL;
 	b.empty=0xFFFFFFFF;
 
 	TEST(a<b);
@@ -84,8 +84,8 @@ static void TestComparison() {
 	TEST(!(b<a));
 
 	a.mover=0x7FFFFFFF;
-	a.empty=0x7FFFFFFF00000000i64;
-	b.mover=0x7FFFFFFF00000000i64;
+	a.empty=0x7FFFFFFF00000000ULL;
+	b.mover=0x7FFFFFFF00000000ULL;
 	b.empty=0x7FFFFFFF;
 
 	TEST(a<b);
@@ -95,7 +95,7 @@ static void TestComparison() {
 	// make empty the same, then must compare movers
 	a.mover=0xFFFFFFFF;
 	a.empty=0;
-	b.mover=0xFFFFFFFF00000000i64;
+	b.mover=0xFFFFFFFF00000000ULL;
 	b.empty=0;
 
 	TEST(a<b);
@@ -106,7 +106,7 @@ static void TestComparison() {
 
 	a.mover=0x7FFFFFFF;
 	a.empty=0;
-	b.mover=0x7FFFFFFF00000000i64;
+	b.mover=0x7FFFFFFF00000000ULL;
 	b.empty=0;
 
 	TEST(a<b);
@@ -116,7 +116,7 @@ static void TestComparison() {
 	// make mover the same, must compare empties
 	a.empty=0xFFFFFFFF;
 	a.mover=0;
-	b.empty=0xFFFFFFFF00000000i64;
+	b.empty=0xFFFFFFFF00000000ULL;
 	b.mover=0;
 
 	TEST(a<b);
@@ -127,7 +127,7 @@ static void TestComparison() {
 
 	a.empty=0x7FFFFFFF;
 	a.mover=0;
-	b.empty=0x7FFFFFFF00000000i64;
+	b.empty=0x7FFFFFFF00000000ULL;
 	b.mover=0;
 
 	TEST(a<b);
@@ -176,7 +176,7 @@ void TestBitBoard() {
 std::vector<COsGame> LoadTestGames() {
 	std::vector<COsGame> sgTest;
 
-	std::string fn="src/resource/TestGames.ggf";
+	std::string fn="TestGames.ggf";
 	std::ifstream is(fn.c_str());
 	if (!is){
 		std::cerr << "Can't open test games file " << fn << "\n";

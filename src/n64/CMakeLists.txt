@@ -1,0 +1,2 @@
+file(GLOB HEADER_FILES *.h)
+add_library(n64 STATIC endgameSearch.cpp endgameSearchTest.cpp flips.cpp flipsTest.cpp hash.cpp hashTest.cpp lastFlipCountGenerator.cpp lastFlipCountGeneratorTest.cpp magic.cpp magics.cpp n64.cpp solve.cpp solveTest.cpp stdafx.cpp test.cpp utils.cpp utilsTest.cpp ${HEADER_FILES})

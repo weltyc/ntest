@@ -28,13 +28,13 @@ ostream& operator<<(ostream& os, const vector<CMoveValue>& mvs) {
 
 ostream& CMVK::Out(ostream& os) const {
 	const std::streamsize oldPrecision=os.precision(2);
-	const int oldFlags=os.setf(ios::fixed, ios::floatfield);
+	const std::ios_base::fmtflags oldFlags=os.setf(ios::fixed, ios::floatfield);
 
 	// move
 	os << move << " " ;
 
 	// value
-	const int oldFlags2=os.setf(ios::showpos);
+	const std::ios_base::fmtflags oldFlags2=os.setf(ios::showpos);
 	os.width(6);
 	if (fKnown)
 		os << double(value)/kStoneValue;

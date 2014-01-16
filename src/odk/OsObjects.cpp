@@ -44,7 +44,8 @@ void COsMove::SetIOS(int iosmove) {
 }
 
 void COsMove::SetString(const std::string& s) {
-	In(istringstream(s));
+    istringstream is(s);
+	In(is);
 }
 
 bool COsMove::operator==(const COsMove& b) const {
@@ -94,7 +95,7 @@ void COsMoveListItem::In(istream& is) {
 
 void COsMoveListItem::Out(ostream& os) const {
 	const std::streamsize nPrecisionOld=os.precision(2);
-	int fFlagsOld=os.setf(ios::fixed, ios::floatfield);
+	std::ios_base::fmtflags fFlagsOld=os.setf(ios::fixed, ios::floatfield);
 
 	os << mv;
 	if (dEval || tElapsed) {
@@ -941,7 +942,7 @@ void COsGame::In(istream& is) {
 
 	// Game header	fOK 
 
-	bool fOK = (is >> c);
+	bool fOK = (is >> c).good();
 	if (fOK) {
 		if (c=='1' || c=='2') {
 			// synch game; get initial '('

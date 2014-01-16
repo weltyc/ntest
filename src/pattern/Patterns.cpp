@@ -5,10 +5,14 @@
 
 // patterns source code
 
+#include <cstdio>
+
 #include "Patterns.h"
 #include "patternJ.h"
 
+#ifdef _WIN32
 #define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
+#endif
 
 /////////////////////////////////////////////////////////////
 // Compression from base 4 to base 3

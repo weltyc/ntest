@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include "n64/solve.h"
 #include "core/NodeStats.h"
 #include "core/CalcParams.h"
@@ -56,12 +57,12 @@ int nCaptureWait=0;
 
 // position capture
 void SetRandomCapture() {
-	nCaptureWait = (rand()*20000)/(RAND_MAX + 1);
+	nCaptureWait = (rand()*20000)/(RAND_MAX + 1LL);
 }
 
 class CInitSearch {
 public:
-	CInitSearch::CInitSearch() {
+	CInitSearch() {
 		// initialize position capture info
 		if (fCapturePositions) {
 			std::string fn(fnBaseDir);
@@ -220,7 +221,7 @@ void ValueCacheOrTree(Pos2& pos2, int height, CValue alpha, CValue beta, CMoves&
 	// Check if the position is in cache
 	hash=pos2.GetBB().Hash();
 
-	if (cd=cache->FindOld(pos2.GetBB(), hash)) {
+	if ((cd=cache->FindOld(pos2.GetBB(), hash))) {
 		// cutoff if we can; otherwise update searchAlpha, searchBeta and set the best move
 		if (cd->Load(height, iPrune, pos2.NEmpty(), alpha, beta, best.move, iffCache, searchAlpha, searchBeta, best.value)) {
 			TREEDEBUG_CACHE;
@@ -588,7 +589,7 @@ static void OutputSearchInfo(std::ostream& os, CMoveValue mv, bool fPassBefore, 
 	os << mv.move;
 
 	const std::streamsize precision=os.precision(2);
-	const u4 flags=os.setf(std::ios::showpos);
+	const std::ios_base::fmtflags flags=os.setf(std::ios::showpos);
 	os.setf(std::ios::fixed, std::ios::floatfield);
 	os << std::setw(7) << " " << double(mv.value)/kStoneValue;
 	os.flags(flags);
@@ -1027,7 +1028,7 @@ void TimedMVK(Pos2& pos2, const CCalcParams& cp, const CSearchInfo& si, CMVK& mv
 		mvk.move.Set(C4);
 		mvk.fBook=true;
 	}
-	else if (nPass=pos2.CalcMovesAndPassBB(moves)) {
+	else if ((nPass=pos2.CalcMovesAndPassBB(moves))) {
 		// no moves - return a pass
 		mvk.move.Set(-1);
 		if (si.NeedValue()) {

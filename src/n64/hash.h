@@ -11,6 +11,7 @@ struct Hash {
 	short max;
 
 public:
+    Hash() : mover(0), enemy(0), depth(0), min(-64), max(64) {}
 	/**
 	* Update score of a parent of this node.
 	*

@@ -1,6 +1,7 @@
 // n64.cpp : Defines the entry point for the console application.
 //
 
+#include <cstring>
 #include "stdafx.h"
 #include "flips.h"
 #include "solveTest.h"

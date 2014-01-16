@@ -40,7 +40,16 @@ public:
 	int CalcMovesAndPassBB(CMoves& moves);
 	void GetFlips(bool m_fBlackMove, int square, CUndoInfo& ui) const;
 	int GetCountAndFlipBB(bool m_fBlackMove, int square, CUndoInfo& ui);
-	bool CalcMoves(CMoves& moves) const;
+    /**
+    * Calculate moves and store them in moves
+    *
+    * @param [out] moves location to store moves
+    * @return true if there are legal moves
+    */
+
+	bool CalcMoves(CMoves& moves) const {
+        return m_bb.CalcMoves(moves);
+    }
 	void PassBase();
 
 	// Info
@@ -67,8 +76,8 @@ private:
 	void AppendPotMobPatterns(u2* ids, u2& jPattern) const;
 	void IdsTrianglePatternsJ(u2* ids, int pattern1, int pattern2, int pattern3, int pattern4) const;
 	void PrintConfigs() const;
-	void Pos2::IdsEdgePatternsJ(u2* ids2x4, u2* ids2x5, u2* idsEdgeXX, int pattern1, int pattern2) const;
-	void Pos2::Ids3x3Patterns(u2* ids, int pattern1, int pattern2, int pattern3) const;
+	void IdsEdgePatternsJ(u2* ids2x4, u2* ids2x5, u2* idsEdgeXX, int pattern1, int pattern2) const;
+	void Ids3x3Patterns(u2* ids, int pattern1, int pattern2, int pattern3) const;
 
 	// eval functions
 	// variables
@@ -83,5 +92,11 @@ inline int Pos2::TerminalValue() const {
 
 inline void Pos2::PassBase() {
 	m_fBlackMove=!m_fBlackMove;
+    m_bb.mover = ~(m_bb.mover | m_bb.empty);
+}
+
+inline void Pos2::PassBB() {
+	m_fBlackMove = !m_fBlackMove;
+	m_bb.InvertColors();
 }
 #endif // #ifdef H_POS2
