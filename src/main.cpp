@@ -536,11 +536,8 @@ int __cdecl main(int argc, char**argv, char**envp) {
 				break;	// it's done when creating computer1
 							  }
 			case kExternalViewer: {
-#ifdef _WIN32
 				CGameX gamex(cd1);
-#else
-                cerr << "mode not currently supported!\n";
-#endif
+                cerr << "mode currently supported!\n";
 				break;
 								  }
 			default:
