@@ -10,7 +10,6 @@
 #include <map>
 #include "n64/types.h"
 #include "n64/utils.h"
-#include "core/Debug.h"
 
 #include "pattern/Patterns.h"
 #include "pattern/Pattern.h"

@@ -1,10 +1,10 @@
 #include <algorithm>
+#include <cassert>
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
 #include <iomanip>
 #include <fstream>
-#include "n64/qssert.h"
 #include "core/MPCStats.h"
 #include "core/Cache.h"
 #include "core/options.h"
@@ -174,7 +174,7 @@ CCache* CPlayerComputer::GetCache(int iCache) {
 
 	if (caches[iCache]==NULL) {
 		std::cerr << "out of memory allocating cache " << iCache << " for computer " << Name() << "\n";
-		_ASSERT(0);
+		assert(0);
 		exit(-1);
 	}
 
@@ -299,7 +299,7 @@ void CPlayerComputer::GetChosen(const CSearchInfo& si, const CQPosition& pos, CM
 	const int hSolve = pos.NEmpty()-hSolverStart;
 
 	SetParameters(pos, fUseBook, si.iCache);
-	QSSERT((mpcs==NULL) || cd.iPruneMidgame<=::mpcs->NPrunes());
+	assert((mpcs==NULL) || cd.iPruneMidgame<=::mpcs->NPrunes());
 
 	Pos2 pos2;
 	pos2.Initialize(pos.BitBoard(),pos.BlackMove());
@@ -456,7 +456,7 @@ void CPlayerComputer::PrintAnalysis(const COsGame& game) {
 			const CBookData* bd=book->FindData(pos.BitBoard());
 			if (!bd) {
 				cout << "Position not in book\n";
-				QSSERT(0);
+				assert(0);
 			}
 			else  {
 				cout << *bd << "\n";

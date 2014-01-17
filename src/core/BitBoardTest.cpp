@@ -1,5 +1,6 @@
+#include <cassert>
+
 #include "../n64/test.h"
-#include "../n64/qssert.h"
 #include "BitBoard.h"
 #include "Moves.h"
 #include "QPosition.h"
@@ -47,9 +48,9 @@ static void TestCalcMobility(const char* board, bool fBlackMove, int pass, int n
 
 	bb.Initialize(board,fBlackMove);
 	int passx=bb.CalcMobility(nMovesPlayerx, nMovesOpponentx);
-	_ASSERT(pass==passx);
-	_ASSERT(nMovesPlayer==nMovesPlayerx);
-	_ASSERT(nMovesOpponent==nMovesOpponentx);
+	assert(pass==passx);
+	assert(nMovesPlayer==nMovesPlayerx);
+	assert(nMovesOpponent==nMovesOpponentx);
 }
 
 static void TestCalcMobility() {

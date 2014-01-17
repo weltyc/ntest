@@ -6,6 +6,7 @@
 // moves source file
 
 #include <inttypes.h>
+#include <cassert>
 #include <cstring>
 #include <cstdlib>
 #include <sstream>
@@ -13,7 +14,6 @@
 #include "Moves.h"
 #include "../odk/OsObjects.h"		
 #include "../n64/test.h"
-#include "../n64/qssert.h"
 
 using namespace std;
 
@@ -49,7 +49,7 @@ void CMove::Set(const char* text) {
 	char items[2];
 
 	if (strlen(text)<2) {
-		QSSERT(0);
+		assert(0);
 		Set(-2);
 		return;
 	}
@@ -73,7 +73,7 @@ void CMove::Set(const char* text) {
 		// any other value? set to -2.
 		else {
 			Set(-2);
-			QSSERT(0);
+			assert(0);
 		}
 	}
 }
@@ -245,7 +245,7 @@ void CMoves::Test() {
 }
 
 void CMoves::Delete(const CMove& move) {
-	QSSERT(all&move.Mask());
+	assert(all&move.Mask());
 	all&=~move.Mask();
 }
 

@@ -7,7 +7,7 @@
 // CNodeStats class
 //////////////////////////////////////////////////////
 
-
+#include <cassert>
 #include <stdio.h>
 #include <iostream>
 #include <iomanip>
@@ -15,9 +15,7 @@
 #include <math.h>
 #include "../n64/types.h"
 #include "../n64/utils.h"
-
 #include "Ticks.h"
-#include "Debug.h"
 #include "NodeStats.h"
 
 using namespace std;
@@ -140,7 +138,7 @@ void SetAbortTime(double seconds) {
 	if (seconds <= 0)
 		seconds=.01;
 
-	_ASSERT(seconds>0);
+	assert(seconds>0);
 
 	abortRound=false;
 

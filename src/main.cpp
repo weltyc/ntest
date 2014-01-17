@@ -16,13 +16,13 @@
 #include <cstdlib>
 #include <cstring>
 #endif
+#include <cassert>
 #include <ctype.h>
 #include <sstream>
 #include <iomanip>
 #include <string>
-#include "n64/qssert.h"
 #include "n64/n64.h"
-#include "core/Debug.h"
+#include "n64/test.h"
 #include "core/QPosition.h"
 #include "core/NodeStats.h"
 #include "core/Cache.h"
@@ -104,7 +104,7 @@ CPlayer* GetPlayer(char c, const CComputerDefaults& cd1, const CComputerDefaults
 		return pPl2;
 	default:
 		cerr << "Unknown player type " << c << "\n";
-		_ASSERT(0);
+		assert(0);
 		exit(-1);
 		return(NULL);
 	}
@@ -244,7 +244,7 @@ void Compare(CPlayerComputer& computer1, CPlayerComputer& computer2) {
 	nWins=nDraws=nLosses=0;
 
 	fp=fopen("CompareStart.pos","rb");
-	QSSERT(fp);
+	assert(fp);
 	if (fp) {
 		while (fread(&bb,sizeof(bb),1,fp)) {
 			char sBoardText[NN+1];
@@ -504,7 +504,7 @@ int __cdecl main(int argc, char**argv, char**envp) {
 			case kGetStartPos: {
 				/*
 				FILE* fp=fopen("CompareStart.pos","wb");
-				QSSERT(fp);
+				assert(fp);
 				if (fp) {
 					int nAcceptable, nEmpty;
 					CValue v, vCutoff=kStoneValue;
@@ -515,7 +515,7 @@ int __cdecl main(int argc, char**argv, char**envp) {
 						map<CBitBoard,CBookData>& entries=computer1.book->entries[nEmpty];
 						for(i=entries.begin(); i!=entries.end(); i++) {
 							const CBookValue& bv=(*i).second.Values();
-							QSSERT(bv.IsAssigned());
+							assert(bv.IsAssigned());
 							v=bv.v;
 							if (v>=-vCutoff && v<=vCutoff) {
 								nAcceptable++;

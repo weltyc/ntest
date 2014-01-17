@@ -450,12 +450,7 @@ u64 flipDiagonal(u64 bits) {
 
 #include <stdio.h>
 #include <sstream>
-#ifdef _MSC_VER
-#include "crtdbg.h"
-#else
 #include <cassert>
-#define _ASSERT(a) assert(a)
-#endif
 
 int Sign(int n) {
 	if (n<0)
@@ -521,7 +516,7 @@ char ValueToText(int value) {
 	case WHITE: return 'O';
 	case EMPTY: return '-';
 	case BLACK: return '*';
-	default: _ASSERT(0); return '?';
+	default: assert(0); return '?';
 	}
 }
 
@@ -541,7 +536,7 @@ int TextToValue(char c) {
 	case '-':
 		return EMPTY;
 	default:
-		_ASSERT(0);
+		assert(0);
 		return EMPTY;
 	}
 }

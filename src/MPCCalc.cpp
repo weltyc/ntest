@@ -1,5 +1,5 @@
+#include <cassert>
 #include <iostream>
-#include "n64/qssert.h"
 #include "core/QPosition.h"
 #include "core/SearchInfo.h"
 #include "core/MPCStats.h"
@@ -167,7 +167,7 @@ void CalcPosValues(CPlayerComputer* computer, bool fAppend) {
 						std::string fn(fnBaseDir);
 						fn+=sPVFile;
 						std::cerr << "can't write to file " << fn << "\n";
-						QSSERT(0);
+						assert(0);
 						_exit(1);
 					}
 				}

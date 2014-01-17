@@ -119,7 +119,7 @@ CValue StaticValue(Pos2& pos2, int iff) {
 	int pass;
 	u4 nMovesPlayer, nMovesOpponent;
 	CValue result;
-	_ASSERT(evaluator);
+	assert(evaluator);
 	nEvalsQuick++;
 
 	// check for out-of-time condition
@@ -194,7 +194,7 @@ CValue ValueBookCacheOrTree(Pos2& pos2, int height, CValue alpha, CValue beta, C
 	}
 
 	ValueCacheOrTree(pos2, height, alpha, beta, moves, iPrune, best);
-	_ASSERT(abortRound || iPrune || (height+hSolverStart!=pos2.NEmpty()) || (best.value<=64*kStoneValue && best.value>=-64*kStoneValue));
+	assert(abortRound || iPrune || (height+hSolverStart!=pos2.NEmpty()) || (best.value<=64*kStoneValue && best.value>=-64*kStoneValue));
 
 	return best.value;
 }
@@ -227,9 +227,9 @@ void ValueCacheOrTree(Pos2& pos2, int height, CValue alpha, CValue beta, CMoves&
 			TREEDEBUG_CACHE;
 			return;
 		}
-		_ASSERT(searchAlpha<searchBeta);
+		assert(searchAlpha<searchBeta);
 		moves.SetBest(best.move);
-		_ASSERT(pos2.GetBB()==cd->Board());	// consistency check
+		assert(pos2.GetBB()==cd->Board());	// consistency check
 	}
 	else {
 		iffCache=0;
@@ -246,13 +246,13 @@ void ValueCacheOrTree(Pos2& pos2, int height, CValue alpha, CValue beta, CMoves&
 		if (cd) {
 			cd->Store(height, iPrune, pos2.NEmpty(), best.move, iffCache, searchAlpha, searchBeta, best.value);
 			#ifdef _DEBUG
-			_ASSERT(cd->Board()==pos2.GetBB());
+			assert(cd->Board()==pos2.GetBB());
 			pos2.CalcMoves(moves);
-			_ASSERT(moves.IsValid(best.move));
+			assert(moves.IsValid(best.move));
 			#endif
 		}
 	}
-	_ASSERT(abortRound || iPrune || (height+hSolverStart!=pos2.NEmpty()) || (best.value<=64*kStoneValue && best.value>=-64*kStoneValue));
+	assert(abortRound || iPrune || (height+hSolverStart!=pos2.NEmpty()) || (best.value<=64*kStoneValue && best.value>=-64*kStoneValue));
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ inline void ValueTree(Pos2& pos2, int height, CValue alpha, CValue beta, CMoves&
 		CMoveValue moveValues[64];
 		iffCache=iff;
 		//cout << "--- sort ---\n";
-		_ASSERT(moves.Consistent());
+		assert(moves.Consistent());
 		for (nMoves=0; moves.GetNext(move); nMoves++) {
 			moveValues[nMoves].move=move;
 			pos2.MakeMoveBB(move.Square(), nFlipped,ui);
@@ -518,7 +518,7 @@ inline CValue SolveValue(Pos2& pos2, CValue alpha, CValue beta) {
 	const int mmxAlpha=int((alpha+10000)/100)-100;
 	const CValue result=-MmxSolve(pos2.GetBB(), -mmxBeta, -mmxAlpha)*kStoneValue;
 
-	_ASSERT(result>-kInfinity);
+	assert(result>-kInfinity);
 	TREEDEBUG_CALLSOLVER;
 	return result;
 }
@@ -546,7 +546,7 @@ CValue ChildValue(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune)
 	// Static value if no height
 	if (height<=0) {
 		result=-StaticValue(pos2, 0);
-		_ASSERT(result>-kInfinity);
+		assert(result>-kInfinity);
 	}
 
 	// Tree-search value otherwise
@@ -559,15 +559,15 @@ CValue ChildValue(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune)
 		switch(pass) {
 		case 0:
 			result=-ValueBookCacheOrTree(pos2, height, -beta, -alpha, moves, iPrune);
-			_ASSERT(result>-kInfinity || abortRound);
+			assert(result>-kInfinity || abortRound);
 			break;
 		case 1:
 			result=ValueBookCacheOrTree(pos2, height, alpha, beta, moves, iPrune);
-			_ASSERT(result>-kInfinity || abortRound);
+			assert(result>-kInfinity || abortRound);
 			break;
 		case 2:
 			result=pos2.TerminalValue();
-			_ASSERT(result>-kInfinity);
+			assert(result>-kInfinity);
 			break;
 		}
 
@@ -664,19 +664,19 @@ void ValueMulti(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune, u
 		if (fNegascout && vSearchAlpha>-kInfinity) {
 			TREEDEBUG_BEFORE_NEGASCOUT;
 			vChild=ChildValue(pos2, hChild, vSearchAlpha, vSearchAlpha+1, iPrune);
-			_ASSERT(vChild>-kInfinity || abortRound);
+			assert(vChild>-kInfinity || abortRound);
 		TREEDEBUG_AFTER_NEGASCOUT;
 			if (vChild>vSearchAlpha && vChild<beta) {
 				TREEDEBUG_BEFORE;
 				vChild=ChildValue(pos2, hChild, vChild, beta, iPrune);
-				_ASSERT(vChild>-kInfinity || abortRound);
+				assert(vChild>-kInfinity || abortRound);
 				TREEDEBUG_AFTER;
 			}
 		}
 		else {				
 			TREEDEBUG_BEFORE;
 			vChild=ChildValue(pos2, hChild, vSearchAlpha, beta, iPrune);
-			_ASSERT(vChild>-kInfinity || abortRound);
+			assert(vChild>-kInfinity || abortRound);
 			TREEDEBUG_AFTER;
 		}
 		if (fDebugPrint)
@@ -735,11 +735,11 @@ void ValueMulti(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune, u
 		if (alpha>-kInfinity)
 			nValued=nBest;
 		else
-			_ASSERT(0);
+			assert(0);
 	}
-	_ASSERT(abortRound || nValued>=nBest || alpha>-kInfinity);
+	assert(abortRound || nValued>=nBest || alpha>-kInfinity);
 	mvsEvaluated.insert(mvsEvaluated.end(),mvsLow.begin(),mvsLow.end());
-	_ASSERT(mvsEvaluated.size() || abortRound);
+	assert(mvsEvaluated.size() || abortRound);
 	// If we had a beta cutoff,some moves weren't even tried, put them last.
 	mvsEvaluated.insert(mvsEvaluated.end(),i,mvs.end());
 }
@@ -794,7 +794,7 @@ void IterativeValue(Pos2& pos2, CMoves moves, const CCalcParams& cp,
 	if (nBest<=0)
 		return;
 
-	//_ASSERT(mpcs && mpcs->Valid());
+	//assert(mpcs && mpcs->Valid());
 
 	// print MPC stat static value?
 	if (si.NeedMPCStats())
@@ -882,7 +882,7 @@ void IterativeValue(Pos2& pos2, CMoves moves, const CCalcParams& cp,
 		mvsOld=mvsNew;
 	}
 
-	_ASSERT(mvk.move.Valid());
+	assert(mvk.move.Valid());
 	if (book) {
 		bool fStoreUnsolved;
 		if (si.NeedNoAddSoloUnsolvedToBook())
@@ -950,7 +950,7 @@ bool FindForcedOpening(Pos2& pos2, CMove& move) {
 			break;
 	}
 	if (!fDone) {
-		_ASSERT(0);
+		assert(0);
 		return false;
 	}
 	return true;
@@ -1043,7 +1043,7 @@ void TimedMVK(Pos2& pos2, const CCalcParams& cp, const CSearchInfo& si, CMVK& mv
 				mvk.move.Set("PA");
 				break;
 			default:
-				_ASSERT(0);
+				assert(0);
 			}
 		}
 		pos2.PassBB();
@@ -1059,9 +1059,9 @@ void TimedMVK(Pos2& pos2, const CCalcParams& cp, const CSearchInfo& si, CMVK& mv
 		mvk.fKnown=true;
 		mvk.fBook=true;
 		if (fPassBefore)
-			_ASSERT(mvk.move.IsPass());
+			assert(mvk.move.IsPass());
 		else
-			_ASSERT(mvk.move.Valid());
+			assert(mvk.move.Valid());
 	}
 
 	else {
@@ -1069,14 +1069,14 @@ void TimedMVK(Pos2& pos2, const CCalcParams& cp, const CSearchInfo& si, CMVK& mv
 		if (moves.NMoves()==1 && !(si.NeedValue())) {
 			// only one move, and not valuing forced moves
 			moves.GetNext(mvk.move);
-			_ASSERT(mvk.move.Valid());
+			assert(mvk.move.Valid());
 		}
 		else {
 			// value the move
 			if (si.PrintAnalysis())
 				std::cout << (si.PrintPondering()?"status Analyzing":"status Thinking") << std::endl;
 			IterativeValue(pos2, moves, cp, si, mvk, fPassBefore, 1);		
-			_ASSERT(mvk.move.Valid());
+			assert(mvk.move.Valid());
 			fIterativeNS=true;
 			if (si.PrintAnalysis())
 				std::cout << "status" << std::endl;

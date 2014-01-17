@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <sstream>
 #include "../n64/test.h"
-#include "../n64/qssert.h"
 
 #include "QPosition.h"
 #include "options.h"

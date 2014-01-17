@@ -10,11 +10,12 @@
 #ifdef _WIN32
 #include <io.h>
 #endif
+#include <cassert>
 #include <math.h>
 #include <sstream>
 #include <fstream>
 #include <time.h>
-#include "../n64/qssert.h"
+
 #include "../n64/test.h"
 
 #include "Game.h"
@@ -133,7 +134,7 @@ int CGame::Play() {
 		// toot
 		bool enemyIsHuman = ppls[!pos.board.fBlackMove]->IsHuman();
 		cheatcode = ppls[!pos.board.fBlackMove]->Update(*this, enemyIsHuman?0:CPlayer::kNoPrint, mli);
-		QSSERT(cheatcode==CPlayer::kCheatNone);
+		assert(cheatcode==CPlayer::kCheatNone);
 
 		// regular player
 		cheatcode = ppls[pos.board.fBlackMove]->Update(*this, CPlayer::kMyMove+CPlayer::kAllowCheats, mli);
@@ -153,7 +154,7 @@ int CGame::Play() {
 		case CPlayer::kCheatContinue:
 			break;
 		default:
-			QSSERT(0);
+			assert(0);
 		}
 	}
 

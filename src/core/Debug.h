@@ -1,9 +1,0 @@
-///////////////////////////////////////////////////
-// File Added by Richard Delorme for portability
-// in replacement of crtdbg.h
-///////////////////////////////////////////////////
-
-#pragma once
-
-#include <cassert>
-#define _ASSERT(x) assert(x)

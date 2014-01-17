@@ -7,11 +7,11 @@
 
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 #include <cstdlib>
 #include "../odk/OsObjects.h"
 #include "../n64/utils.h"
-#include "../n64/qssert.h"
 #include "../n64/flips.h"
 
 #include "QPosition.h"
@@ -116,7 +116,7 @@ bool CQPosition::NonmoverSquare(int col, int row) const {
 // Set down a piece and flip opposing pieces. Change m_bb.blacks.
 void CQPosition::MakeMove(CMove move) {
 #if _DEBUG
-	_ASSERT((m_bb.empty&m_bb.mover)==0);
+	assert((m_bb.empty&m_bb.mover)==0);
 	CMoves movesTest;
 	bool fHasMove=CalcMoves(movesTest);
 	bool fOK = fHasMove?movesTest.IsValid(move):move.IsPass();
@@ -125,7 +125,7 @@ void CQPosition::MakeMove(CMove move) {
 		Print();
 		cout.flush();
 		cerr << " invalid move made" << std::endl;
-		QSSERT(0);
+		assert(0);
 		movesTest.IsValid(move);
 	}
 #endif

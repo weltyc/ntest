@@ -1,10 +1,10 @@
 #include "PlayerHuman.h"
 
+#include <cassert>
 #include <cstring>
 #include <cstdlib>
 #include <sstream>
 #include <fstream>
-#include "../n64/qssert.h"
 
 #include "Game.h"
 
@@ -44,7 +44,7 @@ bool CPlayerHuman::Load(COsGame& game) {
 	}
 	else {
 		cerr << "Internal error at " << __FILE__ << " line " << __LINE__ << "\n";
-		QSSERT(0);
+		assert(0);
 		return false;
 	}
 }

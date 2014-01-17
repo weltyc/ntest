@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include <iostream>
+#include <cassert>
 
 void fail(const char* text);
 void fail(const std::ostringstream& s);
@@ -13,3 +14,4 @@ void assertNotNull(void* p);
 void assertNull(void* p);
 void assertTrue(bool b);
 void assertFalse(bool b);
+#define TEST assertTrue

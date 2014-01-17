@@ -6,10 +6,10 @@
 // Cache for transposition table and move ordering
 
 #include <algorithm>
+#include <cassert>
 #include <cstring>
 
 #include "../n64/types.h"
-#include "../n64/qssert.h"
 #include "options.h"
 #include "Cache.h"
 
@@ -93,7 +93,7 @@ bool CCacheData::Load(int aHeight, int aPrune, int nEmpty, CValue alpha, CValue 
 
 	if (Loadable(aHeight, aPrune, nEmpty)) {
 		// check for immediate return conditions via cutoff
-		_ASSERT(aHeight<=height);
+		assert(aHeight<=height);
 
 		if (lBound>=beta || lBound==uBound) {
 			value=lBound;
@@ -107,7 +107,7 @@ bool CCacheData::Load(int aHeight, int aPrune, int nEmpty, CValue alpha, CValue 
 		// update searchAlpha and searchBeta
 		searchAlpha=std::max(alpha, lBound);
 		searchBeta=std::min(beta, uBound);
-		_ASSERT(searchAlpha<searchBeta);
+		assert(searchAlpha<searchBeta);
 	}
 	else {
 		searchAlpha=alpha;
@@ -130,8 +130,8 @@ bool CCacheData::AlphaCutoff(int aHeight, int aPrune, int nEmpty, CValue alpha) 
 
 // store info in cache.
 void CCacheData::Store(int aHeight, int aPrune, int anEmpty, CMove aBestMove, int aiFastestFirst, CValue searchAlpha, CValue searchBeta, CValue& value) {
-	_ASSERT(anEmpty);
-	_ASSERT(aHeight<=anEmpty-hSolverStart);
+	assert(anEmpty);
+	assert(aHeight<=anEmpty-hSolverStart);
 
 	// If we can use the value from the cache, constrain the return value to be in [lBound, uBound]
 	if (Loadable(aHeight, aPrune, anEmpty) && !Storeable(aHeight, aPrune, anEmpty)) {
@@ -150,18 +150,18 @@ void CCacheData::Store(int aHeight, int aPrune, int anEmpty, CMove aBestMove, in
 		nEmpty=anEmpty;
 	}
 	if (Storeable(aHeight, aPrune, anEmpty)) {
-		_ASSERT(aBestMove.Row()>=0);
+		assert(aBestMove.Row()>=0);
 		bestMove=aBestMove;
 		iFastestFirst|=aiFastestFirst;
 		height=aHeight;
 		iPrune=aPrune;
 		nEmpty=anEmpty;
 
-		_ASSERT(searchAlpha<searchBeta && lBound<=uBound);
+		assert(searchAlpha<searchBeta && lBound<=uBound);
 
 		if (value<searchBeta && value<uBound) {
 			if(value<lBound) {
-				//_ASSERT(::iPruneMidgame || ::iPruneEndgame);
+				//assert(::iPruneMidgame || ::iPruneEndgame);
 				lBound=value;
 			}
 			uBound=value;
@@ -169,7 +169,7 @@ void CCacheData::Store(int aHeight, int aPrune, int anEmpty, CMove aBestMove, in
 
 		if (value>searchAlpha && value>lBound) {
 			if(value>uBound) {
-				//_ASSERT(::iPruneMidgame || ::iPruneEndgame);
+				//assert(::iPruneMidgame || ::iPruneEndgame);
 				uBound=value;
 			}
 			lBound=value;
@@ -224,8 +224,8 @@ CCache::CCache(u4 anbuckets) {
 	nBuckets=anbuckets;
 	mask=nBuckets-1;
 	buckets=new CCacheData[nBuckets];
-	_ASSERT(buckets);
-	_ASSERT((nBuckets&(nBuckets-1))==0);
+	assert(buckets);
+	assert((nBuckets&(nBuckets-1))==0);
 
 	Clear();
 	ClearStats();

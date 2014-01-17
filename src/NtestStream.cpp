@@ -3,9 +3,9 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
+#include <cassert>
 #include <iostream>
 #include "odk/GGSMessage.h"
-#include "n64/qssert.h"
 #include "core/CalcParams.h"
 
 #include "PlayerComputer.h"
@@ -134,7 +134,7 @@ void CNtestStream::MakeMoveIfNeeded(const string& idg) {
 	if (loc!=idg.npos && loc+1 < idg.size())
 		fSynchGame1= idg[loc+1]=='1';
 
-	QSSERT(pgame);
+	assert(pgame);
 	if (pgame!=NULL) {
 		bool fMyMove=pgame->ToMove(GetLogin());
 		COsMoveListItem mli;
@@ -148,11 +148,11 @@ void CNtestStream::MakeMoveIfNeeded(const string& idg) {
 
 
 		if (fMyMove) {
-			_ASSERT(mli.mv.Row()<8);
+			assert(mli.mv.Row()<8);
 			(*this) << "tell /os play " << idg << " " << mli << "\n";
 			flush();
 		}
 	}
 	else
-		QSSERT(0);
+		assert(0);
 }

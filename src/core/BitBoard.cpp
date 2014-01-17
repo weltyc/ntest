@@ -20,7 +20,7 @@ void CBitBoard::Initialize(const char* boardText, bool fBlackMove) {
 	int i;
 	u64 squareMask;
 
-	_ASSERT(strlen(boardText)==NN);
+	assert(strlen(boardText)==NN);
 
 	empty=0;
 	mover=0;
@@ -46,7 +46,7 @@ void CBitBoard::Initialize(const char* boardText, bool fBlackMove) {
 		case 'W':
 			break;
 		default:
-			_ASSERT(0);
+			assert(0);
 		}
 	}
 

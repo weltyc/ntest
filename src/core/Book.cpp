@@ -3,18 +3,7 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
-#ifdef _WIN32
-#pragma warning(disable: 4786)
-
-#if defined(_DEBUG) && defined(_MSC_VER)
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-#define new new(_NORMAL_BLOCK, __FILE__, __LINE__)
-#endif
-
-#include <Windows.h>
-#endif
-
+#include <cassert>
 #include <errno.h>
 #include <stdio.h>
 #include <string>
@@ -23,7 +12,6 @@
 #include <sstream>
 #include <iomanip>
 #include "../odk/OsObjects.h"
-#include "../n64/qssert.h"
 
 #include "Moves.h"
 #include "QPosition.h"
@@ -59,7 +47,7 @@ void CBookValue::SetBranch(const CBookValue& valueNew) {
 // inputs:
 //	boni - winning bonuses
 void CBookValue::AssignLeaf(const CBoni& boni) {
-	//QSSERT(fSet);;
+	//assert(fSet);;
 
 	vMover=vHeuristic;
 	vOpponent=vHeuristic;
@@ -79,7 +67,7 @@ void CBookValue::AssignLeaf(const CBoni& boni) {
 }
 
 void CBookValue::AssignBranch() {
-	QSSERT(fSet);
+	assert(fSet);
 	fAssigned=true;
 }
 
@@ -128,7 +116,7 @@ CValue CBookValue::GameValue(int vContempt, int nPass) const {
 
 	// calculate upper and lower possible values for draw
 	if (vMover<vOpponent) {
-		_ASSERT(0);
+		assert(0);
 		vUpperBound=vOpponent;
 		vLowerBound=vMover;
 	}
@@ -238,7 +226,7 @@ void CBookData::StoreLeaf(const CHeightInfoX& hixNew, CValue v, const CBoni& bon
 	if (hixNew>=hi) {
 		IncreaseHeight(hixNew);
 
-		_ASSERT(IsLeaf());
+		assert(IsLeaf());
 		values.SetLeaf(v, hixNew.WldProven());
 		values.AssignLeaf(boni);
 	}
@@ -358,7 +346,7 @@ void HashLong(u4 x) {
 		hash_n=0;
 		break;
 	default:
-		_ASSERT(0);
+		assert(0);
 	}
 }
 
@@ -406,7 +394,7 @@ int CBook::s_iBookWriteFormat=2;
 
 //! \throw an error message
 void CBook::ReadErr() {
-	_ASSERT(0);
+	assert(0);
 	throw std::string("WARNING: BOOK ")+m_store->ToString()+" is damaged, restore a backup.\n";
 	_exit(-3);
 }
@@ -640,7 +628,7 @@ void CBook::ReadVersion1(Reader& in) {
 		ReadErr();
 	}
 	m_nHashErr=nHashCheck-hash_a;
-	_ASSERT(m_nHashErr==0);
+	assert(m_nHashErr==0);
 }
 
 class CBookDataCompressed {
@@ -770,7 +758,7 @@ void CBook::WriteVersion2(Writer& out) {
 				if (!i->second.GetWritten()) {
 					// write the main tree
 					const CMinimalReflection mr(i->first);
-					_ASSERT(!mr.IsImpossible());
+					assert(!mr.IsImpossible());
 					HashWrite(&mr, sizeof(CBitBoard), out);
 					WriteTree2(out, mr, i->second);
 				}
@@ -805,7 +793,7 @@ int CBook::Size() const {
 //! \param pos [in] the current position. Must be a minimal reflection!
 //! \param bd [in] Reference to the book data for this position
 void CBook::ReadTree2(Reader& in, const CMinimalReflection& mr) {
-	_ASSERT(!mr.IsImpossible());
+	assert(!mr.IsImpossible());
 	CQPosition pos(mr, true);
 
 	// read value
@@ -816,20 +804,20 @@ void CBook::ReadTree2(Reader& in, const CMinimalReflection& mr) {
 	// read subpositions
 	// pass if the current player must
 	CMoves moves;
-		_ASSERT(!pos.BitBoard().IsImpossible());
+		assert(!pos.BitBoard().IsImpossible());
 	const int pass=pos.CalcMovesAndPass(moves);
-		_ASSERT(!pos.BitBoard().IsImpossible());
+		assert(!pos.BitBoard().IsImpossible());
 	if (pass==2)
 		return;
 
 	// read in subtrees.
 	char c;
 	while (HashRead(&c, 1, in) && c!=-1) {
-		_ASSERT(!pos.BitBoard().IsImpossible());
+		assert(!pos.BitBoard().IsImpossible());
 		CMove move(c);
 		CQPosition subpos(pos);
 		subpos.MakeMove(move);
-		_ASSERT(!subpos.BitBoard().IsImpossible());
+		assert(!subpos.BitBoard().IsImpossible());
 		ReadTree2(in, subpos.BitBoard());
 	}
 }
@@ -845,7 +833,7 @@ void CBook::ReadVersion2(Reader& in) {
 	// repeatedly read in main trees
 	CBitBoard bb;
 	while (Size()<nSize && HashRead(&bb, sizeof(bb), in)==1) {
-		_ASSERT(!bb.IsImpossible());
+		assert(!bb.IsImpossible());
 		ReadTree2(in, bb);
 	}
 
@@ -859,7 +847,7 @@ void CBook::ReadVersion2(Reader& in) {
 		ReadErr();
 	}
 	m_nHashErr=nHashCheck-hash_a;
-	_ASSERT(m_nHashErr==0);
+	assert(m_nHashErr==0);
 
 	// Need to negamax the book to return data that was taken out by compression.
 	NegamaxAll();
@@ -891,7 +879,7 @@ const CBookData* CBook::FindData(const CMinimalReflection& mr, int nEmpty) const
 	if (i==entries[nEmpty].end())
 		return 0;
 	else {
-		QSSERT((*i).second.Hi().height<=nEmpty);
+		assert((*i).second.Hi().height<=nEmpty);
 		return &((*i).second);
 	}
 }
@@ -905,7 +893,7 @@ CBookData* CBook::FindNonconstData(const CMinimalReflection& mr, int nEmpty) {
 	if (i==entries[nEmpty].end())
 		return 0;
 	else {
-		QSSERT((*i).second.Hi().height<=nEmpty);
+		assert((*i).second.Hi().height<=nEmpty);
 		return &((*i).second);
 	}
 }
@@ -1018,7 +1006,7 @@ static void PickRandomMove(vector<CMVPS>& mvs, int randomShift, CMoveValue& chos
 	u4 i, nChoices;
 	u4 randUsed, randNumber, loss, probability;
 
-	QSSERT(!mvs.empty());
+	assert(!mvs.empty());
 
 	// First get cutoff value
 	sort(mvs.begin(), mvs.end());
@@ -1038,7 +1026,7 @@ static void PickRandomMove(vector<CMVPS>& mvs, int randomShift, CMoveValue& chos
 
 	// find random move
 	randNumber=u4((double)rand()/(double)(RAND_MAX+1ULL)*randUsed);
-	QSSERT(randNumber<randUsed);
+	assert(randNumber<randUsed);
 	if (randNumber>=randUsed)
 		printf("Error in Negamax.cpp - randomization\n");
 	for (i=0; i<mvs.size(); i++) {
@@ -1273,7 +1261,7 @@ bool CBook::GetRandomMove(const CQPosition& pos, const CSearchInfo& si, CMVK& mv
 
 	bool fSolved=bd->IsLeaf();
 	if (fSolved) {
-		QSSERT(bd->Values().IsProven());
+		assert(bd->Values().IsProven());
 	}
 
 	GetSubnodes(pos, si.vContempt, mvs);
@@ -1290,7 +1278,7 @@ bool CBook::GetRandomMove(const CQPosition& pos, const CSearchInfo& si, CMVK& mv
 	if (mvs.empty()) {
 		if (!fSolved) {
 			pos.Print();
-			QSSERT(0);
+			assert(0);
 			printf("RED ALERT: BOOK HAS NO MOVES\n");
 		}
 		return false;
@@ -1312,7 +1300,7 @@ bool CBook::GetRandomMove(const CQPosition& pos, const CSearchInfo& si, CMVK& mv
 
 	// choose a move
 	// assertion fails when we have uncorrected transpositions
-	//QSSERT(mvs[0].value==bd->Values().VMover(fBlackMove) || bd->IsSolved());
+	//assert(mvs[0].value==bd->Values().VMover(fBlackMove) || bd->IsSolved());
 	bool fUsable=!fSolved;
 	int rs = si.rs;
 
@@ -1390,7 +1378,7 @@ bool CBook::GetEdmundMove(const CQPosition& pos, CMoveValue& mv, bool fPrintEdmu
 	// check for error condition and return false if we have one
 	if (mvs.empty()) {
 		pos.FPrint(stdout);
-		QSSERT(0);
+		assert(0);
 		printf("RED ALERT: BOOK HAS NO MOVES\n");
 
 		return false;
@@ -1530,9 +1518,9 @@ void CBook::StoreLeaf(const CMinimalReflection& mr, CHeightInfoX hix, CValue val
 	CBookData* bd=&(entries[nEmpty][mr]);
 
 	// assign value if we can, or mark unassigned if we should
-	QSSERT(hix.Valid());
+	assert(hix.Valid());
 	bd->StoreLeaf(hix, value, Boni());
-	QSSERT(bd->Hi().height>0);
+	assert(bd->Hi().height>0);
 
 	m_fAltered=true;
 }
@@ -1553,9 +1541,9 @@ void CBook::StoreRoot(const CMinimalReflection& mr, CHeightInfoX hix, CValue val
 	CBookData* bd=&(entries[nEmpty][mr]);
 
 	// assign value if we can, or mark unassigned if we should
-	QSSERT(hix.Valid());
+	assert(hix.Valid());
 	bd->StoreRoot(hix, value, vCutoff, Boni());
-	QSSERT(bd->Hi().height>0);
+	assert(bd->Hi().height>0);
 
 	m_fAltered=true;
 }
@@ -1622,7 +1610,7 @@ void CBook::NegamaxPosition(CQPosition pos) {
 	if (bd)
 		NegamaxPosition(pos, bd);
 	else
-		QSSERT(0);
+		assert(0);
 }
 
 
@@ -1635,7 +1623,7 @@ void CBook::NegamaxPosition(CQPosition pos) {
 //!
 //! \param bd [in/out] pointer to the book data that will be updated by this routine.
 void CBook::NegamaxPosition(CQPosition pos, CBookData* bd) {
-	QSSERT(bd->Hi().height!=0);
+	assert(bd->Hi().height!=0);
 
 	// For branch nodes, get the max of the subnodes values
 	if (bd->IsBranch()) {
@@ -1652,7 +1640,7 @@ void CBook::NegamaxPosition(CQPosition pos, CBookData* bd) {
 		bd->values.AssignLeaf(Boni());
 	}
 
-	QSSERT(bd->Values().IsSetAndAssigned());
+	assert(bd->Values().IsSetAndAssigned());
 }
 
 // Find max subnode value, and max unsolved leaf subnode value
@@ -1671,7 +1659,7 @@ void CBook::MaxSubnodeValues(const CQPosition& pos, CBookData* bd, CBookValue& b
 	CQPosition posSub;
 
 	if (!pos.CalcMoves(moves)) {
-		QSSERT(0);
+		assert(0);
 		return;
 	}
 
@@ -1817,7 +1805,7 @@ void CBook::StoreIterativeResult(const CBitBoard& bb, int nBest, int nEvalOld,in
 		bool fWLDSolved=mvk.hiFull.WldProven(nEmpty);
 		value=mvs.at(0).value;
 
-		_ASSERT(mvk.hiFull.Valid());
+		assert(mvk.hiFull.Valid());
 		if (fWLDSolved) {
 			// solved root node
 			std::cout << "AddToBook mode - solved node" << std::endl;

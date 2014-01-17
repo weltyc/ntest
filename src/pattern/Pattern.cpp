@@ -3,10 +3,10 @@
 // This file is distributed subject to GNU GPL version 2. See the files
 // Copying.txt and GPL.txt for details.
 
+#include <cassert>
 #include <cstdio>
 #include <iostream>
 #include "../n64/types.h"
-#include "../core/Debug.h"
 
 #include "Pattern.h"
 
@@ -40,7 +40,7 @@ int CPattern::Reconfig(int config, int* reorder, int nI) {
 		trits[reorder[i]]=config%3;
 		config/=3;
 	}
-	_ASSERT(config==0);
+	assert(config==0);
 	result=0;
 	for(i=0; i<nI; i++)
 		result+=result+result+trits[nI-1-i];
@@ -72,7 +72,7 @@ void CPattern::Init(){
 			for (i=0; i<nI;i++) {
 				rsq=rsqToSq(symmetries[isymmetry],iToSq[i]);
 				siToI[isymmetry][i]=sqToI[rsq];
-				_ASSERT(siToI[isymmetry][i]>=0);
+				assert(siToI[isymmetry][i]>=0);
 			}
 		}
 
