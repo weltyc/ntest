@@ -6,11 +6,11 @@
 
 #include "MPCStats.h"
 
+#include <cassert>
 #include <time.h>
 #include <stdio.h>
 #include <math.h>
 #include <sstream>
-#include "../n64/qssert.h"
 
 using namespace std;
 
@@ -32,14 +32,14 @@ CMPCStats::CMPCStats(const char* fnStats, int anPrunes) {
 	if (!fpStats) {
 		printf("Unable to open stats file '%s'\n", fnStats);
 		fprintf(stderr, "Unable to open stats file '%s'\n", fnStats);
-		QSSERT(0);
+		assert(0);
 		throw(0);
 	}
 
 	// read header info, and get hMax
 	nRead=fscanf(fpStats,"%d %d", &iVersion, &hMax);
-	QSSERT(nRead==2);
-	QSSERT(iVersion>=1 && iVersion<=3);
+	assert(nRead==2);
+	assert(iVersion>=1 && iVersion<=3);
 	iStartCol=(iVersion>1)?0:1;
 
 	// get multiplier if MPC file was created with different kStoneValue
@@ -50,7 +50,7 @@ CMPCStats::CMPCStats(const char* fnStats, int anPrunes) {
 		if (nRead==1)
 			dMPCMultiplier = kStoneValue/(double)kStoneValueFile;
 		else
-			QSSERT(0);
+			assert(0);
 	}
 	else if (iVersion==2) {
 		dMPCMultiplier = kStoneValue/10.0;
@@ -148,7 +148,7 @@ CMPCStats::CMPCStats(const char* fnStats, int anPrunes) {
 		Multiply(1, 2.2);
 		break;
 	default:
-		QSSERT(0);
+		assert(0);
 	}
 
 	fclose(fpStats);
@@ -182,7 +182,7 @@ CMPCStats::~CMPCStats() {
 
 // get hCheck, sd and cr for a cut. Return true if we should test, false if no test available.
 bool CMPCStats::GetParams(int height, int nEmpty, int nCut, int iPrune, int& hCheck, float& sd, float& cr) {
-	QSSERT(iPrune<=nPrunes);
+	assert(iPrune<=nPrunes);
 
 	hCheck=nCutLocs[height][nCut];
 	if (!hCheck)
@@ -199,7 +199,7 @@ bool CMPCStats::GetParams(int height, int nEmpty, int nCut, int iPrune, int& hCh
 void CMPCStats::Multiply(int iPrune, double dMultiplier) {
 	int nCut, height, nEmpty;
 
-	QSSERT(iPrune>0 && iPrune<=nPrunes);
+	assert(iPrune>0 && iPrune<=nPrunes);
 
 	for (nCut=0; nCut<2; nCut++) {
 		for (height=0; height<=hMax; height++) {
@@ -214,7 +214,7 @@ void CMPCStats::Multiply(int iPrune, double dMultiplier1, double dMultiplier2) {
 	int nCut, height, nEmpty;
 	double dMultiplier;
 
-	QSSERT(iPrune>0 && iPrune<=nPrunes);
+	assert(iPrune>0 && iPrune<=nPrunes);
 
 	for (nEmpty=0; nEmpty<60; nEmpty++) {
 		dMultiplier=(nEmpty>30)?dMultiplier1:dMultiplier2;
@@ -263,7 +263,7 @@ CMPCStats* CMPCStats::GetMPCStats(char evalType,char aCoeffSet, int aPrune) {
 		}
 		break;
 	default:
-		QSSERT(0);
+		assert(0);
 		cout << "MPC stats unavailable! exiting\n";
 		cerr << "MPC stats unavailable! exiting\n";
 		_exit(-5);

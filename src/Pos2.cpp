@@ -4,20 +4,19 @@
 // Copying.txt and GPL.txt for details.
 
 #include <iomanip>
+#include <cassert>
 #include <ctype.h>
 #include <stdio.h>
 #include <fstream>
 #include <math.h>
 #include "n64/types.h"
 #include "n64/test.h"
-#include "n64/qssert.h"
 #include "n64/utils.h"
 #include "core/BitBoard.h"
 #include "core/QPosition.h"
 #include "core/Moves.h"
 #include "core/options.h"
 #include "core/NodeStats.h"
-#include "core/Debug.h"
 #include "pattern/Patterns.h"
 #include "pattern/FastFlip.h"
 
@@ -66,7 +65,7 @@ void Pos2::Initialize(const char* sBoard, bool fBlackMove) {
 				*pConfig+=sdToValue[square][direction]+sdToValue[square][direction];
 				break;
 			default:
-				_ASSERT(0);
+				assert(0);
 			}
 		}
 	}
@@ -97,7 +96,7 @@ void Pos2::MakeMoveBB(int square, int& nFlipped, CUndoInfo& ui) {
 		char buf[65];
 		cout << "Board Text: " << GetText(buf) << "\n";
 		printf("move %c%c flips no discs\n",ColText(square),RowText(square));
-		_ASSERT(0);
+		assert(0);
 	}
 #endif
 	m_fBlackMove=!m_fBlackMove;
@@ -135,7 +134,7 @@ void Pos2::UndoMoveBB(int square, int nFlipped, CUndoInfo& ui) {
 	m_bb.InvertColors();
 	ui.FlipBB(m_bb, m_fBlackMove, m_configs);
 	m_fBlackMove=!m_fBlackMove;
-	_ASSERT(nFlipped);
+	assert(nFlipped);
 }
 
 void Pos2::UndoMoveAndPassBB(CMove move, int nFlipped, CUndoInfo& ui, int& nPass) {
@@ -592,5 +591,5 @@ void Pos2::GetIDsJ(u2 ids[nPatternsJ]) const {
 	ids[jPattern]=config;
 
 	for (jPattern=0; jPattern<59; jPattern++)
-		_ASSERT(ids[jPattern]<=mapsJ[patternToMapJ[jPattern]].NIDs());
+		assert(ids[jPattern]<=mapsJ[patternToMapJ[jPattern]].NIDs());
 }

@@ -9,13 +9,7 @@
 #ifndef __CORE_BITBOARD_H
 #define __CORE_BITBOARD_H
 
-#ifdef _WIN32
-#include <crtdbg.h>
-#else
-
 #include <cassert>
-#define _ASSERT(x) assert(x)
-#endif
 #include <stdio.h>
 #include "../n64/utils.h"
 class CMoves;
@@ -78,7 +72,7 @@ bool operator<(const CBitBoard& a, const CBitBoard& b);
 //! Make the bitboard an impossible position. This is used when clearing the hashtable.
 inline void CBitBoard::SetImpossible() {
 	mover=empty=~0;
-	_ASSERT(IsImpossible());
+	assert(IsImpossible());
 }
 
 //! Check whether the bitboard is impossible. Impossible positions are stored in unused

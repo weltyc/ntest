@@ -6,7 +6,7 @@
 // Evaluator source code
 #include <sstream>
 #include "core/QPosition.h"
-#include "core/Debug.h"
+
 #include "pattern/types.h"
 
 #include "Evaluator.h"
@@ -53,9 +53,9 @@ CEvaluator* CEvaluator::FindEvaluator(char evaluatorType, char coeffSet) {
 			break;
 				  }
 		default:
-			_ASSERT(0);
+			assert(0);
 		}
-		_ASSERT(result);
+		assert(result);
 		evaluatorList[evaluatorInfo]=result;
 	}
 	else {
@@ -104,9 +104,9 @@ static void ConvertFile(FILE*& fp, std::string fn, int& iVersion, u4& fParams) {
 	if (!fp)
 		throw std::string("Can't open coefficient file ")+fn;
 	size_t result=fread(&iVersion, sizeof(int), 1, fp);
-	_ASSERT(result==1);
+	assert(result==1);
 	result=fread(&fParams, sizeof(int), 1, fp);
-	_ASSERT(result==1);
+	assert(result==1);
 }
 
 //! Read in Evaluator coefficients from a coefficient file
@@ -365,7 +365,7 @@ static TCoeff ValueEdgePatternsJ(const TConfig configs[], const TCoeff* pcmove, 
 	value+=ConfigValue(pcmove, config1+(config1<<1)+row2ToXX[config2],CR1XXJ, offsetJEX);
 
 	// in J-configs, the values are multiplied by 65536
-	//_ASSERT((value&0xFFFF)==0);
+	//assert((value&0xFFFF)==0);
 	return value;
 }
 

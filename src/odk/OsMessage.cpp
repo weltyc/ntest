@@ -48,7 +48,7 @@ void CMsgOsAbortRequest::In(istream& is) {
 	is >> idg >> sLogin >> ws;
 	getline(is, sDummy);
 
-	_ASSERT(sDummy=="is asking");
+	assert(sDummy=="is asking");
 }
 
 void CMsgOsAbortRequest::Handle() {
@@ -88,10 +88,10 @@ void CMsgOsEnd::In(istream& is) {
 	string s;
 
 	is >> idg >> c;
-	_ASSERT(c=='(');
+	assert(c=='(');
 	is >> sPlayers[0] >> s >> sPlayers[1] >> c;
-	_ASSERT(s=="vs.");
-	_ASSERT(c==')');
+	assert(s=="vs.");
+	assert(c==')');
 	is >> result;
 }
 
@@ -220,7 +220,7 @@ void CMsgOsFinger::In(istream& is) {
 		getline(isLine, sValue);
 
 		// insert (key, value) pair
-		_ASSERT(keyToValue.find(sKey)==keyToValue.end());
+		assert(keyToValue.find(sKey)==keyToValue.end());
 		keyToValue[sKey]=sValue;
 	}
 
@@ -255,7 +255,7 @@ void CMsgOsJoin::Handle() {
 
 void CMsgOsLook::In(istream& is) {
 	is >> nGames;
-	_ASSERT(nGames==1 || nGames==2);
+	assert(nGames==1 || nGames==2);
 
 	games.reserve(nGames);
 	COsGame game;
@@ -291,7 +291,7 @@ void CMsgOsHistory::In(istream& is) {
 	COsHistoryItem hi;
 	while (is >> hi)
 		his.push_back(hi);
-	_ASSERT(his.size()==n);
+	assert(his.size()==n);
 }
 
 void CMsgOsHistory::Handle() {
@@ -312,13 +312,13 @@ void CMsgOsMatch::In(istream& is) {
 	char c;
 
 	is >> n1 >> c >> n2;
-	_ASSERT(c=='/');
+	assert(c=='/');
 
 	COsMatch match;
 	while (match.In(is))
 		matches.push_back(match);
 
-	_ASSERT(matches.size()==n2);
+	assert(matches.size()==n2);
 }
 
 void CMsgOsMatch::Handle() {
@@ -404,9 +404,9 @@ void CMsgOsRatingUpdate::In(istream& is) {
 
 	is >> idm;
 	is >> sPlayers[0] >> rOlds[0] >> dDeltas[0] >> s >> rNews[0];
-	_ASSERT(s=="->");
+	assert(s=="->");
 	is >> sPlayers[1] >> rOlds[1] >> dDeltas[1] >> s >> rNews[1];
-	_ASSERT(s=="->");
+	assert(s=="->");
 }
 
 void CMsgOsRatingUpdate::Handle() {
@@ -531,7 +531,7 @@ void CMsgOsStored::In(istream& is) {
 	while (is >> sm) {
 		sms.push_back(sm);
 	}
-	_ASSERT(sms.size()==nStored);
+	assert(sms.size()==nStored);
 }
 
 void CMsgOsStored::Handle() {
@@ -590,13 +590,13 @@ void CMsgOsTrustViolation::In(istream& is) {
 	string sDelta, sSecs;
 
 	is >> idg >> sLogin >> c1 >> cColor >> c2;
-	_ASSERT(c1=='(');
-	_ASSERT(cColor==COsBoard::BLACK || cColor==COsBoard::WHITE || cColor==COsBoard::UNKNOWN);
-	_ASSERT(c2==')');
+	assert(c1=='(');
+	assert(cColor==COsBoard::BLACK || cColor==COsBoard::WHITE || cColor==COsBoard::UNKNOWN);
+	assert(c2==')');
 
 	is >> sDelta >> delta1 >> c1 >> delta2 >> sSecs;
-	_ASSERT(sDelta=="delta=");
-	_ASSERT(sSecs=="secs");
+	assert(sDelta=="delta=");
+	assert(sSecs=="secs");
 }
 
 void CMsgOsTrustViolation::Handle() {
@@ -613,7 +613,7 @@ void CMsgOsUndoRequest::In(istream& is) {
 	is >> idg >> sLogin >> ws;
 	getline(is, sDummy);
 
-	_ASSERT(sDummy=="is asking");
+	assert(sDummy=="is asking");
 }
 
 void CMsgOsUndoRequest::Handle() {
@@ -660,12 +660,12 @@ void CMsgOsWatch::In(istream& is) {
 	int nWatchers;
 
 	is >> nMatches >> c1;
-	_ASSERT(c1==':');
+	assert(c1==':');
 
 	while (is >> idm >> c1 >> nWatchers >> c2) {
-		_ASSERT(c1=='(');
-		_ASSERT(c2==')');
-		_ASSERT(idToNWatchers.find(idm)==idToNWatchers.end());
+		assert(c1=='(');
+		assert(c2==')');
+		assert(idToNWatchers.find(idm)==idToNWatchers.end());
 		idToNWatchers[idm]=nWatchers;
 	}
 }
@@ -719,5 +719,5 @@ void CMsgOsWho::In(istream& is) {
 	}
 
 	// This assert fails because GGS sends the wrong n
-	//	_ASSERT(wis.size()==n);
+	//	assert(wis.size()==n);
 }

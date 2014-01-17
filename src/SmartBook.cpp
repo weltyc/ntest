@@ -1,7 +1,8 @@
 #include "SmartBook.h"
 
+#include <cassert>
 #include <sstream>
-#include "n64/qssert.h"
+
 #include "core/options.h"
 #include "core/CalcParams.h"
 #include "game/Game.h"
@@ -75,7 +76,7 @@ CSmartBook* CSmartBook::FindBook(char evalType, char coeffSet, CCalcParams* pcp)
 			_exit(-3);
 		}
 		bookList[os.str()]=result;
-		QSSERT(result);
+		assert(result);
 	}
 	else {
 		result=(*ptr).second;
@@ -110,7 +111,7 @@ CHeightInfo CSmartBook::HiMin(int nEmpty) const {
 void CSmartBook::NegamaxAndCorrectPosition(CQPosition pos, CBookData* bd, int& nSearches) {
 	int nEmpty=pos.NEmpty();
 
-	QSSERT(bd->Hi().height!=0);
+	assert(bd->Hi().height!=0);
 
 	// enforce a minimum height for book branch nodes and solved nodes
 	// this could potentially result in a branch node being solved.
@@ -158,7 +159,7 @@ void CSmartBook::NegamaxAndCorrectPosition(CQPosition pos, CBookData* bd, int& n
 		bd->values.AssignLeaf(Boni());
 	}
 
-	QSSERT(bd->Values().IsSetAndAssigned());
+	assert(bd->Values().IsSetAndAssigned());
 }
 
 //! Add a game to the book and calculate necessary deviations.
@@ -213,7 +214,7 @@ void CSmartBook::CorrectGame(const COsGame& game, int iGameType, int& nSearches,
 				abortOnInput=true;
 				nSearches++;
 				bd=FindNonconstData(pos.BitBoard());
-				QSSERT(bd);
+				assert(bd);
 			}
 			else {
 				if (fPrintCorrections)
@@ -249,7 +250,7 @@ void CSmartBook::IncreaseHeight(CQPosition pos, CBookData* bd, CHeightInfo hi, i
 
 	// branch?
 	if (!bd->IsLeaf() && !fWLDSolved) {
-		QSSERT(hi.Valid());
+		assert(hi.Valid());
 		bd->IncreaseHeight(CHeightInfoX(hi, pos.NEmpty()));
 		NegamaxAndCorrectPosition(pos, bd, nSearches);
 	}
@@ -258,8 +259,8 @@ void CSmartBook::IncreaseHeight(CQPosition pos, CBookData* bd, CHeightInfo hi, i
 	//	on a previously WLD solved position, e.g. when we are recalcing a
 	//	book at a higher height.
 	else if (bd->IsProven()) {
-		QSSERT(hi.height==pos.NEmpty()-hSolverStart);
-		QSSERT(fWLDSolved);
+		assert(hi.height==pos.NEmpty()-hSolverStart);
+		assert(fWLDSolved);
 		return;
 	}
 
@@ -270,7 +271,7 @@ void CSmartBook::IncreaseHeight(CQPosition pos, CBookData* bd, CHeightInfo hi, i
 		CMoves moves;
 
 		if (!pos.CalcMoves(moves)) {
-			QSSERT(0);
+			assert(0);
 		}
 
 		Pos2 pos2;
@@ -297,9 +298,9 @@ void CSmartBook::IncreaseHeight(CQPosition pos, CBookData* bd, CHeightInfo hi, i
 		bd->SetRoot(fRoot);
 
 		bd->StoreLeaf(CHeightInfoX(hi, pos.NEmpty()), mvk.value, Boni());
-		QSSERT(bd->IsProven()==fWLDSolved);
+		assert(bd->IsProven()==fWLDSolved);
 	}
-	QSSERT(bd->IsProven()==fWLDSolved);
+	assert(bd->IsProven()==fWLDSolved);
 }
 
 // Find max subnode value, and max unsolved leaf subnode value
@@ -318,7 +319,7 @@ void CSmartBook::MaxAndCorrectSubnodeValues(const CQPosition& pos, CBookData* bd
 	CQPosition posSub;
 
 	if (!pos.CalcMoves(moves)) {
-		QSSERT(0);
+		assert(0);
 		return;
 	}
 

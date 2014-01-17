@@ -6,7 +6,6 @@
 #include <vector>
 #include "../n64/utils.h"
 #include "../core/BitBoard.h"
-#include "../core/Debug.h"
 
 #include "FastFlipTables.h"
 #include "Patterns.h"
@@ -80,7 +79,7 @@ void InitSDToPattern() {
 				sdToPattern[square][dir]=knPats;
 			}
 	}
-	_ASSERT(pattern==knPats);
+	assert(pattern==knPats);
 }
 
 
@@ -94,7 +93,7 @@ void InitSDToPatternK() {
 	patE2x4.CalcTables(nPatterns,sqToUpdatesK);
 	patTriangle.CalcTables(nPatterns,sqToUpdatesK);
 
-	_ASSERT(nPatterns==knPatsK);
+	assert(nPatterns==knPatsK);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -140,7 +139,7 @@ void InitSdlrToIrf() {
 	prf->sq=-1;
 	prf->dir=-1;
 
-	_ASSERT((prf-rfs)==knRFs);
+	assert((prf-rfs)==knRFs);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -174,29 +173,29 @@ void InitColorSDCToPrf() {
 				pattern=sdToPattern[square][dir];
 				size=patternToSize[pattern];
 				nConfigs=SizeToNConfigs(size);
-				_ASSERT(rfs[0].nFlipped==0);
+				assert(rfs[0].nFlipped==0);
 				for (config=0;config<nConfigs;config++)
 					AddCToPrf(cToPrf++,config, square, dir);
-				_ASSERT(rfs[0].nFlipped==0);
+				assert(rfs[0].nFlipped==0);
 				colorsdcToPrf[0][square][dir]=cToPrf-1;
 			}
 		}
 	}
-	_ASSERT(rfs[0].nFlipped==0);
+	assert(rfs[0].nFlipped==0);
 	// check
-	_ASSERT(cToPrf-isdcToPrf==knSDCs);
+	assert(cToPrf-isdcToPrf==knSDCs);
 
-	_ASSERT(rfs[0].nFlipped==0);
+	assert(rfs[0].nFlipped==0);
 	// final dummy value for directions without configs
 	*cToPrf=rfs+knRFs;
-	_ASSERT(rfs[0].nFlipped==0);
+	assert(rfs[0].nFlipped==0);
 }
 
 void AddCToPrf(CRowFlip** cToPrf, int config, int sq, int dir){
 	// figure out how many squares of config are flipped to the left and right
 	int trits[8], pattern, index, i, iGood, left,right,size;
 
-	//_ASSERT(cToPrf-isdcToPrf!=1012580);
+	//assert(cToPrf-isdcToPrf!=1012580);
 
 	index=sdToIndex[sq][dir];
 	pattern=sdToPattern[sq][dir];
@@ -222,7 +221,7 @@ void AddCToPrf(CRowFlip** cToPrf, int config, int sq, int dir){
 		case 0: break;
 		case 1: iGood=-1; break;
 		case 2: iGood=i; break;
-		default: _ASSERT(0);
+		default: assert(0);
 		}
 	}
 	if (iGood>=0)
@@ -237,7 +236,7 @@ void AddCToPrf(CRowFlip** cToPrf, int config, int sq, int dir){
 		case 0: break;
 		case 1: iGood=-1; break;
 		case 2: iGood=i; break;
-		default: _ASSERT(0);
+		default: assert(0);
 		}
 	}
 	if (iGood>=0)

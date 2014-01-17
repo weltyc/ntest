@@ -26,7 +26,7 @@ ggsstream::~ggsstream() {
 
 int ggsstream::Connect(const string& sServer, int nPort) {
 	if(IsConnected()) {
-		_ASSERT(0);
+		assert(0);
 		return kErrConnected;
 	}
 	
@@ -48,7 +48,7 @@ int ggsstream::Connect(const string& sServer, int nPort) {
 
 int ggsstream::Disconnect() {
 	if (!IsConnected()) {
-		_ASSERT(0);
+		assert(0);
 		return kErrNotConnected;
 	}
 	setstate(ios::eofbit);
@@ -68,7 +68,7 @@ int ggsstream::Login(const char* sName, const char* sPassword) {
 	int err=0;
 
 	if (fLoggedIn) {
-		_ASSERT(0);
+		assert(0);
 		err = kErrLoggedIn;
 	}
 
@@ -104,7 +104,7 @@ int ggsstream::Login(const char* sName, const char* sPassword) {
 			fLoggedIn=true;
 			break;
 		default:
-			_ASSERT(0);
+			assert(0);
 			err = kErrUnknown;
 		}
 	}
@@ -117,7 +117,7 @@ int ggsstream::Login(const char* sName, const char* sPassword) {
 			Post(pmsg);
 		}
 		else
-			_ASSERT(0);
+			assert(0);
 	}
 
 	return err;
@@ -125,7 +125,7 @@ int ggsstream::Login(const char* sName, const char* sPassword) {
 
 int ggsstream::Logout() {
 	if (fLoggedIn==false) {
-		_ASSERT(0);
+		assert(0);
 		return kErrLoggedOut;
 	}
 	else {
@@ -150,7 +150,7 @@ int ggsstream::await(const char* sAwait) {
 	if (psb)
 		return psb->Err();
 	else {
-		_ASSERT(0);
+		assert(0);
 		return kErrNoStreambuf;
 	}
 }
@@ -353,7 +353,7 @@ CMsg* ggsstream::GetMsgTypeOs(istream& is) {
 	else
 		pmsg=new CMsgOsUnknown(sMsgType);
 
-	_ASSERT(pmsg);
+	assert(pmsg);
 	return pmsg;
 }
 
@@ -380,7 +380,7 @@ CMsg* ggsstream::GetMsgTypeGGS(istream& is) {
 	else
 		pmsg=new CMsgGGSUnknown;
 
-	_ASSERT(pmsg);
+	assert(pmsg);
 	return pmsg;
 }
 
@@ -444,7 +444,7 @@ void ggsstream::BaseOsEnd(const CMsgOsEnd* pmsg) {
 	//	to let you know the result
 	COsGame* pgame=PGame(pmsg->idg);
 	if (pgame) {
-		_ASSERT(pgame->mt.fSynch);
+		assert(pgame->mt.fSynch);
 		pgame->SetResult(pmsg->result, pmsg->sPlayers);
 	}
 }
@@ -492,7 +492,7 @@ void ggsstream::EndGame(const CMsgOsMatchDelta* pmsg, const string& idg) {
 		if (pgame->result.status==COsResult::kUnfinished)
 			pgame->SetResult(pmsg->result, pmsg->match.pis);
 		else {
-			_ASSERT(pgame->mt.fSynch && pgame->result.status==COsResult::kNormalEnd);
+			assert(pgame->mt.fSynch && pgame->result.status==COsResult::kNormalEnd);
 		}
 		HandleOsGameOver(pmsg, idg);
 	}
@@ -501,7 +501,7 @@ void ggsstream::EndGame(const CMsgOsMatchDelta* pmsg, const string& idg) {
 void ggsstream::BaseOsMatchDelta(const CMsgOsMatchDelta* pmsg) {
 	map<string,COsMatch>::iterator i=idToMatch.find(pmsg->match.idm);
 	if (pmsg->fPlus) {
-		_ASSERT(i==idToMatch.end());
+		assert(i==idToMatch.end());
 		idToMatch[pmsg->match.idm]=pmsg->match;
 	}
 	else {
@@ -523,7 +523,7 @@ void ggsstream::BaseOsMatchDelta(const CMsgOsMatchDelta* pmsg) {
 void ggsstream::BaseOsRequestDelta(const CMsgOsRequestDelta* pmsg) {
 	map<string,COsRequest>::iterator i=idToRequest.find(pmsg->idr);
 	if (pmsg->fPlus) {
-		_ASSERT(i==idToRequest.end());
+		assert(i==idToRequest.end());
 		idToRequest[pmsg->idr]=pmsg->request;
 	}
 	else {

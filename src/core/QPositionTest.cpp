@@ -4,7 +4,6 @@
 #include "QPosition.h"
 
 #include "../n64/test.h"
-#include "../n64/qssert.h"
 static void TestMakeMove() {
 	CQPosition pos;
 	char sBoard[65];

@@ -9,7 +9,6 @@
 #include <string>
 #include <iomanip>
 #include <math.h>
-#include "n64/qssert.h"
 #include "core/Moves.h"
 #include "core/QPosition.h"
 #include "core/Cache.h"

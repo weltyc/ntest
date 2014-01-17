@@ -124,5 +124,5 @@ void CODKStream::MakeMoveIfNeeded(const string& idg) {
 		}
 	}
 	else
-		_ASSERT(0);
+		assert(0);
 }

@@ -5,6 +5,7 @@
 
 // patterns source code
 
+#include <cassert>
 #include <cstdio>
 
 #include "Patterns.h"
@@ -136,7 +137,7 @@ void ConfigToTrits(u4 config, int length, int* trits) {
 		trits[i]=config%3;
 		config/=3;
 	}
-	_ASSERT(config==0);
+	assert(config==0);
 }
 
 // change trits to config. trit[0] is smallest value
@@ -178,7 +179,7 @@ void InitORIDTables() {
 				id++;
 			}
 		}
-		_ASSERT(id==nORIDs[size]);
+		assert(id==nORIDs[size]);
 	}
 
 }
@@ -203,7 +204,7 @@ void InitCRIDTables() {
 			id++;
 		}
 	}
-	_ASSERT(id==nCRIDs[6]);
+	assert(id==nCRIDs[6]);
 	for (id=config=0; config<nBase3s[10]; config++) {
 		rconfig=CRID10Reverse(config);
 		if (config<=rconfig) {
@@ -212,7 +213,7 @@ void InitCRIDTables() {
 			id++;
 		}
 	}
-	_ASSERT(id==nCRIDs[10]);
+	assert(id==nCRIDs[10]);
 }
 
 void InitR33IDTables() {
@@ -227,7 +228,7 @@ void InitR33IDTables() {
 			id++;
 		}
 	}
-	_ASSERT(id==14*729);
+	assert(id==14*729);
 }
 
 // initialize edge -> 2x4 and 2x5 translators
@@ -356,7 +357,7 @@ const int R33ID[9]={0,3,6,1,4,7,2,5,8};
 u2 ReorderedConfig(u2 config, int nTrits, const int* reordering) {
 	int i, trits[20];
 
-	_ASSERT(nTrits<=20);
+	assert(nTrits<=20);
 	ConfigToTrits(config, nTrits,trits);
 	config=0;
 	for (i=nTrits-1; i>=0; i--)
@@ -374,7 +375,7 @@ u2 CRID10Reverse(u2 config) {
 }
 
 u2 ORIDReverse(u2 config, int size) {
-	_ASSERT(size>0);
+	assert(size>0);
 	int trits[maxBase3PatternSize];
 
 	ConfigToTrits(config, size, trits);
@@ -400,24 +401,24 @@ u2 Base2ToORIDx(u2 pattern2, u2 size) {
 	pattern3=Base2ToBase3(pattern2>>8,pattern2&0xFF);
 	if (!size)
 		return pattern3;
-	_ASSERT(size<maxORIDPatternSize);
-	_ASSERT(base3ToORIDTable[size][pattern3]<nORIDs[size]);
+	assert(size<maxORIDPatternSize);
+	assert(base3ToORIDTable[size][pattern3]<nORIDs[size]);
 	return Base3ToORID(pattern3, size);
 }
 
 // PrintORID:
 //	if size!=0 interprets a as an o#.
 char* PrintORID(u2 orid, u2 size) {
-	_ASSERT(size);
-	_ASSERT(size<maxORIDPatternSize);
-	_ASSERT(size<10);
+	assert(size);
+	assert(size<maxORIDPatternSize);
+	assert(size<10);
 	return PrintBase3(oRIDToBase3Table[size][orid], size);
 }
 
 char* PrintBase3(u2 pattern3, u2 size) {
 	int i;
 
-	_ASSERT(size);
+	assert(size);
 	for (i=size-1; i>=0; i--) {
 		configString[i]=outputStuff[pattern3%3];
 		pattern3/=3;
@@ -434,7 +435,7 @@ u2 ORIDxToBase2(u2 compress, u2 size) {
 	u2 temp;
 
 	if (size) {
-		_ASSERT(size<maxORIDPatternSize);
+		assert(size<maxORIDPatternSize);
 		compress=oRIDToBase3Table[size][compress];
 	}
 
@@ -456,17 +457,17 @@ static char nullString[]="";
 u2 CMap::IDToConfig(u2 id) const {
 	switch(idType) {
 	case kBase3:
-		_ASSERT(size<maxBase3PatternSize);
-		_ASSERT(id<nBase3s[size]);
+		assert(size<maxBase3PatternSize);
+		assert(id<nBase3s[size]);
 		return id;
 	case kORID:
-		_ASSERT(size<maxORIDPatternSize);
-		_ASSERT(id<nORIDs[size]);
+		assert(size<maxORIDPatternSize);
+		assert(id<nORIDs[size]);
 		return ORIDToBase3(id, size);
 	case kCRID:
-		_ASSERT(size<maxCRIDPatternSize);
-		_ASSERT(id<nCRIDs[size]);
-		_ASSERT(size==6 || size==10);
+		assert(size<maxCRIDPatternSize);
+		assert(id<nCRIDs[size]);
+		assert(size==6 || size==10);
 		return CRIDToBase3(id, size);
 	case kR33ID:
 		return R33IDToBase3(id);
@@ -474,7 +475,7 @@ u2 CMap::IDToConfig(u2 id) const {
 	case kNumber:
 		return id;
 	default:
-		_ASSERT(0);
+		assert(0);
 		return 0;
 	}
 }
@@ -544,7 +545,7 @@ int D4Subconfig(int config) {
 	subconfig=(subconfig*3)+config%3;
 	config/=27;
 	subconfig=(subconfig*3)+config%3;
-	_ASSERT(subconfig<81);
+	assert(subconfig<81);
 	return subconfig;
 }
 
@@ -574,7 +575,7 @@ void InitConfigToPotMob() {
 				black=base2>>8;
 				empty=base2&0xFF;
 				white=~(empty|black);
-				_ASSERT(!(empty&black));
+				assert(!(empty&black));
 
 				// pot mob
 				configToPotMob[0][length][config]=PotMob(black, empty, length);

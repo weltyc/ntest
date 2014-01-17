@@ -15,7 +15,7 @@ using namespace std;
 ///////////////////////////////////
 
 void CMsg::In(istream& is) {
-	_ASSERT(0);
+	assert(0);
 }
 
 ///////////////////////////////////
@@ -27,11 +27,11 @@ void CMsgGGSAlias::In(istream& is) {
 	CGGSAlias alias;
 
 	is >> nAlias1 >> c >> nAlias2;
-	_ASSERT(c=='/');
+	assert(c=='/');
 	while (is >> alias)
 		valiases.push_back(alias);
 
-	_ASSERT(nAlias2==valiases.size());
+	assert(nAlias2==valiases.size());
 }
 
 void CMsgGGSAlias::Handle() {
@@ -178,7 +178,7 @@ void CMsgGGSWho::In(istream& is) {
 	while (is >> wu) {
 		wus.push_back(wu);
 	}
-	_ASSERT(wus.size()==nUsers);
+	assert(wus.size()==nUsers);
 }
 
 void CMsgGGSWho::Handle() {

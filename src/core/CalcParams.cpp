@@ -10,7 +10,6 @@
 #include <sstream>
 
 #include "options.h"
-#include "Debug.h"
 #include "CalcParams.h"
 
 using namespace std;

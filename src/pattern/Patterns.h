@@ -10,9 +10,10 @@
 #ifndef _H_PATTERNS_	// MSC sucks
 #define _H_PATTERNS_
 
+#include <cassert>
+
 #include "../n64/types.h"
 #include "../n64/utils.h"
-#include "../core/Debug.h"
 
 // Compression class. Call CCompression::Init() to initialize compression.
 //	Will be automatically cleaned up at the end of the program.
@@ -138,13 +139,13 @@ extern u4	configs2x5To2x4[9*6561];
 inline u2 CMap::NIDs() const {
 	switch(idType) {
 	case kBase3:
-		_ASSERT(size<maxBase3PatternSize);
+		assert(size<maxBase3PatternSize);
 		return nBase3s[size];
 	case kORID:
-		_ASSERT(size<maxORIDPatternSize);
+		assert(size<maxORIDPatternSize);
 		return nORIDs[size];
 	case kCRID:
-		_ASSERT(size<maxCRIDPatternSize);
+		assert(size<maxCRIDPatternSize);
 		return nCRIDs[size];
 	case kMobCombo:
 	case kNumber:
@@ -152,7 +153,7 @@ inline u2 CMap::NIDs() const {
 	case kR33ID:
 		return 14*729;
 	default:
-		_ASSERT(0);
+		assert(0);
 		return 0;
 	}
 }
@@ -162,7 +163,7 @@ inline u2 CMap::NConfigs() const {
 	case kBase3:
 	case kORID:
 	case kCRID:
-		_ASSERT(size<maxBase3PatternSize);
+		assert(size<maxBase3PatternSize);
 		return nBase3s[size];
 	case kMobCombo:
 	case kNumber:
@@ -172,7 +173,7 @@ inline u2 CMap::NConfigs() const {
 	case kR33ID:
 		return nBase3s[9];
 	default:
-		_ASSERT(0);
+		assert(0);
 		return 0;
 	}
 }
@@ -191,7 +192,7 @@ inline u2 CMap::ConfigToID(u2 config) const {
 	case kR25ID:
 		return config;
 	}
-	_ASSERT(0);
+	assert(0);
 	return 0;
 }
 

@@ -48,7 +48,7 @@ sockbuf::~sockbuf() {
 		if (fplog && fplog->is_open())
 			fplog->close();
 		else
-			_ASSERT(0);
+			assert(0);
 	}
 	if (buf)
 		delete [] buf;
@@ -70,7 +70,7 @@ int sockbuf::connect(const string& sServer, int nPort) {
 		return err;
 
 	if (fConnected) {
-		_ASSERT(0);
+		assert(0);
 		return kErrAlreadyConnected;
 	}
 
@@ -123,7 +123,7 @@ int sockbuf::disconnect() {
 		return 0;
 	}
 	else {
-		_ASSERT(0);
+		assert(0);
 		return kErrNotConnected;
 	}
 }
@@ -144,7 +144,7 @@ int sockbuf::underflow() {
 		nGetSize=nBufSize;
 	}
 	else {
-		_ASSERT(0);
+		assert(0);
 	}
 	int nrecv=recv(sock, p0, nGetSize,0);
 #if _WIN32
@@ -162,7 +162,7 @@ int sockbuf::underflow() {
 				break;
 			default:
 				err=kErrUnknown;
-				_ASSERT(0);
+				assert(0);
 			}
 			return EOF;
 		}
@@ -206,7 +206,7 @@ int sockbuf::overflow(int c) {
 	int nSent=send(sock, pbase(), nSend,0);
 	bool fOK=nSend==nSent;
 
-	_ASSERT(fOK);
+	assert(fOK);
 	if (fplog) {
 		if (loglast!=kLogSend) {
 			loglast=kLogSend;
