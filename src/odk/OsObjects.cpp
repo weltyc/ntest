@@ -861,7 +861,7 @@ int COsBoard::Result(bool fAnti) const {
 	else if (nNet>0)
 		nNet+=nEmpty;
 
-	return fAnti?nNet:-nNet;
+	return fAnti?-nNet:nNet;
 }
 
 /////////////////////////////////////

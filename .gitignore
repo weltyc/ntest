@@ -85,3 +85,7 @@ packages/
 #Test files
 *.testsettings
 /winbuild
+
+# Mac build files
+DerivedData/
+ntest.xcodeproj/

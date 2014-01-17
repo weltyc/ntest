@@ -62,7 +62,7 @@ string OutWithCommas(double n) {
 	return os.str();
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(_LIBCPP_VERSION)
 #define _Ios_Fmtflags int
 #endif
 
