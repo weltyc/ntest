@@ -1,6 +1,6 @@
 #include "OsObjects.h"
 #include <sstream>
-#include <string>
+#include <cstring>
 #include "../n64/test.h"
 
 void testOsBoard() {
