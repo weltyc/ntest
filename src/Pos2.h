@@ -12,7 +12,6 @@
 #include <vector>
 #include "n64/utils.h"
 #include "core/Moves.h"
-#include "pattern/FastFlipTables.h"
 #include "pattern/patternJ.h"
 
 #include "UndoInfo.h"
@@ -38,8 +37,8 @@ public:
 	void PassBB();
 	void UndoMoveBB(int square, int nFlipped, CUndoInfo& ui);
 	int CalcMovesAndPassBB(CMoves& moves);
-	void GetFlips(bool m_fBlackMove, int square, CUndoInfo& ui) const;
-	int GetCountAndFlipBB(bool m_fBlackMove, int square, CUndoInfo& ui);
+	void GetFlips(int square, CUndoInfo& ui) const;
+	int GetCountAndFlipBB(int square, CUndoInfo& ui);
     /**
     * Calculate moves and store them in moves
     *
@@ -56,7 +55,6 @@ public:
 	int NEmpty() const { return m_bb.NEmpty();}
 	bool BlackMove() const { return m_fBlackMove; }
 	const CBitBoard& GetBB() const { return m_bb; }
-	const TConfig* Configs() const { return m_configs; }
 	bool IsValid() const { return m_bb.IsValid(); };
 
 	int TerminalValue() const;
@@ -70,20 +68,9 @@ private:
 	void UndoMoveAndPassBB(CMove move, int nFlipped, CUndoInfo& ui, int& nPass);
 	int CalcMovesAndPassBB(CMoves& moves, const CMoves& submoves);
 
+    bool m_fBlackMove;
+    CBitBoard m_bb;
 
-	// patterns
-	void GetIDsJ(u2 ids[nPatternsJ]) const;
-	void AppendPotMobPatterns(u2* ids, u2& jPattern) const;
-	void IdsTrianglePatternsJ(u2* ids, int pattern1, int pattern2, int pattern3, int pattern4) const;
-	void PrintConfigs() const;
-	void IdsEdgePatternsJ(u2* ids2x4, u2* ids2x5, u2* idsEdgeXX, int pattern1, int pattern2) const;
-	void Ids3x3Patterns(u2* ids, int pattern1, int pattern2, int pattern3) const;
-
-	// eval functions
-	// variables
-	bool m_fBlackMove;
-	CBitBoard m_bb;
-	TConfig m_configs[knPats+1]; // extra is dummy pattern which is updated when directions don't flip any discs
 };
 
 inline int Pos2::TerminalValue() const {

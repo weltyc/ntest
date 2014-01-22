@@ -15,6 +15,8 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ox /GL /MTd")
 endif(MSVC)
 
+enable_testing()
+
 add_subdirectory(odk)
 add_subdirectory(n64)
 add_subdirectory(pattern)
@@ -31,6 +33,8 @@ target_link_libraries(ntest n64)
 if(MSVC)
     target_link_libraries(ntest WSock32)
 endif(MSVC)
+
+add_test(ntest_basic ntest o)
 
 if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_libraries(ntest ${Boost_LIBRARIES})

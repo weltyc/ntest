@@ -10,32 +10,11 @@
 #include "FastFlip.h"
 
 // Fill in the tables
-void InitRFs();
 void InitConfigTranslate();
 
-u64 DummyFlipFunc(TConfig* configs) {
-	return 0;
-}
-
-// use dff[0] instead of DummyFlipFunc below as a workaround for a glitch in MSC
-TFlipFunc* dff[1]={DummyFlipFunc};
-
-void InitRFs() {
-	int iFlip,color;
-	for (iFlip=0;iFlip<knRFs;iFlip++) {
-		for(color=0; color<2; color++) {
-			rfs[iFlip].ffsBB[color]=flipFuncsBB[iFlip][color];
-		}
-	}
-	for (color=0; color<2;color++) {
-		rfs[knRFs].ffsBB[color]=dff[0];
-	}
-}
 
 void InitFastFlip() {
-	InitFastFlipBase();
 	fprintf(stderr,"Init fast flip...");
-	InitRFs();
 	InitConfigTranslate();
 	fprintf(stderr,"Done\n");
 }
