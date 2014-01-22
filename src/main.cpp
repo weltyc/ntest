@@ -287,7 +287,7 @@ int __cdecl main(int argc, char**argv, char**envp) {
 		const char* submode;
 
 		cout << "Ntest version as of " << __DATE__ << "\n";
-		cout << "Copyright (c) Chris Welty\nAll Rights Reserved\n\n";
+		cout << "Copyright 1999-2014 Chris Welty and Vlad Petric\nAll Rights Reserved\n\n";
 
 		//_crtBreakAlloc=329;
 
