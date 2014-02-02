@@ -55,143 +55,143 @@ u64 d7Flips[nDiagonals + 1][256];
 u64 neighbors[64];
 
 static void initNeighbors() {
-	for (int sq = 0; sq<64; sq++) {
-		u64 m = mask(sq);
-		if (col(sq)>0) {
-			m|=m>>1;
-		}
-		if (col(sq)<7) {
-			m|=m<<1;
-		}
-		m|=(m>>8)|(m<<8);
-		neighbors[sq]=m&~mask(sq);
-	}
+    for (int sq = 0; sq<64; sq++) {
+        u64 m = mask(sq);
+        if (col(sq)>0) {
+            m|=m>>1;
+        }
+        if (col(sq)<7) {
+            m|=m<<1;
+        }
+        m|=(m>>8)|(m<<8);
+        neighbors[sq]=m&~mask(sq);
+    }
 }
 
 static void initOutside(int index, int enemyBitPattern) {
-	int outside = 0;
+    int outside = 0;
 
-	for (int i=index-1; i>=0; i--) {
-		if (bitClear(i, enemyBitPattern)) {
-			outside |= 1<<i;
-			break;
-		}
-	}
-	for (int i=index+1; i<8; i++) {
-		if (bitClear(i, enemyBitPattern)) {
-			outside |= 1<<i;
-			break;
-		}
-	}
-	outsides[index][enemyBitPattern]=outside;
+    for (int i=index-1; i>=0; i--) {
+        if (bitClear(i, enemyBitPattern)) {
+            outside |= 1<<i;
+            break;
+        }
+    }
+    for (int i=index+1; i<8; i++) {
+        if (bitClear(i, enemyBitPattern)) {
+            outside |= 1<<i;
+            break;
+        }
+    }
+    outsides[index][enemyBitPattern]=outside;
 }
 
 static void initInside(int index, int moverBitPattern) {
-	int count = 0;
-	int inside = 0;
-	int insideLeft = 0;
-	for (int i=index-1; i>=0; i--) {
-		if (bitSet(i, moverBitPattern)) {
-			count+=index-i-1;
-			inside|= insideLeft;
-			break;
-		}
-		else {
-			insideLeft |= 1<<i;
-		}
-	}
+    int count = 0;
+    int inside = 0;
+    int insideLeft = 0;
+    for (int i=index-1; i>=0; i--) {
+        if (bitSet(i, moverBitPattern)) {
+            count+=index-i-1;
+            inside|= insideLeft;
+            break;
+        }
+        else {
+            insideLeft |= 1<<i;
+        }
+    }
 
-	int insideRight = 0;
-	for (int i=index+1; i<8; i++) {
-		if (bitSet(i, moverBitPattern)) {
-			inside|= insideRight;
-			count+=i-index-1;
-			break;
-		}
-		else {
-			insideRight|= 1<<i;
-		}
-	}
-	counts[index][moverBitPattern]=count;
-	insides[index][moverBitPattern] = inside;
+    int insideRight = 0;
+    for (int i=index+1; i<8; i++) {
+        if (bitSet(i, moverBitPattern)) {
+            inside|= insideRight;
+            count+=i-index-1;
+            break;
+        }
+        else {
+            insideRight|= 1<<i;
+        }
+    }
+    counts[index][moverBitPattern]=count;
+    insides[index][moverBitPattern] = inside;
 }
 
 static void initRowFlips(int row, u64 insideBitPattern) {
-	rowFlips[row][insideBitPattern] = insideBitPattern << (row*8);
+    rowFlips[row][insideBitPattern] = insideBitPattern << (row*8);
 }
 
 static void initColFlips(int col, u64 insideBitPattern) {
-	// turn pattern sideways using magic
-	u64 pattern = (insideBitPattern * 0x02040810204081) & MaskA;
+    // turn pattern sideways using magic
+    u64 pattern = (insideBitPattern * 0x02040810204081) & MaskA;
 
-	colFlips[col][insideBitPattern] = pattern << col;
+    colFlips[col][insideBitPattern] = pattern << col;
 }
 
 static u64 signedLeftShift(u64 pattern, int shift) {
-	if (shift > 0) {
-		return pattern<<shift;
-	}
-	else {
-		return pattern>>-shift;
-	}
+    if (shift > 0) {
+        return pattern<<shift;
+    }
+    else {
+        return pattern>>-shift;
+    }
 }
 
 /**
 * @param index row-col+5
 */
 static void initD9Flips(int index, u64 insideBitPattern) {
-	// turn pattern diagonally using magic
-	u64 pattern = (insideBitPattern * MaskA) & MaskA1H8;
-	int diff = index-5; // diff =row-col
+    // turn pattern diagonally using magic
+    u64 pattern = (insideBitPattern * MaskA) & MaskA1H8;
+    int diff = index-5; // diff =row-col
 
-	d9Flips[index][insideBitPattern] = signedLeftShift(pattern, diff*8);
+    d9Flips[index][insideBitPattern] = signedLeftShift(pattern, diff*8);
 }
 
 static void initD7Flips(int index, u64 insideBitPattern) {
-	// turn pattern diagonally using magic
-	u64 pattern = (insideBitPattern * MaskA) & MaskA8H1;
+    // turn pattern diagonally using magic
+    u64 pattern = (insideBitPattern * MaskA) & MaskA8H1;
 
-	int diff = index-5; // diff = row+col-7
+    int diff = index-5; // diff = row+col-7
 
-	d7Flips[index][insideBitPattern] = signedLeftShift(pattern, diff*8);
+    d7Flips[index][insideBitPattern] = signedLeftShift(pattern, diff*8);
 }
 
 void initFlips() {
-	initNeighbors();
-	for (int bitPattern=0; bitPattern<256; bitPattern++) {
-		for (int index=0; index<8; index++) {
-			initOutside(index, bitPattern);
-			initInside(index, bitPattern);
-			initRowFlips(index, bitPattern);
-			initColFlips(index, bitPattern);
-		}
-		for (int index=0; index<nDiagonals; index++) {
-			initD9Flips(index, bitPattern);
-			initD7Flips(index, bitPattern);
-		}
+    initNeighbors();
+    for (int bitPattern=0; bitPattern<256; bitPattern++) {
+        for (int index=0; index<8; index++) {
+            initOutside(index, bitPattern);
+            initInside(index, bitPattern);
+            initRowFlips(index, bitPattern);
+            initColFlips(index, bitPattern);
+        }
+        for (int index=0; index<nDiagonals; index++) {
+            initD9Flips(index, bitPattern);
+            initD7Flips(index, bitPattern);
+        }
         d9Flips[nDiagonals][bitPattern] = 0;
         d7Flips[nDiagonals][bitPattern] = 0;
-	}
+    }
     for (int index=0; index<8; index++) {
         assert(counts[index][0] == 0);
     }
 }
 
 inline int flipIndex(int moveLoc, u64 mover, u64 enemy, u64 mask, u64 mult) {
-	const u64 enemy256 = (enemy&mask)*mult>>56;
-	const int out = outsides[moveLoc][enemy256];
-	const u64 mover256 = (mover&mask)*mult>>56;
-	const int flipIndex = insides[moveLoc][mover256&out];
-	return flipIndex;
+    const u64 enemy256 = (enemy&mask)*mult>>56;
+    const int out = outsides[moveLoc][enemy256];
+    const u64 mover256 = (mover&mask)*mult>>56;
+    const int flipIndex = insides[moveLoc][mover256&out];
+    return flipIndex;
 }
 
 inline int rowFlipIndex(int row, int col, u64 mover, u64 enemy) {
-	const int shift = row<<3;
-	const u64 enemy256 = (enemy>>shift)&0xFF;
-	const int out = outsides[col][enemy256];
-	const u64 mover256 = (mover>>shift)&0xFF;
-	const int flipIndex = insides[col][mover256&out];
-	return flipIndex;
+    const int shift = row<<3;
+    const u64 enemy256 = (enemy>>shift)&0xFF;
+    const int out = outsides[col][enemy256];
+    const u64 mover256 = (mover>>shift)&0xFF;
+    const int flipIndex = insides[col][mover256&out];
+    return flipIndex;
 }
 
 
@@ -273,7 +273,7 @@ static struct magicFlip flipArray[64] = {
 { 0x8040201008040201ULL,  0x101010101010101ULL,  0x8080808080808080ULL,  0x2040810204081ULL,  0ULL,  0ULL,  5,  11 }}; 
 
 u64 flips(int sq, u64 mover, u64 enemy) {
-	if (neighbors[sq]&enemy) {
+    if (neighbors[sq]&enemy) {
         const struct magicFlip &m = flipArray[sq];
         const int row = sq >> 3;
         const int col = sq & 7;
@@ -290,17 +290,17 @@ u64 flips(int sq, u64 mover, u64 enemy) {
         flip |= d7Flips[m.d7b][d7Index];
 
         return flip;
-	} else {
-		return 0;
-	}
+    } else {
+        return 0;
+    }
 }
 
 
 struct magicCount {
-uint64_t mask1;
-uint64_t mask2;
-uint64_t mask3;
-uint64_t mult2;
+    uint64_t mask1;
+    uint64_t mask2;
+    uint64_t mask3;
+    uint64_t mult2;
 };
 
 static struct magicCount magicCountArray[64] = {
@@ -377,7 +377,7 @@ static struct magicCount magicCountArray[64] = {
 * @return number of disks flipped with 1 empty
 */
 int lastFlipCount(int sq, u64 mover) {
-	if (neighbors[sq]&~mover) {
+    if (neighbors[sq]&~mover) {
         const struct magicCount &m = magicCountArray[sq];
         const int row = sq >> 3;
         const int col = sq & 7;
@@ -387,8 +387,8 @@ int lastFlipCount(int sq, u64 mover) {
             counts[row][(mover & m.mask2) * m.mult2 >> 56] +
             counts[col][(mover & m.mask3) * MaskA >> 56];
         return v;
-	}
-	else {
-		return 0;
-	}
+    }
+    else {
+        return 0;
+    }
 }

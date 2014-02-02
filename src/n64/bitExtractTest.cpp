@@ -1,4 +1,3 @@
-#include <cassert>
 #include <cstdlib>
 #include "bitextractor.h"
 #include "test.h"
