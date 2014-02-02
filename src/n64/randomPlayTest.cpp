@@ -74,7 +74,7 @@ const uint64_t position_bitmask[8][8]={
 {0x100000000000000LLU, 0x200000000000000LLU, 0x400000000000000LLU, 0x800000000000000LLU, 0x1000000000000000LLU, 0x2000000000000000LLU, 0x4000000000000000LLU, 0x8000000000000000LLU},
 };
 
-uint64_t generateMoveMask(const CBitBoard bb, DirectionalMask *dm) {
+void generateMoveMask(const CBitBoard bb, DirectionalMask *dm) {
     uint64_t side_to_move = bb.mover;
     uint64_t other_side = bb.getEnemy();
     for (int i = 0; i < 8; ++i) {
