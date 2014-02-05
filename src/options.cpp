@@ -12,41 +12,7 @@
 #endif
 
 int treeNEmpty;
-/*
- //! Get the file name (including full path) of the current executable
-static std::string GetModuleFilename() {
-	std::string sMFN;
 
-	char *buf=0;
-	int size=16;
-	int nLen;
-
-	while (size<(1<<15) && buf==NULL) {
-		buf=new char[size];
-		if (!buf)
-			break;
-		// win NT: 3d argument must be < size; \0 appended to result
-		// win 98: 3d argument must be <=size; \0 appended to result
-		nLen=GetModuleFileNameA(NULL, buf, size-1);
-		if (nLen>=size-2) {
-			size+=size;
-			delete [] buf;
-			buf=NULL;
-		}
-		else
-			buf[nLen]=0;
-	}
-
-	if (buf) {
-		sMFN=buf;
-		delete [] buf;
-	}
-	else
-		sMFN="";
-
-	return sMFN;
-}
-*/
 // opponent's move?
 bool fTooting=false;
 bool fMyMove=false;
