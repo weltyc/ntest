@@ -4,7 +4,6 @@
 // Copying.txt and GPL.txt for details.
 
 #include <cstdlib>
-#include <random>
 #include <vector>
 
 #include "../core/BitBoard.h"
@@ -149,8 +148,7 @@ CBitBoard performMove(const CBitBoard bb, const DirectionalMask &mask, uint64_t 
 // End simple mover
 
 
-template<typename RandGen>
-void RandomGameTester(RandGen *rgen) {
+void RandomGameTester() {
     CBitBoard bb;
     bb.Initialize();
 
@@ -176,8 +174,7 @@ void RandomGameTester(RandGen *rgen) {
                 // reset the bit 
                 moveBits &= (moveBits - 1);
             } while(moveBits);
-            uniform_int_distribution<> dis(0, singleMoves.size() - 1);
-            uint64_t singleMove = singleMoves[dis(*rgen)];
+            uint64_t singleMove = singleMoves[random() % singleMoves.size()];
 
             
             // Do the move, the simple and slow way. 
@@ -228,10 +225,8 @@ void RandomGameTester(RandGen *rgen) {
 }
 
 void TestRandomGames(int count) {
-    random_device rd;
-    mt19937 rgen(rd());
-    rgen.seed();  // seed with default seed; make it deterministic
+    srandom(20111004);
     for (int i = 0; i < count; ++i) {
-        RandomGameTester(&rgen);
+        RandomGameTester();
     }
 }
