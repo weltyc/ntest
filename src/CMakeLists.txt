@@ -24,7 +24,7 @@ add_subdirectory(core)
 add_subdirectory(game)
 
 file(GLOB HEADER_FILES *.h)
-add_library(mainlib GameX.cpp Evaluator.cpp MPCCalc.cpp NtestStream.cpp options.cpp PlayerComputer.cpp Pos2.cpp Pos2Test.cpp Search.cpp SearchTest.cpp SearchParams.cpp SmartBook.cpp SpeedTest.cpp treedebug.cpp ${HEADER_FILES})
+add_library(mainlib GameX.cpp Evaluator.cpp EvalTest.cpp MPCCalc.cpp NtestStream.cpp options.cpp PlayerComputer.cpp Pos2.cpp Pos2Test.cpp Search.cpp SearchTest.cpp SearchParams.cpp SmartBook.cpp SpeedTest.cpp treedebug.cpp ${HEADER_FILES})
 
 add_executable(ntest main.cpp)
 target_link_libraries(ntest mainlib core game patterns odk n64)

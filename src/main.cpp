@@ -37,6 +37,7 @@
 #include "options.h"
 #include "GameX.h"
 #include "Evaluator.h"
+#include "EvalTest.h"
 #include "SpeedTest.h"
 #include "TreeDebug.h"
 #include "Pos2.h"
@@ -202,7 +203,7 @@ void Test() {
 	TestPos2();
 	TestIsOpeningOf();
 	TestSearch();
-
+    GoldenValueEvalTest();
 	std::cerr << "Ending standard test\n";
 }
 
