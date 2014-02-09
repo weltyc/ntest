@@ -481,7 +481,6 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
     value += pR3[Row2];
     int16_t Row3 = BB_EXTRACT_ROW_PATTERN(3);
     value += pR4[Row3];
-    value += ValueTrianglePatternsJ(pcmove, Row0, Row1, Row2, Row3);
 
     int16_t Row4 = BB_EXTRACT_ROW_PATTERN(4);
     value += pR4[Row4];
@@ -493,11 +492,16 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
     value += pR1[Row7];
 #undef BB_EXTRACT_ROW_PATTERN
 
+	if (iDebugEval>1)
+		printf("Straight lines done. Value so far: %d.\n",value>>16);
+
 	// Triangle patterns in corners
+    value += ValueTrianglePatternsJ(pcmove, Row0, Row1, Row2, Row3);
     value += ValueTrianglePatternsJ(pcmove, Row7, Row6, Row5, Row4);
 
 	if (iDebugEval>1)
-		printf("Straight lines done. Value so far: %d.\n",value>>16);
+		printf("Corners done. Value so far: %d.\n",value);
+
 
 	// Take apart packed information about pot mobilities
 	int nPMO=(value>>8) & 0xFF;
@@ -512,17 +516,17 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 	value += ConfigValue(pcmove, nPMP, PM1J, offsetJPMP);
 	value += ConfigValue(pcmove, nPMO, PM2J, offsetJPMO);
 
+	if (iDebugEval>1)
+		printf("Potential mobility done. Value so far: %d.\n",value);
+
     value += ValueEdgePatternsJ(pcmove, Row0, Row1);
     value += ValueEdgePatternsJ(pcmove, Row7, Row6);
     value += ValueEdgePatternsJ(pcmove, Column0, Column1);
     value += ValueEdgePatternsJ(pcmove, Column7, Column6);
 
 	if (iDebugEval>1)
-		printf("Potential mobility done. Value so far: %d.\n",value);
+		printf("Edge patterns done. Value so far: %d.\n",value);
 
-
-	if (iDebugEval>1)
-		printf("Corners done. Value so far: %d.\n",value);
 
 	// mobility
 	value+=ConfigValue(pcmove, nMovesPlayer, M1J, offsetJMP);
