@@ -6,7 +6,7 @@
 // Evaluator source code
 #include <sstream>
 #include "core/QPosition.h"
-
+#include "n64/bitextractor.h"
 #include "pattern/types.h"
 
 #include "Evaluator.h"
@@ -274,7 +274,7 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 				for (mover=0; mover<2; mover++) {
 					pcoeffs[nEmpty][mover]=coeffs[nSets][mover];
 				}
-			}
+            }
 
 			nSets++;
 		}
@@ -349,16 +349,14 @@ const int offsetJR1=0, sizeJR1=6561,
 	offsetJPAR=offsetJPMO+sizeJPMO, sizeJPAR=2;
 
 // value all the edge patterns. return the sum of the values.
-static TCoeff ValueEdgePatternsJ(const TConfig configs[], const TCoeff* pcmove, int pattern1, int pattern2) {
-	TConfig config1, config2, configXX;
+static TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
+    TConfig configXX;
 	u4 configs2x5;
 	TCoeff value;
 
 	value=0;
-	config1=configs[pattern1];
-	config2=configs[pattern2];
 
-	configs2x5=row1To2x5[config1]+row2To2x5[config2];
+    configs2x5=row1To2x5[config1]+row2To2x5[config2];
 	configXX=config1+(config1<<1)+row2ToXX[config2];
 	value+=ConfigValue(pcmove, configs2x5&0xFFFF, C2x5J, offsetJC5);
 	value+=ConfigValue(pcmove, configs2x5>>16,    C2x5J, offsetJC5);
@@ -370,16 +368,11 @@ static TCoeff ValueEdgePatternsJ(const TConfig configs[], const TCoeff* pcmove, 
 }
 
 // value all the triangle patterns. return the sum of the values.
-static TCoeff ValueTrianglePatternsJ(const TConfig configs[], const TCoeff* pcmove, int pattern1, int pattern2, int pattern3, int pattern4) {
-	TConfig config1, config2, config3, config4;
+static TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2, TConfig config3, TConfig config4) {
 	u4 configsTriangle;
 	TCoeff value;
 
 	value=0;
-	config1=configs[pattern1];
-	config2=configs[pattern2];
-	config3=configs[pattern3];
-	config4=configs[pattern4];
 
 	configsTriangle=row1ToTriangle[config1]+row2ToTriangle[config2]+row3ToTriangle[config3]+row4ToTriangle[config4];
 	value+=ConfigPMValue(pcmove, configsTriangle&0xFFFF, C4J, offsetJTriangle);
@@ -388,42 +381,127 @@ static TCoeff ValueTrianglePatternsJ(const TConfig configs[], const TCoeff* pcmo
 	return value;
 }
 
-static CValue ValueJMobs(const TConfig configs[], int nEmpty, bool fBlackMove, TCoeff *const pcoeffs[2], u4 nMovesPlayer, u4 nMovesOpponent) {
+static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs[2], u4 nMovesPlayer, u4 nMovesOpponent) {
 	TCoeff value;
 	TCoeff *pcmove=pcoeffs[fBlackMove];
 
 	value=0;
 
 	if (iDebugEval>1) {
-		cout << "----------------------------\n";
+        cout << "----------------------------\n";
 		//bb.Print(fBlackMove);
 		cout << (fBlackMove?"Black":"White") << " to move\n\n";
 	}
 
-	const TCoeff* const pR1 = pcmove+offsetJR1;
-	value+=pR1[configs[0]] + pR1[configs[7]] + pR1[configs[19]] + pR1[configs[26]];
-	const TCoeff* const pR2 = pcmove+offsetJR2;
-	value+=pR2[configs[1]] + pR2[configs[6]] + pR2[configs[20]] + pR2[configs[25]];
-	const TCoeff* const pR3 = pcmove+offsetJR3;
-	value+=pR3[configs[2]] + pR3[configs[5]] + pR3[configs[21]] + pR3[configs[24]];
-	const TCoeff* const pR4 = pcmove+offsetJR4;
-	value+=pR4[configs[3]] + pR4[configs[4]] + pR4[configs[22]] + pR4[configs[23]];
-	const TCoeff* const pD5 = pcmove+offsetJD5;
-	value+=pD5[configs[10]] + pD5[configs[16]] + pD5[configs[29]] + pD5[configs[35]];
-	const TCoeff* const pD6 = pcmove+offsetJD6;
-	value+=pD6[configs[11]] + pD6[configs[15]] + pD6[configs[30]] + pD6[configs[34]];
-	const TCoeff* const pD7 = pcmove+offsetJD7;
-	value+=pD7[configs[12]] + pD7[configs[14]] + pD7[configs[31]] + pD7[configs[33]];
-	const TCoeff* const pD8 = pcmove+offsetJD8;
-	value+=pD8[configs[13]] + pD8[configs[32]];
-	
+    uint64_t empty = bb.empty;
+    uint64_t black = fBlackMove? bb.mover: ~(bb.mover | empty);
 
-	// Triangle patterns in corners
-	value+=ValueTrianglePatternsJ(configs, pcmove, 0, 1, 2, 3);
-	value+=ValueTrianglePatternsJ(configs, pcmove, 7, 6, 5, 4);
+    // EXTRACT_BITS_U64 takes four parameters:
+    // base value
+    // start bit (constant)
+    // count (constant)
+    // step (constant)
+
+#define BB_EXTRACT_STEP_PATTERN(START, COUNT, STEP) \
+    base2ToBase3Table[EXTRACT_BITS_U64(empty, (START), (COUNT), (STEP))] + \
+    base2ToBase3Table[EXTRACT_BITS_U64(black, (START), (COUNT), (STEP))] * 2
+
+	const TCoeff* const pR1 = pcmove+offsetJR1;
+	const TCoeff* const pR2 = pcmove+offsetJR2;
+	const TCoeff* const pR3 = pcmove+offsetJR3;
+	const TCoeff* const pR4 = pcmove+offsetJR4;
+	const TCoeff* const pD5 = pcmove+offsetJD5;
+	const TCoeff* const pD6 = pcmove+offsetJD6;
+	const TCoeff* const pD7 = pcmove+offsetJD7;
+	const TCoeff* const pD8 = pcmove+offsetJD8;
+
+    int16_t Diag8A = BB_EXTRACT_STEP_PATTERN(0, 8, 9);
+    value += pD8[Diag8A];
+    int16_t Diag8B =
+        base2ToBase3Table[EXTRACT_BITS_U64(empty, 7, 4, 7) | (EXTRACT_BITS_U64(empty, 35, 4, 7) << 4)] +
+        base2ToBase3Table[EXTRACT_BITS_U64(black, 7, 4, 7) | (EXTRACT_BITS_U64(black, 35, 4, 7) << 4)] * 2;
+    value += pD8[Diag8B]; 
+
+    int16_t Diag7A1 = BB_EXTRACT_STEP_PATTERN(1, 7, 9);
+    value += pD7[Diag7A1];
+    int16_t Diag7A2 = BB_EXTRACT_STEP_PATTERN(8, 7, 9);
+    value += pD7[Diag7A2];
+    int16_t Diag7B1 = BB_EXTRACT_STEP_PATTERN(6, 7, 7);
+    value += pD7[Diag7B1];
+    int16_t Diag7B2 = BB_EXTRACT_STEP_PATTERN(15, 7, 7);
+    value += pD7[Diag7B2];
+
+    int16_t Diag6A1 = BB_EXTRACT_STEP_PATTERN(2, 6, 9);
+    value += pD6[Diag6A1];
+    int16_t Diag6A2 = BB_EXTRACT_STEP_PATTERN(16, 6, 9);
+    value += pD6[Diag6A2];
+    int16_t Diag6B1 = BB_EXTRACT_STEP_PATTERN(5, 6, 7);
+    value += pD6[Diag6B1];
+    int16_t Diag6B2 = BB_EXTRACT_STEP_PATTERN(23, 6, 7);
+    value += pD6[Diag6B2];
+
+    int16_t Diag5A1 = BB_EXTRACT_STEP_PATTERN(3, 5, 9);
+    value += pD5[Diag5A1];
+    int16_t Diag5A2 = BB_EXTRACT_STEP_PATTERN(24, 5, 9);
+    value += pD5[Diag5A2];
+    int16_t Diag5B1 = BB_EXTRACT_STEP_PATTERN(4, 5, 7);
+    value += pD5[Diag5B1];
+    int16_t Diag5B2 = BB_EXTRACT_STEP_PATTERN(31, 5, 7);
+    value += pD5[Diag5B2];
+
+	
+    int16_t Column0 = BB_EXTRACT_STEP_PATTERN(0, 8, 8);
+    value += pR1[Column0];
+    int16_t Column7 = BB_EXTRACT_STEP_PATTERN(7, 8, 8);
+    value += pR1[Column7];
+    int16_t Column1 = BB_EXTRACT_STEP_PATTERN(1, 8, 8);
+    value += pR2[Column1];
+    int16_t Column6 = BB_EXTRACT_STEP_PATTERN(6, 8, 8);
+    value += pR2[Column6];
+    int16_t Column2 = BB_EXTRACT_STEP_PATTERN(2, 8, 8);
+    value += pR3[Column2];
+    int16_t Column5 = BB_EXTRACT_STEP_PATTERN(5, 8, 8);
+    value += pR3[Column5];
+    int16_t Column3 = BB_EXTRACT_STEP_PATTERN(3, 8, 8);
+    value += pR4[Column3];
+    int16_t Column4 = BB_EXTRACT_STEP_PATTERN(4, 8, 8);
+    value += pR4[Column4];
+#undef BB_EXTRACT_STEP_PATTERN
+
+
+#define BB_EXTRACT_ROW_PATTERN(ROW) \
+    base2ToBase3Table[(empty >> (8 * (ROW))) & 0xff] + \
+    base2ToBase3Table[(black >> (8 * (ROW))) & 0xff] * 2
+
+    int16_t Row0 = BB_EXTRACT_ROW_PATTERN(0);
+    value += pR1[Row0];
+    int16_t Row1 = BB_EXTRACT_ROW_PATTERN(1);
+    value += pR2[Row1];
+    int16_t Row2 = BB_EXTRACT_ROW_PATTERN(2);
+    value += pR3[Row2];
+    int16_t Row3 = BB_EXTRACT_ROW_PATTERN(3);
+    value += pR4[Row3];
+
+    int16_t Row4 = BB_EXTRACT_ROW_PATTERN(4);
+    value += pR4[Row4];
+    int16_t Row5 = BB_EXTRACT_ROW_PATTERN(5);
+    value += pR3[Row5];
+    int16_t Row6 = BB_EXTRACT_ROW_PATTERN(6);
+    value += pR2[Row6];
+    int16_t Row7 = BB_EXTRACT_ROW_PATTERN(7);
+    value += pR1[Row7];
+#undef BB_EXTRACT_ROW_PATTERN
 
 	if (iDebugEval>1)
 		printf("Straight lines done. Value so far: %d.\n",value>>16);
+
+	// Triangle patterns in corners
+    value += ValueTrianglePatternsJ(pcmove, Row0, Row1, Row2, Row3);
+    value += ValueTrianglePatternsJ(pcmove, Row7, Row6, Row5, Row4);
+
+	if (iDebugEval>1)
+		printf("Corners done. Value so far: %d.\n",value);
+
 
 	// Take apart packed information about pot mobilities
 	int nPMO=(value>>8) & 0xFF;
@@ -435,20 +513,20 @@ static CValue ValueJMobs(const TConfig configs[], int nEmpty, bool fBlackMove, T
 	value>>=16;
 
 	// pot mobility
-	value+=ConfigValue(pcmove, nPMP, PM1J, offsetJPMP);
-	value+=ConfigValue(pcmove, nPMO, PM2J, offsetJPMO);
+	value += ConfigValue(pcmove, nPMP, PM1J, offsetJPMP);
+	value += ConfigValue(pcmove, nPMO, PM2J, offsetJPMO);
 
 	if (iDebugEval>1)
 		printf("Potential mobility done. Value so far: %d.\n",value);
 
-	// 2x4, 2x5, edge+2X patterns
-	value+=ValueEdgePatternsJ(configs, pcmove, 0, 1);
-	value+=ValueEdgePatternsJ(configs, pcmove, 7, 6);
-	value+=ValueEdgePatternsJ(configs, pcmove, 19, 20);
-	value+=ValueEdgePatternsJ(configs, pcmove, 26, 25);
+    value += ValueEdgePatternsJ(pcmove, Row0, Row1);
+    value += ValueEdgePatternsJ(pcmove, Row7, Row6);
+    value += ValueEdgePatternsJ(pcmove, Column0, Column1);
+    value += ValueEdgePatternsJ(pcmove, Column7, Column6);
 
 	if (iDebugEval>1)
-		printf("Corners done. Value so far: %d.\n",value);
+		printf("Edge patterns done. Value so far: %d.\n",value);
+
 
 	// mobility
 	value+=ConfigValue(pcmove, nMovesPlayer, M1J, offsetJMP);
@@ -469,5 +547,5 @@ static CValue ValueJMobs(const TConfig configs[], int nEmpty, bool fBlackMove, T
 // pos2 evaluators
 CValue CEvaluator::EvalMobs(const Pos2& pos2, u4 nMovesPlayer, u4 nMovesOpponent) const {
 	int nEmpty = pos2.NEmpty();
-	return ValueJMobs(pos2.Configs(), nEmpty, pos2.BlackMove(), pcoeffs[nEmpty], nMovesPlayer, nMovesOpponent);
+    return ValueJMobs(pos2.GetBB(), nEmpty, pos2.BlackMove(), pcoeffs[nEmpty], nMovesPlayer, nMovesOpponent);
 }

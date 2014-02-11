@@ -2,41 +2,36 @@
 #define _H_UNDO_INFO
 
 #include "core/BitBoard.h"
+#include "n64/flips.h"
+#include "n64/utils.h"
 #include "pattern/RowFlip.h"
 
 class CUndoInfo {
 public:
-	void InitPrfs(int sq, CRowFlip* prf0, CRowFlip* prf1, CRowFlip* prf2, CRowFlip* prf3);
+    void InitPrfs(const CBitBoard& bb, int sq);
 	
 	int NFlipped();
-	void FlipBB(CBitBoard& bb, bool fBlackMove, TConfig* configs);
+    void FlipBB(CBitBoard& bb);
 
 private:
-	CRowFlip* m_prfs[4];
-
 	int m_sq;
+    int m_nflipped;
+    u64 m_flip;
 };
 
-inline void CUndoInfo::InitPrfs(int sq, CRowFlip* prf0, CRowFlip* prf1, CRowFlip* prf2, CRowFlip* prf3) {
-	m_prfs[0]=prf0;
-	m_prfs[1]=prf1;
-	m_prfs[2]=prf2;
-	m_prfs[3]=prf3;
+inline void CUndoInfo::InitPrfs(const CBitBoard& bb, int sq) {
 	m_sq = sq;
+    m_flip = flips(sq, bb.mover, ~(bb.mover | bb.empty)) | mask(sq);
+    m_nflipped = static_cast<int>(bitCount(m_flip) - 1);
 }
 
 inline int CUndoInfo::NFlipped() {
-	return m_prfs[0]->nFlipped+m_prfs[1]->nFlipped+m_prfs[2]->nFlipped+m_prfs[3]->nFlipped;
+    return m_nflipped;
 }
 
-inline void CUndoInfo::FlipBB(CBitBoard& bb, bool fBlackMove, TConfig* configs) {
-	bb.empty^=mask(m_sq);
-	u64 flip = 
-		m_prfs[0]->FlipBB(fBlackMove, configs) 
-		| m_prfs[1]->FlipBB(fBlackMove, configs)
-		| m_prfs[2]->FlipBB(fBlackMove, configs)
-		| m_prfs[3]->FlipBB(fBlackMove, configs);
-	bb.mover^=flip;
+inline void CUndoInfo::FlipBB(CBitBoard& bb) {
+    bb.empty^=mask(m_sq);
+    bb.mover^=m_flip;
 }
 
 #endif // _H_UNDO_INFO

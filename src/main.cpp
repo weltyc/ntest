@@ -37,6 +37,7 @@
 #include "options.h"
 #include "GameX.h"
 #include "Evaluator.h"
+#include "EvalTest.h"
 #include "SpeedTest.h"
 #include "TreeDebug.h"
 #include "Pos2.h"
@@ -124,7 +125,6 @@ void Init() {
 	srand(static_cast<unsigned int>(RANDSEED));
 
 	InitFastFlip();
-	InitFastFlipPatterns();
 	InitConfigToPotMob();
 	cout << setprecision(3);
 	cerr << setprecision(3);
@@ -142,7 +142,6 @@ void Init() {
 
 void Clean() {
 	CleanConfigToPotMob();
-	CleanFastFlipPatterns();
 	CSmartBook::Clean();
 	CleanPlayers();
 }
@@ -204,7 +203,7 @@ void Test() {
 	TestPos2();
 	TestIsOpeningOf();
 	TestSearch();
-
+    GoldenValueEvalTest();
 	std::cerr << "Ending standard test\n";
 }
 
@@ -537,7 +536,6 @@ int __cdecl main(int argc, char**argv, char**envp) {
 							  }
 			case kExternalViewer: {
 				CGameX gamex(cd1);
-                cerr << "mode currently supported!\n";
 				break;
 								  }
 			default:

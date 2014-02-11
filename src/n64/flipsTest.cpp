@@ -1,9 +1,11 @@
 #include "stdafx.h"
+
+#include "randomPlayTest.h"
 #include "test.h"
 #include "flips.h"
 
 extern u64 rowFlips[8][256];
-extern u64 d7Flips[11][256];
+extern u64 d7Flips[11 + 1][256];
 extern int counts[8][256];
 
 static void testFlipCounts(int expected, int sq, u64 mover) {
@@ -179,6 +181,5 @@ void testFlips() {
 	testFlipFlips();
 	testRandomFlips();
 	testNeighbors();
+    TestRandomGames(500);
 }
-
-

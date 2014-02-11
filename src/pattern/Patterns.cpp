@@ -20,7 +20,6 @@
 /////////////////////////////////////////////////////////////
 
 u2 base2ToBase3Table[256];
-u2 base2ToBase3FlipTable[256];
 u2 base3ToBase2Table[6561];
 u2 *base3ToORIDTable[maxORIDPatternSize];
 u2 *oRIDToBase3Table[maxORIDPatternSize];
@@ -36,8 +35,6 @@ u4	row2To2x4[6561],row1To2x4[6561],row2To2x5[6561],row1To2x5[6561],row2ToXX[6561
 u4	row1To3x3[6561],row2To3x3[6561],row3To3x3[6561];
 u4	row1ToTriangle[6561],row2ToTriangle[6561],row3ToTriangle[6561],row4ToTriangle[6561];
 u4	configs2x5To2x4[9*6561];
-u1 rowMovesTable[rowMovesTableSize][2];
-u1 rowAllMovesTable[rowMovesTableSize];
 
 // pattern J info
 int coeffStartsJ[nMapsJ];
@@ -51,7 +48,6 @@ void InitBaseTables() {
 	u1 mask, maskr;
 
 	// base2ToBase3Table, convert base 3 to base 2, and
-	//	base2ToBase3FlipTable, convert base 3 (backwards) to base 2
 	for (i=0; i<256; i++) {
 		mask=0x80;
 		maskr=0x01;
@@ -67,7 +63,6 @@ void InitBaseTables() {
 			maskr<<=1;
 		}
 		base2ToBase3Table[i]=result;
-		base2ToBase3FlipTable[i]=resultr;
 	}
 
 	// base3ToBase2Table, convert base 2 to base 3 (only for length 8)
@@ -77,54 +72,6 @@ void InitBaseTables() {
 				config=Base2ToBase3((u1)black, (u1)empty);
 				base3ToBase2Table[config]=(black<<8)|empty;
 			}
-}
-
-void InitRowMovesTables() {
-	// Initialize rowMovesTable
-	u2 black, empty, pattern;
-	u1 mask, a, b;
-	int col;
-
-	for (black=0; black<256; black++) {
-		for (empty=0; empty<256; empty++) {
-			if (black&empty)
-				continue;
-			if (rowMovesTableSize==6561)
-				pattern=Base2ToBase3(black,empty);
-			else
-				pattern=(black<<8)|empty;
-
-			// check for west moves.flips
-			// remember bits are stored from left to right so '<<' moves to the right
-			mask=0x01;
-			a=b=0;
-			rowMovesTable[pattern][0]=0;
-			for (col=0; col<8; col++) {
-				rowMovesTable[pattern][0]|=b&empty&mask;
-				a=(~empty)&(a|black);
-				b=a&~black;
-				a<<=1;
-				b<<=1;
-				mask<<=1;
-			}
-
-			// check for east moves.flips
-			mask=0x80;
-			a=b=0;
-			rowMovesTable[pattern][1]=0;
-			for (col=7; col>=0; col--) {
-				rowMovesTable[pattern][1]|=b&empty&mask;
-				a=(~empty)&(a|black);
-				b=a&~black;
-				a>>=1;
-				b>>=1;
-				mask>>=1;
-			}
-		}
-	}
-
-	for (pattern=0; pattern<rowMovesTableSize; pattern++)
-		rowAllMovesTable[pattern]=rowMovesTable[pattern][0]|rowMovesTable[pattern][1];
 }
 
 // convert a config into its length base-3 digits
@@ -562,7 +509,6 @@ void InitConfigToPotMob() {
 
 	if (!fInitConfigToPotMob) {
 		InitJCoeffStarts();
-		InitRowMovesTables();
 
 		// fill configToPotMob[0] with black mobility and configToPotMob[1] with white mobility
 		for (length=3, nConfigs=27; length<=N; length++, nConfigs*=3) {

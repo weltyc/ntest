@@ -15,6 +15,8 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Ox /GL /MTd")
 endif(MSVC)
 
+enable_testing()
+
 add_subdirectory(odk)
 add_subdirectory(n64)
 add_subdirectory(pattern)
@@ -22,15 +24,21 @@ add_subdirectory(core)
 add_subdirectory(game)
 
 file(GLOB HEADER_FILES *.h)
-add_executable(ntest GameX.cpp Evaluator.cpp main.cpp MPCCalc.cpp NtestStream.cpp options.cpp PlayerComputer.cpp Pos2.cpp Pos2Test.cpp Search.cpp SearchTest.cpp SearchParams.cpp SmartBook.cpp SpeedTest.cpp treedebug.cpp ${HEADER_FILES})
-target_link_libraries(ntest core)
-target_link_libraries(ntest game)
-target_link_libraries(ntest patterns)
-target_link_libraries(ntest odk)
-target_link_libraries(ntest n64)
+add_library(mainlib GameX.cpp Evaluator.cpp EvalTest.cpp MPCCalc.cpp NtestStream.cpp options.cpp PlayerComputer.cpp Pos2.cpp Pos2Test.cpp Search.cpp SearchTest.cpp SearchParams.cpp SmartBook.cpp SpeedTest.cpp treedebug.cpp ${HEADER_FILES})
+
+add_executable(ntest main.cpp)
+target_link_libraries(ntest mainlib core game patterns odk n64)
 if(MSVC)
     target_link_libraries(ntest WSock32)
 endif(MSVC)
+
+add_executable(randomEvalGen randomEvalGen.cpp)
+target_link_libraries(randomEvalGen mainlib core game patterns odk n64)
+if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    target_link_libraries(randomEvalGen ${Boost_LIBRARIES})
+endif()
+
+add_test(ntest_basic ntest o)
 
 if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     target_link_libraries(ntest ${Boost_LIBRARIES})

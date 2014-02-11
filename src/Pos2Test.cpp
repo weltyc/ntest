@@ -1,10 +1,10 @@
 #include "n64/test.h"
+#include "n64/bitExtractTest.h"
 #include "core/Cache.h"
 #include "core/BitBoardTest.h"
 #include "core/MPCStats.h"
 #include "core/QPosition.h"
 #include "core/Book.h"
-#include "pattern/FastFlipTables.h"
 
 #include "SearchParams.h"
 #include "UndoInfo.h"
@@ -12,6 +12,10 @@
 #include "SpeedTest.h"
 
 using namespace std;
+
+void TestBitExtract() {
+    TestBitGather();
+}
 
 void TestIU() {
 	int nFlipped;
@@ -120,4 +124,5 @@ void TestPos2() {
 	TestMakeMove();
 	TestIU();
 	TestMpc();
+    TestBitExtract();
 }

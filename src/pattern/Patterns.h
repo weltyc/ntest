@@ -79,8 +79,6 @@ void CleanConfigToPotMob();
 extern u1 *configToPotMob[2][9];
 extern u1 *configToPotMobTriangle[2];
 const int rowMovesTableSize=6561;
-extern u1 rowAllMovesTable[rowMovesTableSize];	// table of which moves are available in which rows to the west [0] and east [1]
-extern u1 rowMovesTable[rowMovesTableSize][2];
 
 //////////////////////////////////////////
 // compression

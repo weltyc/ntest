@@ -5,8 +5,6 @@
 
 #pragma once
 
-#include "FastFlipTables.h"
-
 void InitFastFlip();
 
 extern int *nEmptyToPCoeffsK[60];

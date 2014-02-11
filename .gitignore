@@ -14,9 +14,18 @@ float coefficients.zip
 [Bb]uildLog.htm
 *.exe
 
+# CMake files
+*.cmake
+CMakeFiles/
+Makefile
+CMakeCache.txt
+
 #OS junk files
 [Tt]humbs.db
 *.DS_Store
+
+# XCode (Mac)
+ntest.xcodeproj/
 
 #Visual Studio files
 *.[Oo]bj
