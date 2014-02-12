@@ -1,0 +1,509 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>NBoard Protocol</title>
+		
+	<head>
+	<style>
+	pre {font-size:120%; background-color:#FFE;}
+	</style>
+	</head></head>
+
+	<body alink="#ff00ff" bgcolor="#ffffc0" link="#0000ff" text="#000000" vlink="#800080">
+		<h1>NBoard Protocol</h1>
+		<p>This is a brief description of the protocol used by the NBoard Othello GUI when 
+			communicating with engines. The engine is run as a separate process which is 
+			started by the GUI; communication between the two programs is via the NBoard 
+			Protocol. The protocol is designed to be easy for the engine to implement.
+		</p>
+		<h2>Example Session</h2>
+		<pre>
+&lt; set game (;GM[Othello]PC[NBoard]DT[2014-02-10 22:52:01 GMT]PB[null]PW[null]RE[?]TI[0//0]TY[8]BO[8 ---------------------------O*------*O--------------------------- *];)
+&lt; set depth 2
+&lt; ping 1
+&lt; go
+
+> set myname Edax2
+> pong 1
+> status Edax is thinking
+> === d3 1.00 0.0
+> status Edax is waiting
+</pre>			
+		You can see an example of an NBoard communication by running NBoard and 
+		examining debugLog.txt in the NBoard directory. Commands to the engine are 
+		preceded by '&gt;' and responses by the engine are preceded by '&lt;'.
+		<h2>Communication Mechanism</h2>
+		The engine communicates with the GUI via console input and output (i.e. stdin 
+		and stdout, cerr and cout). This sounds easy, and it is, but there are two 
+		things to be careful of:
+		<ol>
+			<li>
+				The communication is done via pipes, so testing for input may not work in the 
+				same way as a true console application. In particular under Windows the 
+				_kbhit() function will not work. You can simply do full depth searches and 
+				ignore the user trying to abort the search, or use a simple second thread which 
+				reads stdin and signals the first when a command has come in.
+				<p></p>
+			</li><li>
+				The response from the engine to NBoard won't be sent until the output buffer is 
+				flushed. There are a lot of ways to do this. In C++ viable choices include
+				<ul>
+					<li>
+					call cout.flush() after each line
+					</li><li>
+					end your lines with std::endl instead of "\n"
+					</li><li>
+					set cout to unbuffered
+					</li><li>
+						output to cerr which is automatically flushed each time the line ends.
+					</li>
+				</ul>
+				I expect that at least one of these options is available in other languages.
+			</li>
+		</ol>
+		<h2>Commands from NBoard to the engine</h2>
+		All commands from NBoard to the engine are on a single line.
+		<p>
+			This is a list of the most important commands. There are other less important 
+			commands now and more will likely be added as the protocol evolves. If you get 
+			a command you don't understand you should ignore the entire line; you should be 
+			able to determine the purpose of unlisted commands by examining debugLog.txt.
+		</p>
+		<p>
+			GUIs must send the "nboard" command as their first command to the engine. GUIs 
+			must also send the "set depth" command and "set game" command before issuing 
+			"hint" and "go" commands. Engines may assume that the GUIs do this properly.
+		</p>
+		<table border="1">
+			<tbody><tr>
+				<th>
+					nboard 1</th>
+				<td>
+					<p>Version information sent at the beginning of the session.</p>
+					<p><strong>Required:</strong> The engine should enter "NBoard mode" and all further 
+						commands will be in NBoard format.</p>
+					<p><strong>Note: </strong>Future versions of the NBoard protocol may increment the 
+						NBoard protocol version and send, e.g. "nboard 2". NBoard will never send the 
+						command "nboard 0"; you can use it for your own purposes (e.g. to exit nboard 
+						mode in a test script).</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					set depth {maxDepth: int}</th>
+				<td>
+					<p>Set engine midgame search depth</p>
+					<p><strong>Optional:</strong> Set midgame depth to {maxDepth}. Endgame depths are at the engine 
+						author's discretion.</p>
+					<p><strong>Note:</strong>Ntest issues the "set myname" command in response to this 
+						command, for instance "set depth 15" results in Ntest issuing "set myname 
+						Ntest15".</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					set game {GGF}</th>
+				<td>Tell the engine that all further commands relate to the position at the end of 
+					the given game, in GGF format.
+					<p><strong>Required:</strong>The engine must update its stored game state</p>
+					<p><strong>Note:</strong> NBoard 1.1 does not use the clock but 
+						it is planned for future versions.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					set contempt {contempt:int}</th>
+				<td><p>Set the engine's contempt factor</p>
+					<p><strong>Optional:</strong> Tell the engine that book draws should be considered as a given value,
+					from black's point of view. 100 = draws to black (+100 disks), -100 = draws to white (by 100
+					 disks),0 = draws are valued at 0.<p>
+						 <p>If no 'set contempt' command is issued, the program should use a contempt value of 0.</p>
+					<p><strong>Note:</strong> Used but not documented in NBoard 1.1. Documented since NBoard 2.0.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					move {move:string}/{eval:float or blank}/{time:float}</th>
+				<td>
+					<p>Tell the engine that all further commands relate to the position after the given 
+						move. The move is 2 characters e.g. "F5". Eval is normally in centi-disks. Time is
+						in seconds.  Eval and time may be omitted. If eval is omitted it is assumed to be "unknown";
+						if time is omitted it is assumed to be 0.</p>
+					<p><strong>Required:</strong>Update the game state by making the move. No response required.</p>
+					<p><strong>Note:</strong> NBoard 1.1 sends just "F5" instead of "move F5". NBoard 2.0 onwards
+						follows the protocol.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					hint {n:int}</th>
+				<td>Tell the engine to give evaluations for the given position. n tells how many 
+					moves to evaluate, e.g. 2 means give evaluations for the top 2 positions. This is used
+					when the user is analyzing a game.
+					<p><b>Required:</b> The engine sends back an evaluation for at its top move</p>
+					<p><b>Best:</b> The engine sends back an evaluation for approximately the top n 
+						moves. The engine also sends back evaluations during search, either
+						</p><pre> search {pv} {eval} 0 {depth} {freeform text}</pre>
+						or
+						<pre> book {pv} {eval} {# games:long} {depth} {freeform text:string}</pre>
+					<p>The pv must begin with two characters representing the move considered (e.g. 
+						"F5" or "PA") and must not contain any whitespace. "F5d6C3" and "F5-D6-C3" are 
+						valid PVs but "F5 D6 C3" will consider D6 to be the eval.
+					</p>
+					<p>The eval is from the point-of-view of the player to move and is a 
+						double. It can also be an ordered pair of doubles separated by a comma:
+						{draw-to-black value}, {draw-to-white value}.</p>
+						<p>depth is the search depth. It must start with an integer but can end with other characters;
+							for instance "100%WLD" is a valid depth. The depth cannot contain spaces.</p>
+					<p>The freeform text can be any other information that the engine wants to convey.
+						NBoard 1.1 does not display this information but later versions or other GUIs may.</p>
+						<p><b>Note:</b> The Engine is allowed to either search up to its max depth, or it can
+							use iterative deepening and report search results for each round. With the
+							"hint" command the engine is not constrained by the time remaining in the game.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					go</th>
+				<td>Tell the engine to decide what move it would play. This is used when the engine is playing in a game.
+					<p><b>Required:</b> The engine responds with "<code>=== [move]</code>" where move 
+						is e.g. "F5"
+					</p>
+					<p><b>Best:</b> The engine responds with "<code>=== {move:String}/{eval:float}/{time:float}</code>". 
+						Eval may be omitted if the move is forced. The engine also sends back thinking 
+						output as in the "hint" command.</p>
+						<p>With the "go" command the computer is limited by both the maximum search depth and the 
+							time remaining in the game.<p>
+					<p><b>Important:</b> The engine does <em>not</em> update the board with this move, 
+						instead it waits for a "move" command from NBoard. This is because the user may 
+						have switched to Human/Human mode while the engine was thinking in which case 
+						the engine's move is ignored.</p>
+						<p><b>Note:</b> The NBoard gui sets the engine's status to "" when it receives this command,
+							to make it easier on the engine author. The engine can override this behaviour
+							by sending a "status" command immediately after the "learned" response.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					ping {ping:int}</th>
+				<td>Ensure synchronization when the board position is about to change.
+					<p><b>Required:</b> Stop thinking and respond with "pong n". If the engine is 
+						analyzing a position it must stop analyzing before sending "pong n" otherwise 
+						NBoard will think the analysis relates to the current position.</p>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					learn</th>
+				<td>Learn the current game.
+					<p><b>Required:</b> Respond "learned".</p>
+					<p><b>Best:</b> Add the current game to book.</p>
+					<p><b>Note:</b> The NBoard gui sets the engine's status to "" when it receives this command,
+						to make it easier on the engine author. The engine can override this behaviour
+						by sending a "status" command immediately after the "learned" response.</p>
+				</td>
+			</tr>
+		</tbody></table>
+		<h2>Commands from the engine to NBoard</h2>
+		<table border="1">
+			<tbody><tr>
+				<th>
+					status {text}</th><td>Sets the status line displayed in the NBoard GUI.</td>
+			</tr>
+			<tr>
+				<th>
+					set myname {text}</th><td>Sets the engine's name as displayed in the GUI.</td>
+			</tr>
+			<tr>
+				<th>
+					nodestats {node count:double} {time:float}</th><td>The engine may issue this command
+					at any time to let the GUI know its current thinking status.
+					<p>node count: number of nodes since the beginning of the current search</p>
+					<p>time: number of seconds since the beginning of the current search</p>
+					<p><strong>Note: </strong>This command is not issued by Ntest 1.1; the nodestats
+					are not displayed by NBoard 1.1.</p>
+					</td>
+			</tr>
+		</tbody></table>
+		<h2>Sample Code</h2>
+		This is the code used by NTest as of NBoard 1.1. It includes Windows-specific 
+		multithreading. It will probably require modification to work in other 
+		programs.
+		<pre>// Copyright 2004 Chris Welty
+// All Rights Reserved
+
+#include "GameX.h"
+#include &lt;deque&gt;
+#include &lt;sstream&gt;
+#include "windows.h"
+
+///////////////////////////////////
+// CGame2
+///////////////////////////////////
+
+//! Stored commands from NBoard.
+static std::deque&lt;std::string&gt; lines;
+//! This event is set when there is an input line available
+
+//!  A critical section handles access to a resource. Only one thread can own it at a time.
+class CriticalSection  {
+public:
+	CriticalSection(); 
+	~CriticalSection();
+
+	void Enter();
+	void Leave();
+private:
+	CRITICAL_SECTION m_cs;
+} cs;
+
+//! Construct the critical section object
+CriticalSection::CriticalSection() {
+ 	::InitializeCriticalSection(&amp;m_cs);
+ }
+
+//! Destroy the critical section
+CriticalSection::~CriticalSection() {
+	::DeleteCriticalSection(&amp;m_cs);
+}
+
+//! Block until the critical section is available; then take control of it.
+void CriticalSection::Enter() {
+	::EnterCriticalSection(&amp;m_cs);
+}
+
+//!  release control of the critical section
+void CriticalSection::Leave() {
+	::LeaveCriticalSection(&amp;m_cs);
+}
+
+//! A waitable windows event
+//!
+//! This is an unnamed windows event, so that other processes
+//! (e.g. multiple copies of ntest) can't affect the event.
+class Event {
+public:
+	Event();
+	~Event();
+
+	void Set();
+	void Reset();
+	void Wait(u4 timeout);
+private:
+	HANDLE m_event;
+} eventInput;
+
+Event::Event() {
+	m_event=CreateEvent(NULL, true, false, NULL);
+}
+
+Event::~Event() {
+	CloseHandle(m_event);
+}
+
+//! Set an event to true.
+void Event::Set() {
+	SetEvent(m_event);
+}
+
+//! Set an event to false
+void Event::Reset() {
+	ResetEvent(m_event);
+}
+
+//! Wait on an event with the specified timeout, or forever if timeout == INFINITE
+void Event::Wait(u4 timeout) {
+	WaitForSingleObject(m_event, timeout);
+}
+
+//! This function returns true if there is input waiting for the engine.
+//! It is meant to be used in the search function.
+//!
+//! It is currently used only when using an external viewer with GameX.
+//! \todo test to see if this slows down the search. If so need a faster mechanism.
+bool HasInput() {
+	cs.Enter();
+	bool fHasInput=!lines.empty();
+	cs.Leave();
+	return fHasInput;
+}
+
+//! Add an input line to the deque, and set the eventInput if the deque was empty before
+static void AddStringToDeque(const std::string&amp; s) {
+	cs.Enter();
+	if (lines.empty()) {
+		eventInput.Set();
+	}
+	lines.push_back(s);
+	cs.Leave();
+}
+
+//! Thread's job: add things to the deque
+static DWORD WINAPI MoveCinToDeque(void*) {
+	std::string sLine;
+	while (getline(std::cin, sLine))
+		AddStringToDeque(sLine);
+
+	// last, post a quit message. Normally we get one from the viewer
+	// but sometimes it doesn't get a chance to before termination.
+	AddStringToDeque("quit");
+	return 0;
+}
+
+//! Get a line of input from the thread that's parsing lines for us.
+static bool GetLineFromThread(std::string&amp; sLine) {
+	eventInput.Wait(INFINITE);
+	cs.Enter();
+	sLine=lines.front();
+	lines.pop_front();
+	if (lines.empty())
+		eventInput.Reset();
+	cs.Leave();
+	return true;
+}
+
+//! Create and run a game using the alternate game class for external viewers
+//!
+//! User commands:
+//!	- mode &lt;n&gt;: 0=computer inactive, 1=computer plays white, 2=computer plays black, 3=computer plays both
+CGameX::CGameX(CComputerDefaults cd) {
+	CPlayerComputer* pcomp=NULL;
+
+	int nboardVersion=0;
+	cd.fsPrint=-1&amp;~CSearchInfo::kPrintMove&amp;~CSearchInfo::kPrintGameAnalysis;
+	cd.fsPrintOpponent=-1;
+	u4 fLearn=CPlayer::kNoAddSoloUnsolvedToBook;
+
+	// Initialize with a basic board. That way we're guaranteed to always have a legal game.
+	Initialize("8");
+
+	// start up the thread that will give us messages
+	u4 threadId;
+	CreateThread(NULL, 0, MoveCinToDeque, NULL, 0, &amp;threadId);
+
+	std::string sLine;
+//	while (getline(std::cin,sLine)) {
+	while (GetLineFromThread(sLine)) {
+		// save value of GameOver so that we know whether to learn the game
+		const bool fGameWasOver=GameOver();
+
+		std::istringstream is(sLine);
+		std::string sCommand;
+		is &gt;&gt; sCommand;
+
+		if (sCommand=="go") {
+			// engine tells viewer what move it would make.
+			// do NOT update the board, the engine has no idea whether the viewer thinks the computer should move
+			// (e.g. in nboard, the user could switch to "user plays both colors" mode while the engine is thinking).
+			// any board updates are given by a standard move message.
+			if (pcomp) {
+				COsMoveListItem mli;
+				pcomp-&gt;GetMoveAndTime(*this, CPlayer::kMyMove | fLearn, mli);
+				std::cout &lt;&lt; "=== " &lt;&lt; mli &lt;&lt; std::endl;
+			}
+			else {
+				std::cout &lt;&lt; "warning Must pick a depth with \"set depth &lt;n&gt;\" first" &lt;&lt; std::endl;
+			}
+		}
+		else if (sCommand=="hint") {
+			int nBest=1;
+			is &gt;&gt; nBest;
+			// if it's not the computer's move, he can give hints.
+			//COsMoveListItem mli;
+			//pcomp-&gt;GetMoveAndTime(*this, CPlayer::kAnalyze | fLearn, mli);
+			std::cout &lt;&lt; "status Analyzing" &lt;&lt; std::endl;
+			pcomp-&gt;Hint(CQPosition(pos.board), nBest);
+			std::cout &lt;&lt; "status" &lt;&lt; std::endl;
+		}
+		else if (sCommand=="learn") {
+			pcomp-&gt;EndGame(*this);
+			std::cout &lt;&lt; "learn" &lt;&lt; std::endl;
+		}
+		else if (sCommand=="nboard") {
+			is &gt;&gt; nboardVersion;
+		}
+		else if (sCommand=="new") {
+			// this command is not part of the interface standard, but is useful for testing.
+			std::string sBoardType("8");
+			is &gt;&gt; sBoardType;
+			Initialize(sBoardType.c_str());
+		}
+		else if (sCommand=="ping") {
+			int n;
+			is &gt;&gt; n;
+			std::cout &lt;&lt; "pong " &lt;&lt; n &lt;&lt; std::endl;
+		}
+		else if (sCommand=="quit") {
+			break;
+		}
+		else if (sCommand=="remove_tree") {
+			if (pcomp &amp;&amp; pcomp-&gt;book) {
+				pcomp-&gt;book-&gt;RemoveTree(CQPosition(pos.board).BitBoard());
+			}
+		}
+		else if (sCommand=="draw_tree") {
+			if (pcomp &amp;&amp; pcomp-&gt;book) {
+				std::cout&lt;&lt;"--- Draw Tree ---\nAfter ";
+				for (size_t i=0; i&lt;ml.size(); i++)
+					std::cout &lt;&lt; ml[i].mv &lt;&lt; " ";
+				std::cout &lt;&lt; "\n";
+
+				pcomp-&gt;book-&gt;PrintDrawTree(CQPosition(pos.board));
+			}
+		}
+		else if (sCommand=="set") {
+			std::string param;
+			is &gt;&gt; param;
+			if (param=="game") {
+				// board is changing, need to negamax old game to make sure values remain consistent
+				if (pcomp &amp;&amp; pcomp-&gt;book)
+					pcomp-&gt;book-&gt;NegamaxGame(*this);
+				In(is);
+			}
+			else if (param=="depth") {
+				std::istringstream iscp(cd.sCalcParams.c_str());
+				char c='s';
+				int depth=12;
+				iscp &gt;&gt; c &gt;&gt; depth;
+
+				is &gt;&gt; depth;
+
+				std::ostringstream os;
+				os &lt;&lt; c &lt;&lt; depth;
+				cd.sCalcParams=os.str();
+
+				if (pcomp)
+					delete pcomp;
+				pcomp=new CPlayerComputer(cd);
+				std::cout &lt;&lt; "\n";
+				std::cout &lt;&lt; "set myname Ntest" &lt;&lt; depth &lt;&lt; std::endl;
+			}
+			else if (param=="contempt") {
+				float contempt=0;
+				is &gt;&gt; contempt;
+
+				// update both the computer defaults (used for new computers) and the current computer.
+				cd.vContempts[1]=CComputerDefaults::FloatToContempt(contempt);
+				cd.vContempts[0]=-cd.vContempts[1];
+				if (pcomp) {
+					pcomp-&gt;cd.vContempts[0]=cd.vContempts[0];
+					pcomp-&gt;cd.vContempts[1]=cd.vContempts[1];
+				}
+			}
+			else {
+				getline(is, param);
+			}
+		}
+		else if (sCommand=="move") {
+			COsMoveListItem mli;
+			is &gt;&gt; mli;
+			Update(mli);
+		}
+		else if (sCommand.size()==2) {
+			COsMoveListItem mli;
+			mli.mv=COsMove(sCommand);
+			Update(mli);
+		}
+	}
+}
+
+		</pre>
+	</body></html>

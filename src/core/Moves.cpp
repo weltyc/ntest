@@ -178,7 +178,7 @@ bool CMoves::HasBest() const {
 bool CMoves::GetNext(CMove& move) {
 	int square;
 	//! masks are for corners, non-cx squares, and all remaining squares.
-	const int64_t masks[3]= {0x8100000000000081ULL, 0x3C3CFFFFFFFF3C3CULL, -1LL};
+	const int64_t masks[3]= {(int64_t)0x8100000000000081ULL, 0x3C3CFFFFFFFF3C3CULL, -1LL};
 
 	if (moveToCheck<0) {
 		square=bestMove.Square();

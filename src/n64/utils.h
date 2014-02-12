@@ -177,11 +177,11 @@ u64 koggeStoneFlips(int sq, u64 mover, u64 enemy);
 /////////////////////////////////////////
 
 // for compatibility with unix-like OS
-#ifdef __unix__
+#ifndef _WIN32
 
 #include <unistd.h>
 
-#endif //__unix__
+#endif //_WIN32
 
 inline void CHECKNEW(bool x) {
 	if (!x) {
