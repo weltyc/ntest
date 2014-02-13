@@ -105,6 +105,9 @@ inline std::ostream& operator<<(std::ostream& os, const COsClock& ck)  { ck.Out(
 
 class COsPlayerInfo {
 public:
+    COsPlayerInfo() {
+        Clear();
+    }
 	void In(std::istream& is);
 
 	void Clear();
@@ -154,6 +157,10 @@ inline std::ostream& operator<<(std::ostream& os, const COsRatingType& rt)  { rt
 
 class COsMatchType {
 public:
+    COsMatchType() {
+        fSynch=fRand=fKomi=fAnti=fBlack=fWhite=false;
+        bt.Clear();
+    }
 	COsBoardType bt;
 	bool fSynch, fRand, fKomi, fAnti, fBlack, fWhite;
 	int nRandDiscs;
