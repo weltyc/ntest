@@ -119,6 +119,10 @@ void COsMoveList::Update(const COsMoveListItem& mli) {
 /////////////////////////////////////////
 
 COsClock::COsClock() {
+    tCurrent = 60.0;
+    tIncrement = 0.0;
+    tGrace = 120.0;
+    iTimeout = 0;
 }
 
 COsClock::COsClock(double atCurrent, double atIncrement, double atGrace, int aiTimeout) {
