@@ -1,5 +1,6 @@
 This version of NTest is Copyright 1999-2014, All Rights Reserved,
-by Chris Welty <chris.welty.1@gmail.com> and Vlad Petric and is released under the GPL V3.
+by Chris Welty <chris.welty.1@gmail.com>
+and Vlad Petric <vlad@petric.cc> and is released under the GPL V3.
 
 
 This program is free software: you can redistribute it and/or modify
