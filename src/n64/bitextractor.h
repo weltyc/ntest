@@ -1,8 +1,8 @@
 // Copyright (c) 2014, Vlad Petric
 // All rights reserved.
 //
-// This file is distributed subject to GNU GPL version 2. See the files
-// Copying.txt and GPL.txt for details.
+// This file is distributed subject to GNU GPL version 3. See the files
+// GPLv3.txt and License.txt in the instructions subdirectory for details.
 
 #ifndef __BIT_EXTRACTOR_H
 #define __BIT_EXTRACTOR_H

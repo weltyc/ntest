@@ -1,7 +1,7 @@
 // Copyright Vlad Petric
 //	All Rights Reserved
-// This file is distributed subject to GNU GPL version 2. See the files
-// Copying.txt and GPL.txt for details.
+// This file is distributed subject to GNU GPL version 3. See the files
+// GPLv3.txt and License.txt in the instructions subdirectory for details.
 
 // This test checks the evaluator against 40 positions. The evaluation
 // result is compared against the known value. This is a golden value
