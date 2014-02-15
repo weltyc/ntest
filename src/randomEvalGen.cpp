@@ -2,6 +2,8 @@
 //	All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files
 // GPLv3.txt and License.txt in the instructions subdirectory for details.
+#define __STDC_FORMAT_MACROS
+#include <inttypes.h>
 
 #include <cstdio>
 #include <cstdlib>
@@ -54,7 +56,7 @@ void RandomGameEvalGen() {
                 Pos2 pp;
                 pp.Initialize(bb, blackMove);
                 CValue val = eval->EvalMobs(pp, bitCount(moveBits), bitCount(enemyMoveBits));
-                fprintf(stdout, "{0x%llx, 0x%llx, %s, %d} /* %d moves */", bb.mover, bb.empty, blackMove? "true": "false", static_cast<int>(val), stopAt);
+                fprintf(stdout, "{0x%" PRIx64 ", 0x%" PRIx64 ", %s, %d} /* %d moves */", bb.mover, bb.empty, blackMove? "true": "false", static_cast<int>(val), stopAt);
                 break;
             }
             // Perform the move.
@@ -78,6 +80,11 @@ void RandomGameEvalGen() {
             }
         }
     } while (!gameOver);
+}
+
+// To satisfy linker in debug mode
+bool HasInput() {
+    return false;
 }
 
 int main(int argc, char **argv) {
