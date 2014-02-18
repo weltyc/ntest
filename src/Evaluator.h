@@ -54,8 +54,8 @@ protected:
 
 private:
 	CEvaluator(const std::string& fnBase, int nFiles);
-	TCoeff *coeffs[60][2];
-	TCoeff *pcoeffs[60][2];
+	TCoeff *coeffs[60];
+	TCoeff *pcoeffs[60];
 	int	nEmptyToSet[60];
 	u4  fParameters[60];
 	int nSets;

@@ -116,8 +116,8 @@ static void ConvertFile(FILE*& fp, std::string fn, int& iVersion, u4& fParams) {
 //!
 //! \throw string if error
 CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
-	int map,  iFile, coeffStart, mover, packedCoeff;
-	int nIDs, nConfigs, id, config, wconfig, cid, wcid;
+	int map,  iFile, coeffStart, packedCoeff;
+	int nIDs, nConfigs, id, config, cid;
 	u2 configpm1, configpm2, mapsize;
 	bool fHasPotMobs;
 	float* rawCoeffs=0;	//!< for use with raw (float) coeffs
@@ -163,9 +163,8 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 
 		for (iSubset=0; iSubset<nSubsets; iSubset++) {
 			// allocate memory for the black and white versions of the coefficients
-			coeffs[nSets][0]=new TCoeff[nCoeffsJ];
-			coeffs[nSets][1]=new TCoeff[nCoeffsJ];
-			CHECKNEW(coeffs[nSets][0] && coeffs[nSets][1]);
+			coeffs[nSets]=new TCoeff[nCoeffsJ];
+			CHECKNEW(coeffs[nSets]);
 
 			// put the coefficients in the proper place
 			for (map=0; map<nMapsJ; map++) {
@@ -231,16 +230,11 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 						if (fHasPotMobs)
 							packedCoeff=(packedCoeff<<16) | (configpm1<<8) | (configpm2);						
 
-						// calculate white config
-						wconfig=nConfigs-1-config;
-						wcid=wconfig+coeffStart;
-						coeffs[nSets][0][wcid]=packedCoeff;
-						coeffs[nSets][1][cid]=packedCoeff;
+						coeffs[nSets][cid]=packedCoeff;
 					}
 					
 					else {		// non-pattern maps
-						coeffs[nSets][0][cid]=coeff;
-						coeffs[nSets][1][cid]=coeff;
+						coeffs[nSets][cid]=coeff;
 					}
 				}
 
@@ -252,28 +246,24 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 			TCoeff* pcf2x4, *pcf2x5;
 			TConfig c2x4;
 
-			for(mover=0; mover<2;mover++) {
-				pcf2x4=&(coeffs[nSets][mover][coeffStartsJ[C2x4J]]);
-				pcf2x5=&(coeffs[nSets][mover][coeffStartsJ[C2x5J]]);
-				// fold coefficients in
-				for (config=0; config<9*6561; config++) {
-					c2x4=configs2x5To2x4[config];
-					pcf2x5[config]+=pcf2x4[c2x4];
-				}
-				// zero out 2x4 coefficients
-				for (config=0;config<6561; config++) {
-					pcf2x4[config]=0;
-				}
-			}
+            pcf2x4=&(coeffs[nSets][coeffStartsJ[C2x4J]]);
+            pcf2x5=&(coeffs[nSets][coeffStartsJ[C2x5J]]);
+            // fold coefficients in
+            for (config=0; config<9*6561; config++) {
+                c2x4=configs2x5To2x4[config];
+                pcf2x5[config]+=pcf2x4[c2x4];
+            }
+            // zero out 2x4 coefficients
+            for (config=0;config<6561; config++) {
+                pcf2x4[config]=0;
+            }
 
 			// Set the pcoeffs array and the fParameters
 			for (nEmpty=59-nSetWidth*iFile; nEmpty>=50-nSetWidth*iFile; nEmpty--) {
 				// if this is a set of the wrong parity, do nothing
 				if ((nEmpty&1)==iSubset)
 					continue;
-				for (mover=0; mover<2; mover++) {
-					pcoeffs[nEmpty][mover]=coeffs[nSets][mover];
-				}
+                pcoeffs[nEmpty]=coeffs[nSets];
             }
 
 			nSets++;
@@ -287,9 +277,7 @@ CEvaluator::~CEvaluator() {
 
 	// delete the coeffs array
 	for (set=0; set<nSets; set++) {
-		for (color=0; color<2; color++) {
-			delete[] coeffs[set][color];
-		}
+        delete[] coeffs[set];
 	}
 }
 
@@ -381,11 +369,8 @@ static TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TCon
 	return value;
 }
 
-static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs[2], u4 nMovesPlayer, u4 nMovesOpponent) {
-	TCoeff value;
-	TCoeff *pcmove=pcoeffs[fBlackMove];
-
-	value=0;
+static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs, u4 nMovesPlayer, u4 nMovesOpponent) {
+	TCoeff value = 0;
 
 	if (iDebugEval>1) {
         cout << "----------------------------\n";
@@ -394,7 +379,7 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 	}
 
     uint64_t empty = bb.empty;
-    uint64_t black = fBlackMove? bb.mover: ~(bb.mover | empty);
+    uint64_t mover = bb.mover;
 
     // EXTRACT_BITS_U64 takes four parameters:
     // base value
@@ -404,22 +389,22 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 
 #define BB_EXTRACT_STEP_PATTERN(START, COUNT, STEP) \
     base2ToBase3Table[EXTRACT_BITS_U64(empty, (START), (COUNT), (STEP))] + \
-    base2ToBase3Table[EXTRACT_BITS_U64(black, (START), (COUNT), (STEP))] * 2
+    base2ToBase3Table[EXTRACT_BITS_U64(mover, (START), (COUNT), (STEP))] * 2
 
-	const TCoeff* const pR1 = pcmove+offsetJR1;
-	const TCoeff* const pR2 = pcmove+offsetJR2;
-	const TCoeff* const pR3 = pcmove+offsetJR3;
-	const TCoeff* const pR4 = pcmove+offsetJR4;
-	const TCoeff* const pD5 = pcmove+offsetJD5;
-	const TCoeff* const pD6 = pcmove+offsetJD6;
-	const TCoeff* const pD7 = pcmove+offsetJD7;
-	const TCoeff* const pD8 = pcmove+offsetJD8;
+	const TCoeff* const pR1 = pcoeffs+offsetJR1;
+	const TCoeff* const pR2 = pcoeffs+offsetJR2;
+	const TCoeff* const pR3 = pcoeffs+offsetJR3;
+	const TCoeff* const pR4 = pcoeffs+offsetJR4;
+	const TCoeff* const pD5 = pcoeffs+offsetJD5;
+	const TCoeff* const pD6 = pcoeffs+offsetJD6;
+	const TCoeff* const pD7 = pcoeffs+offsetJD7;
+	const TCoeff* const pD8 = pcoeffs+offsetJD8;
 
     int16_t Diag8A = BB_EXTRACT_STEP_PATTERN(0, 8, 9);
     value += pD8[Diag8A];
     int16_t Diag8B =
         base2ToBase3Table[EXTRACT_BITS_U64(empty, 7, 4, 7) | (EXTRACT_BITS_U64(empty, 35, 4, 7) << 4)] +
-        base2ToBase3Table[EXTRACT_BITS_U64(black, 7, 4, 7) | (EXTRACT_BITS_U64(black, 35, 4, 7) << 4)] * 2;
+        base2ToBase3Table[EXTRACT_BITS_U64(mover, 7, 4, 7) | (EXTRACT_BITS_U64(mover, 35, 4, 7) << 4)] * 2;
     value += pD8[Diag8B]; 
 
     int16_t Diag7A1 = BB_EXTRACT_STEP_PATTERN(1, 7, 9);
@@ -471,7 +456,7 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 
 #define BB_EXTRACT_ROW_PATTERN(ROW) \
     base2ToBase3Table[(empty >> (8 * (ROW))) & 0xff] + \
-    base2ToBase3Table[(black >> (8 * (ROW))) & 0xff] * 2
+    base2ToBase3Table[(mover >> (8 * (ROW))) & 0xff] * 2
 
     int16_t Row0 = BB_EXTRACT_ROW_PATTERN(0);
     value += pR1[Row0];
@@ -496,8 +481,8 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 		printf("Straight lines done. Value so far: %d.\n",value>>16);
 
 	// Triangle patterns in corners
-    value += ValueTrianglePatternsJ(pcmove, Row0, Row1, Row2, Row3);
-    value += ValueTrianglePatternsJ(pcmove, Row7, Row6, Row5, Row4);
+    value += ValueTrianglePatternsJ(pcoeffs, Row0, Row1, Row2, Row3);
+    value += ValueTrianglePatternsJ(pcoeffs, Row7, Row6, Row5, Row4);
 
 	if (iDebugEval>1)
 		printf("Corners done. Value so far: %d.\n",value);
@@ -513,30 +498,30 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 	value>>=16;
 
 	// pot mobility
-	value += ConfigValue(pcmove, nPMP, PM1J, offsetJPMP);
-	value += ConfigValue(pcmove, nPMO, PM2J, offsetJPMO);
+	value += ConfigValue(pcoeffs, nPMP, PM1J, offsetJPMP);
+	value += ConfigValue(pcoeffs, nPMO, PM2J, offsetJPMO);
 
 	if (iDebugEval>1)
 		printf("Potential mobility done. Value so far: %d.\n",value);
 
-    value += ValueEdgePatternsJ(pcmove, Row0, Row1);
-    value += ValueEdgePatternsJ(pcmove, Row7, Row6);
-    value += ValueEdgePatternsJ(pcmove, Column0, Column1);
-    value += ValueEdgePatternsJ(pcmove, Column7, Column6);
+    value += ValueEdgePatternsJ(pcoeffs, Row0, Row1);
+    value += ValueEdgePatternsJ(pcoeffs, Row7, Row6);
+    value += ValueEdgePatternsJ(pcoeffs, Column0, Column1);
+    value += ValueEdgePatternsJ(pcoeffs, Column7, Column6);
 
 	if (iDebugEval>1)
 		printf("Edge patterns done. Value so far: %d.\n",value);
 
 
 	// mobility
-	value+=ConfigValue(pcmove, nMovesPlayer, M1J, offsetJMP);
-	value+=ConfigValue(pcmove, nMovesOpponent, M2J, offsetJMO);
+	value+=ConfigValue(pcoeffs, nMovesPlayer, M1J, offsetJMP);
+	value+=ConfigValue(pcoeffs, nMovesOpponent, M2J, offsetJMO);
 
 	if (iDebugEval>1)
 		printf("Mobility done. Value so far: %d.\n",value);
 
 	// parity
-	value+=ConfigValue(pcmove, nEmpty&1, PARJ, offsetJPAR);
+	value+=ConfigValue(pcoeffs, nEmpty&1, PARJ, offsetJPAR);
 
 	if (iDebugEval>0)
 		printf("Total Value= %d\n", value);
