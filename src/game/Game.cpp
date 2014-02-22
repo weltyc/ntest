@@ -6,10 +6,7 @@
 // game routines
 
 
-#include <stdio.h>
-#ifdef _WIN32
-#include <io.h>
-#endif
+#include <cstdio>
 #include <cassert>
 #include <math.h>
 #include <sstream>

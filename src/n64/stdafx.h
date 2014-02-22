@@ -5,13 +5,7 @@
 
 #pragma once
 
-#ifdef _WIN32
-#include <tchar.h>
-#include <intrin.h>
-#include <direct.h>
-#endif 
-
-#include <stdio.h>
+#include <cstdio>
 #include <sstream>
 #include <iostream>
 #include <fstream>

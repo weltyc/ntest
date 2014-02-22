@@ -26,7 +26,7 @@ void RandomGameEvalGen() {
     bool gameOver = false;
     bool blackMove = false;
 
-    int stopAt = 10 + random() % 30;  // between 10 and 40 non-pass moves
+    int stopAt = 10 + rand() % 30;  // between 10 and 40 non-pass moves
    
     int npMoveCount = 0; 
     do {
@@ -44,7 +44,7 @@ void RandomGameEvalGen() {
                 // reset the bit 
                 copyMoveBits &= (copyMoveBits - 1);
             } while(copyMoveBits);
-            uint64_t singleMove = singleMoves[random() % singleMoves.size()];
+            uint64_t singleMove = singleMoves[rand() % singleMoves.size()];
 
             CMoves moves;
             moves.Set(singleMove);
@@ -97,7 +97,7 @@ int main(int argc, char **argv) {
         count = atoi(argv[1]);
     }
 
-    srandom(20111004);
+    srand(20111004);
     fputs("struct evaltest {\n", stdout);
     fputs("    uint64_t mover;\n", stdout);
     fputs("    uint64_t empty;\n", stdout);
