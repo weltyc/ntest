@@ -174,7 +174,7 @@ void RandomGameTester() {
                 // reset the bit 
                 moveBits &= (moveBits - 1);
             } while(moveBits);
-            uint64_t singleMove = singleMoves[random() % singleMoves.size()];
+            uint64_t singleMove = singleMoves[rand() % singleMoves.size()];
 
             
             // Do the move, the simple and slow way. 
@@ -225,7 +225,7 @@ void RandomGameTester() {
 }
 
 void TestRandomGames(int count) {
-    srandom(20111004);
+    srand(20111004);
     for (int i = 0; i < count; ++i) {
         RandomGameTester();
     }

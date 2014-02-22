@@ -7,15 +7,9 @@
 
 #pragma warning(disable: 4786)
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
-#ifdef _WIN32
-#include <io.h>
-#else
 #include <cstdlib>
 #include <cstring>
-#endif
 #include <cassert>
 #include <ctype.h>
 #include <sstream>
@@ -51,10 +45,6 @@
 #include "odk/odkTest.h"
 
 using namespace std;
-
-#ifndef _WIN32
-#define __cdecl
-#endif
 
 extern bool fPrintCorrections;
 extern bool fInTournament;
@@ -128,12 +118,6 @@ void Init() {
 	InitConfigToPotMob();
 	cout << setprecision(3);
 	cerr << setprecision(3);
-
-#ifdef _DEBUG
-	int tmpFlag = _CrtSetDbgFlag( _CRTDBG_REPORT_FLAG );
-	tmpFlag |= _CRTDBG_LEAK_CHECK_DF;
-	_CrtSetDbgFlag( tmpFlag );
-#endif
 
 	void InitFFBonus();
 	InitFFBonus();
@@ -274,7 +258,7 @@ void Compare(CPlayerComputer& computer1, CPlayerComputer& computer2) {
 	}
 }
 
-int __cdecl main(int argc, char**argv, char**envp) {
+int main(int argc, char**argv, char**envp) {
 	if (argc>1 && !strcmp(argv[1], "n64")) {
 		extern int n64_main(int argc, char* argv[]);
 		return n64_main(argc-1, argv+1);

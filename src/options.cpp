@@ -7,10 +7,6 @@
 
 #include "n64/utils.h"
 #include "options.h"
-#ifdef _WIN32
-#include "windows.h"
-#endif
-
 int treeNEmpty;
 
 // opponent's move?
