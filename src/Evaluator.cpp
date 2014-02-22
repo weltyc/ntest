@@ -331,7 +331,7 @@ const int offsetJR1=0, sizeJR1=6561,
 	offsetJPAR=offsetJPMO+sizeJPMO, sizeJPAR=2;
 
 // value all the edge patterns. return the sum of the values.
-static TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
+static inline TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
     TConfig configXX;
 	u4 configs2x5;
 	TCoeff value;
@@ -350,7 +350,7 @@ static TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig 
 }
 
 // value all the triangle patterns. return the sum of the values.
-static TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2, TConfig config3, TConfig config4) {
+static inline TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2, TConfig config3, TConfig config4) {
 	u4 configsTriangle;
 	TCoeff value;
 
@@ -361,6 +361,21 @@ static TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TCon
 	value+=ConfigPMValue(pcmove, configsTriangle>>16,    C4J, offsetJTriangle);
 
 	return value;
+}
+
+static inline uint64_t diagonal_flip(uint64_t v) {
+    // flip 4-by-4 bits
+    v = (v & 0xf0f0f0f00f0f0f0fULL)
+        | ((v >> 28) & 0xf0f0f0f0ULL)
+        | ((v & 0xf0f0f0f0ULL) << 28);
+    // flip 2-by-2 bits
+    v = (v & 0xcccc3333cccc3333ULL)
+        | ((v & 0x0000cccc0000ccccULL) << 14)
+        | ((v & 0x3333000033330000ULL) >> 14);
+    // flip 1-by-1 bits
+    return (v & 0xaa55aa55aa55aa55ULL)
+        | ((v & 0x00aa00aa00aa00aaULL) << 7)
+        | ((v & 0x5500550055005500ULL) >> 7);
 }
 
 static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs, u4 nMovesPlayer, u4 nMovesOpponent) {
@@ -385,101 +400,116 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
     base2ToBase3Table[EXTRACT_BITS_U64(empty, (START), (COUNT), (STEP))] + \
     base2ToBase3Table[EXTRACT_BITS_U64(mover, (START), (COUNT), (STEP))] * 2
 
-	const TCoeff* const pR1 = pcoeffs+offsetJR1;
-	const TCoeff* const pR2 = pcoeffs+offsetJR2;
-	const TCoeff* const pR3 = pcoeffs+offsetJR3;
-	const TCoeff* const pR4 = pcoeffs+offsetJR4;
 	const TCoeff* const pD5 = pcoeffs+offsetJD5;
 	const TCoeff* const pD6 = pcoeffs+offsetJD6;
 	const TCoeff* const pD7 = pcoeffs+offsetJD7;
 	const TCoeff* const pD8 = pcoeffs+offsetJD8;
 
-    int16_t Diag8A = BB_EXTRACT_STEP_PATTERN(0, 8, 9);
-    value += pD8[Diag8A];
-    int16_t Diag8B =
-        base2ToBase3Table[EXTRACT_BITS_U64(empty, 7, 4, 7) | (EXTRACT_BITS_U64(empty, 35, 4, 7) << 4)] +
-        base2ToBase3Table[EXTRACT_BITS_U64(mover, 7, 4, 7) | (EXTRACT_BITS_U64(mover, 35, 4, 7) << 4)] * 2;
+    // Diagonals of type A run NWSE, with a bit step of 9.
+    // Type B diagonals run NESW, with a bit step of 7.
+    // Diag 8A and 8B
+    value += pD8[BB_EXTRACT_STEP_PATTERN(0, 8, 9)];
+    int32_t Diag8B =
+        base2ToBase3Table[extract_second_diagonal(empty)] +
+        base2ToBase3Table[extract_second_diagonal(mover)] * 2;
     value += pD8[Diag8B]; 
 
-    int16_t Diag7A1 = BB_EXTRACT_STEP_PATTERN(1, 7, 9);
-    value += pD7[Diag7A1];
-    int16_t Diag7A2 = BB_EXTRACT_STEP_PATTERN(8, 7, 9);
-    value += pD7[Diag7A2];
-    int16_t Diag7B1 = BB_EXTRACT_STEP_PATTERN(6, 7, 7);
-    value += pD7[Diag7B1];
-    int16_t Diag7B2 = BB_EXTRACT_STEP_PATTERN(15, 7, 7);
-    value += pD7[Diag7B2];
+    value += pD7[BB_EXTRACT_STEP_PATTERN(1, 7, 9)];
+    value += pD7[BB_EXTRACT_STEP_PATTERN(8, 7, 9)];
+    value += pD7[BB_EXTRACT_STEP_PATTERN(6, 7, 7)];
+    value += pD7[BB_EXTRACT_STEP_PATTERN(15, 7, 7)];
 
-    int16_t Diag6A1 = BB_EXTRACT_STEP_PATTERN(2, 6, 9);
+    // Diag6 B1 and B2 
+    value += pD6[BB_EXTRACT_STEP_PATTERN(5, 6, 7)];
+    value += pD6[BB_EXTRACT_STEP_PATTERN(23, 6, 7)];
+
+    uint64_t Diag6A1 =
+        (((empty & meta_repeated_bit<uint64_t, 2, 6, 9>::value) * 0x2030486ca2f300) >> 55) +
+        2 * (((mover & meta_repeated_bit<uint64_t, 2, 6, 9>::value) * 0x2030486ca2f300) >> 55);
     value += pD6[Diag6A1];
-    int16_t Diag6A2 = BB_EXTRACT_STEP_PATTERN(16, 6, 9);
+    uint64_t Diag6A2 =
+        ((((empty & meta_repeated_bit<uint64_t, 16, 6, 9>::value) >> 14) * 0x2030486ca2f300) >> 55) +
+        2 * ((((mover & meta_repeated_bit<uint64_t, 16, 6, 9>::value) >> 14) * 0x2030486ca2f300) >> 55);
     value += pD6[Diag6A2];
-    int16_t Diag6B1 = BB_EXTRACT_STEP_PATTERN(5, 6, 7);
-    value += pD6[Diag6B1];
-    int16_t Diag6B2 = BB_EXTRACT_STEP_PATTERN(23, 6, 7);
-    value += pD6[Diag6B2];
 
-    int16_t Diag5A1 = BB_EXTRACT_STEP_PATTERN(3, 5, 9);
+    uint64_t Diag5A1 =
+         ((((empty & meta_repeated_bit<uint64_t, 3, 5, 9>::value) >> 1) * 0x2030486ca2f300) >> 55) +
+         2 * ((((mover & meta_repeated_bit<uint64_t, 3, 5, 9>::value) >> 1) * 0x2030486ca2f300) >> 55);
     value += pD5[Diag5A1];
-    int16_t Diag5A2 = BB_EXTRACT_STEP_PATTERN(24, 5, 9);
+    uint64_t Diag5A2 =
+         ((((empty & meta_repeated_bit<uint64_t, 24, 5, 9>::value) >> 22) * 0x2030486ca2f300) >> 55) +
+         2 * ((((mover & meta_repeated_bit<uint64_t, 24, 5, 9>::value) >> 22) * 0x2030486ca2f300) >> 55);
     value += pD5[Diag5A2];
-    int16_t Diag5B1 = BB_EXTRACT_STEP_PATTERN(4, 5, 7);
-    value += pD5[Diag5B1];
-    int16_t Diag5B2 = BB_EXTRACT_STEP_PATTERN(31, 5, 7);
-    value += pD5[Diag5B2];
 
-	
-    int16_t Column0 = BB_EXTRACT_STEP_PATTERN(0, 8, 8);
-    value += pR1[Column0];
-    int16_t Column7 = BB_EXTRACT_STEP_PATTERN(7, 8, 8);
-    value += pR1[Column7];
-    int16_t Column1 = BB_EXTRACT_STEP_PATTERN(1, 8, 8);
-    value += pR2[Column1];
-    int16_t Column6 = BB_EXTRACT_STEP_PATTERN(6, 8, 8);
-    value += pR2[Column6];
-    int16_t Column2 = BB_EXTRACT_STEP_PATTERN(2, 8, 8);
-    value += pR3[Column2];
-    int16_t Column5 = BB_EXTRACT_STEP_PATTERN(5, 8, 8);
-    value += pR3[Column5];
-    int16_t Column3 = BB_EXTRACT_STEP_PATTERN(3, 8, 8);
-    value += pR4[Column3];
-    int16_t Column4 = BB_EXTRACT_STEP_PATTERN(4, 8, 8);
-    value += pR4[Column4];
+
+    int32_t Diag5B1 =  
+         ((((empty & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57) +
+         2 * ((((mover & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57);
+    value += pD5[Diag5B1];
+    int32_t Diag5B2 = 
+         ((((empty & meta_repeated_bit<uint64_t, 31, 5, 7>::value) >> 27) * 0x20c49ba2000000) >> 57) +
+         2 * ((((mover & meta_repeated_bit<uint64_t, 31, 5, 7>::value) >> 27) * 0x20c49ba2000000) >> 57);
+    value += pD5[Diag5B2];
 #undef BB_EXTRACT_STEP_PATTERN
 
+	const TCoeff* const pR1 = pcoeffs+offsetJR1;
+	const TCoeff* const pR2 = pcoeffs+offsetJR2;
+	const TCoeff* const pR3 = pcoeffs+offsetJR3;
+	const TCoeff* const pR4 = pcoeffs+offsetJR4;
 
 #define BB_EXTRACT_ROW_PATTERN(ROW) \
     base2ToBase3Table[(empty >> (8 * (ROW))) & 0xff] + \
     base2ToBase3Table[(mover >> (8 * (ROW))) & 0xff] * 2
 
-    int16_t Row0 = BB_EXTRACT_ROW_PATTERN(0);
+    TConfig Row0 = BB_EXTRACT_ROW_PATTERN(0);
     value += pR1[Row0];
-    int16_t Row1 = BB_EXTRACT_ROW_PATTERN(1);
+    TConfig Row1 = BB_EXTRACT_ROW_PATTERN(1);
     value += pR2[Row1];
-    int16_t Row2 = BB_EXTRACT_ROW_PATTERN(2);
+    TConfig Row2 = BB_EXTRACT_ROW_PATTERN(2);
     value += pR3[Row2];
-    int16_t Row3 = BB_EXTRACT_ROW_PATTERN(3);
+    TConfig Row3 = BB_EXTRACT_ROW_PATTERN(3);
     value += pR4[Row3];
-
-    int16_t Row4 = BB_EXTRACT_ROW_PATTERN(4);
-    value += pR4[Row4];
-    int16_t Row5 = BB_EXTRACT_ROW_PATTERN(5);
-    value += pR3[Row5];
-    int16_t Row6 = BB_EXTRACT_ROW_PATTERN(6);
-    value += pR2[Row6];
-    int16_t Row7 = BB_EXTRACT_ROW_PATTERN(7);
-    value += pR1[Row7];
-#undef BB_EXTRACT_ROW_PATTERN
-
-	if (iDebugEval>1)
-		printf("Straight lines done. Value so far: %d.\n",value>>16);
-
-	// Triangle patterns in corners
     value += ValueTrianglePatternsJ(pcoeffs, Row0, Row1, Row2, Row3);
+    TConfig valueEdge = ValueEdgePatternsJ(pcoeffs, Row0, Row1);
+
+    TConfig Row4 = BB_EXTRACT_ROW_PATTERN(4);
+    value += pR4[Row4];
+    TConfig Row5 = BB_EXTRACT_ROW_PATTERN(5);
+    value += pR3[Row5];
+    TConfig Row6 = BB_EXTRACT_ROW_PATTERN(6);
+    value += pR2[Row6];
+    TConfig Row7 = BB_EXTRACT_ROW_PATTERN(7);
+    value += pR1[Row7];
     value += ValueTrianglePatternsJ(pcoeffs, Row7, Row6, Row5, Row4);
+    valueEdge += ValueEdgePatternsJ(pcoeffs, Row7, Row6);
+#undef BB_EXTRACT_ROW_PATTERN
+    
+    uint64_t flippedMover = diagonal_flip(mover);
+    uint64_t flippedEmpty = diagonal_flip(empty);
+
+#define BB_EXTRACT_FLIPPED_ROW_PATTERN(ROW) \
+    base2ToBase3Table[(flippedEmpty >> (8 * (ROW))) & 0xff] + \
+    base2ToBase3Table[(flippedMover >> (8 * (ROW))) & 0xff] * 2
+	
+    TConfig Column0 = BB_EXTRACT_FLIPPED_ROW_PATTERN(0);
+    value += pR1[Column0];
+    TConfig Column1 = BB_EXTRACT_FLIPPED_ROW_PATTERN(1);
+    value += pR2[Column1];
+    valueEdge += ValueEdgePatternsJ(pcoeffs, Column0, Column1);
+    TConfig Column6 = BB_EXTRACT_FLIPPED_ROW_PATTERN(6);
+    value += pR2[Column6];
+    TConfig Column7 = BB_EXTRACT_FLIPPED_ROW_PATTERN(7);
+    value += pR1[Column7];
+    valueEdge += ValueEdgePatternsJ(pcoeffs, Column7, Column6);
+    value += pR3[BB_EXTRACT_FLIPPED_ROW_PATTERN(2)];
+    value += pR3[BB_EXTRACT_FLIPPED_ROW_PATTERN(5)];
+    value += pR4[BB_EXTRACT_FLIPPED_ROW_PATTERN(3)];
+    value += pR4[BB_EXTRACT_FLIPPED_ROW_PATTERN(4)];
+#undef BB_EXTRACT_FLIPPED_ROW_PATTERN
+
 
 	if (iDebugEval>1)
-		printf("Corners done. Value so far: %d.\n",value);
+		printf("Straight lines and corners done. Value so far: %d.\n",value>>16);
 
 
 	// Take apart packed information about pot mobilities
@@ -498,10 +528,7 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 	if (iDebugEval>1)
 		printf("Potential mobility done. Value so far: %d.\n",value);
 
-    value += ValueEdgePatternsJ(pcoeffs, Row0, Row1);
-    value += ValueEdgePatternsJ(pcoeffs, Row7, Row6);
-    value += ValueEdgePatternsJ(pcoeffs, Column0, Column1);
-    value += ValueEdgePatternsJ(pcoeffs, Column7, Column6);
+    value += valueEdge;
 
 	if (iDebugEval>1)
 		printf("Edge patterns done. Value so far: %d.\n",value);

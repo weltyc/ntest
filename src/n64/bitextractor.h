@@ -40,8 +40,9 @@ These macros are highly useful for extracting columns or diagonals from bitboard
 
 The implementation relies on C++ template metaprogramming.
 
-In addition, a simple function - extract_row - that extracts rows from bitboards is included as
-well.
+The function - extract_second_diagonal - uses the reverse extraction technique
+for the second diagonal. The second diagonal (NESW) has a count of 8 and step
+of 7, and thus cannot be handled by the EXTRACT_BITS_U64.
 */
 
 #include <inttypes.h>
@@ -85,7 +86,8 @@ inline IntT extractor(IntT input) {
 #define EXTRACT_BITS_U32(value, START, COUNT, STEP) \
     extractor<uint32_t, (START), (COUNT), (STEP)>(value)
 
-inline unsigned extract_row(uint64_t v, int row) {
-    return (v >> (row * 8)) & 0xff;
+inline uint64_t extract_second_diagonal(uint64_t v) {
+    return ((v & meta_repeated_bit<uint64_t, 7, 8, 7>::value) *
+            meta_repeated_bit<uint64_t, 0, 8, 8>::value) >> 56;
 }
 #endif  // __BIT_EXTRACTOR_H
