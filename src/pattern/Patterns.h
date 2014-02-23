@@ -85,7 +85,7 @@ const int rowMovesTableSize=6561;
 //////////////////////////////////////////
 
 // size of unreverse table for various pattern sizes
-extern u2 base2ToBase3Table[256];
+extern uint32_t base2ToBase3Table[256];
 extern u2 base3ToBase2Table[6561];
 extern u2 *base3ToORIDTable[maxORIDPatternSize];
 extern u2 *base3ToCRIDTable[maxCRIDPatternSize];

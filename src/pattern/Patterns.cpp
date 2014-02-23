@@ -15,7 +15,7 @@
 // Compression from base 4 to base 3
 /////////////////////////////////////////////////////////////
 
-u2 base2ToBase3Table[256];
+uint32_t base2ToBase3Table[256];
 u2 base3ToBase2Table[6561];
 u2 *base3ToORIDTable[maxORIDPatternSize];
 u2 *oRIDToBase3Table[maxORIDPatternSize];
