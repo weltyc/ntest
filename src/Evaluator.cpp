@@ -17,6 +17,14 @@ using namespace std;
 // Evaluator base class
 //////////////////////////////////////////////////
 
+#if defined(__clang__)
+#define INLINE_HINT 
+#elif __GNUC__ >= 4
+#define INLINE_HINT inline __attribute__((always_inline)) 
+#else
+#define INLINE_HINT inline
+#endif
+
 class CEvaluatorList: public std::map<CEvaluatorInfo, CEvaluator*> {
 public:
 	~CEvaluatorList();
@@ -286,14 +294,14 @@ CEvaluator::~CEvaluator() {
 // only works with OLD_EVAL set to 1 (slower old version)
 const int iDebugEval=0;
 
-inline TCoeff ConfigValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
+INLINE_HINT TCoeff ConfigValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
 		printf("Config: %5u, Id: %5hu, Value: %4d\n", config, mapsJ[map].ConfigToID(u2(config)), value);
 	return value;
 }
 
-inline TCoeff PatternValue(TConfig configs[], const TCoeff* pcmove, int pattern, int map, int offset) {
+INLINE_HINT TCoeff PatternValue(TConfig configs[], const TCoeff* pcmove, int pattern, int map, int offset) {
 	TConfig config=configs[pattern];
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
@@ -302,7 +310,7 @@ inline TCoeff PatternValue(TConfig configs[], const TCoeff* pcmove, int pattern,
 	return value;
 }
 
-inline TCoeff ConfigPMValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
+INLINE_HINT TCoeff ConfigPMValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
 		printf("Config: %5u, Id: %5hu, Value: %4d (pms %2d, %2d)\n",
@@ -331,7 +339,7 @@ const int offsetJR1=0, sizeJR1=6561,
 	offsetJPAR=offsetJPMO+sizeJPMO, sizeJPAR=2;
 
 // value all the edge patterns. return the sum of the values.
-static inline TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
+static INLINE_HINT TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
     TConfig configXX;
 	u4 configs2x5;
 	TCoeff value;
@@ -350,7 +358,7 @@ static inline TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, T
 }
 
 // value all the triangle patterns. return the sum of the values.
-static inline TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2, TConfig config3, TConfig config4) {
+static INLINE_HINT TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2, TConfig config3, TConfig config4) {
 	u4 configsTriangle;
 	TCoeff value;
 
@@ -363,7 +371,7 @@ static inline TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig config
 	return value;
 }
 
-static inline uint64_t diagonal_flip(uint64_t v) {
+static INLINE_HINT uint64_t diagonal_flip(uint64_t v) {
     // flip 4-by-4 bits
     v = (v & 0xf0f0f0f00f0f0f0fULL)
         | ((v >> 28) & 0xf0f0f0f0ULL)

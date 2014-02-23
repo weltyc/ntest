@@ -49,8 +49,8 @@ public:
 
 	// statistics
 	u4 Hash() const;
-	int NEmpty() const;
-	int NMover() const;
+	int NEmpty() const { return bitCountInt(empty); }
+	int NMover() const { return bitCountInt(mover); }
 	void NDiscs(bool fBlackMove, int& nBlack, int& nWhite, int& nEmpty) const;
 	int TerminalValue() const;
 

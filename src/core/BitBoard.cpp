@@ -194,14 +194,6 @@ char* CBitBoard::GetSBoard(char sBoard[NN+1], bool fBlackMove) const {
 	return sBoard;
 }
 
-int CBitBoard::NEmpty() const {
-	return bitCountInt(empty);
-}
-
-int CBitBoard::NMover() const {
-	return bitCountInt(mover);
-}
-
 void CBitBoard::NDiscs(bool fBlackMove, int& nBlack, int& nWhite, int& nEmpty) const {
 	nEmpty=bitCountInt(empty);
 	if (fBlackMove) {
