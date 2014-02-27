@@ -4,9 +4,8 @@ project(ntest)
 
 if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
     set(Boost_USE_STATIC_LIBS ON)
-    find_package(Boost REQUIRED system thread)
-    add_definitions(-D_M_AMD64 -m64 -msse4 -O3 -flto -g3 -Wno-unused-result -Wno-deprecated)
-    set(CMAKE_CXX_LINK_FLAGS "-m64 -msse4 -O3 -flto -g3")
+    add_definitions(-D_M_AMD64 -m64 -msse4 -O3 -std=0x -g3 -Wno-unused-result -Wno-deprecated)
+    set(CMAKE_CXX_LINK_FLAGS "-m64 -msse4 -O3 -std=0x -g3")
 endif()
 
 if(MSVC)
