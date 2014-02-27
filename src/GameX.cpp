@@ -1,16 +1,12 @@
 // Copyright 2004 Chris Welty
 // All Rights Reserved
 
+#include <condition_variable>
 #include <deque>
+#include <functional>
+#include <mutex>
 #include <sstream>
-#ifdef _WIN32
-#include <windows.h>
-#else
-// Must have boost ...
-#include <boost/bind.hpp>
-#include <boost/thread/thread.hpp>
-#include <boost/thread/mutex.hpp>
-#endif
+#include <thread>
 
 #include "SmartBook.h"
 #include "GameX.h"
@@ -21,126 +17,46 @@
 
 //! Stored commands from NBoard.
 static std::deque<std::string> lines;
-//! This event is set when there is an input line available
 
-//!  A critical section handles access to a resource. Only one thread can own it at a time.
-class CriticalSection  {
-public:
-	CriticalSection(); 
-	~CriticalSection();
+std::mutex cs;
 
-	void Enter();
-	void Leave();
-private:
-#ifdef _WIN32
-	CRITICAL_SECTION m_cs;
-#else
-    boost::mutex m_cs;
-#endif
-} cs;
-
-//! Construct the critical section object
-CriticalSection::CriticalSection() {
-#ifdef _WIN32
- 	::InitializeCriticalSection(&m_cs);
-#endif
-}
-
-//! Destroy the critical section
-CriticalSection::~CriticalSection() {
-#ifdef _WIN32
-	::DeleteCriticalSection(&m_cs);
-#endif
-}
-
-//! Block until the critical section is available; then take control of it.
-void CriticalSection::Enter() {
-#ifdef _WIN32
-	::EnterCriticalSection(&m_cs);
-#else
-    m_cs.lock();
-#endif
-}
-
-//!  release control of the critical section
-void CriticalSection::Leave() {
-#ifdef _WIN32
-	::LeaveCriticalSection(&m_cs);
-#else
-    m_cs.unlock();
-#endif
-}
-
-//! A waitable windows event
-//!
-//! This is an unnamed windows event, so that other processes
-//! (e.g. multiple copies of ntest) can't affect the event.
+//! A waitable event
 class Event {
 public:
-	Event();
-	~Event();
+	Event() : val(false) {}
 
 	void Set();
 	void Reset();
 	void Wait();
 private:
-#ifdef _WIN32
-	HANDLE m_event;
-#else
-    boost::mutex guard;
-    boost::condition_variable cv;
+    std::mutex cvcs;
+    std::condition_variable cv;
     bool val;
     bool IsValSet() { return val; }
-#endif
 } eventInput;
-
-Event::Event() {
-#ifdef _WIN32
-	m_event=CreateEvent(NULL, true, false, NULL);
-#else
-    val = false;
-#endif
-}
-
-Event::~Event() {
-#ifdef _WIN32
-	CloseHandle(m_event);
-#endif
-}
 
 //! Set an event to true.
 void Event::Set() {
-#ifdef _WIN32
-	SetEvent(m_event);
-#else
     {
-        boost::mutex::scoped_lock s(guard);
+		std::unique_lock<std::mutex> guard(cvcs);
         val = true;
     }
     cv.notify_one();
-#endif
+
 }
 
 //! Set an event to false
 void Event::Reset() {
-#ifdef _WIN32
-	ResetEvent(m_event);
-#else
-    boost::mutex::scoped_lock s(guard);
-    val = false;
-#endif
+	std::unique_lock<std::mutex> guard(cvcs);
+	val = false;
 }
 
 //! Wait on an event (forever)
 void Event::Wait() {
-#ifdef _WIN32
-	WaitForSingleObject(m_event, INFINITE);
-#else
-    boost::mutex::scoped_lock s(guard);
+	std::unique_lock<std::mutex> guard(cvcs);
     while (!val) {
-        cv.wait(s, boost::bind(&Event::IsValSet, this));
+		cv.wait(guard, std::bind(&Event::IsValSet, this));
     }
-#endif
 }
 
 //! This function returns true if there is input waiting for the engine.
@@ -149,28 +65,22 @@ void Event::Wait() {
 //! It is currently used only when using an external viewer with GameX.
 //! \todo test to see if this slows down the search. If so need a faster mechanism.
 bool HasInput() {
-	cs.Enter();
+	std::unique_lock<std::mutex> guard(cs);
 	bool fHasInput=!lines.empty();
-	cs.Leave();
 	return fHasInput;
 }
 
 //! Add an input line to the deque, and set the eventInput if the deque was empty before
 static void AddStringToDeque(const std::string& s) {
-	cs.Enter();
+	std::unique_lock<std::mutex> guard(cs);
 	if (lines.empty()) {
 		eventInput.Set();
 	}
 	lines.push_back(s);
-	cs.Leave();
 }
 
 //! Thread's job: add things to the deque
-#ifdef _WIN32
-static DWORD WINAPI MoveCinToDeque(void*) {
-#else
 static void MoveCinToDeque() {
-#endif
 	std::string sLine;
 	while (getline(std::cin, sLine))
 		AddStringToDeque(sLine);
@@ -178,20 +88,16 @@ static void MoveCinToDeque() {
 	// last, post a quit message. Normally we get one from the viewer
 	// but sometimes it doesn't get a chance to before termination.
 	AddStringToDeque("quit");
-#ifdef _WIN32
-	return 0;
-#endif
 }
 
 //! Get a line of input from the thread that's parsing lines for us.
 static bool GetLineFromThread(std::string& sLine) {
 	eventInput.Wait();
-	cs.Enter();
+	std::unique_lock<std::mutex> guard(cs);
 	sLine=lines.front();
 	lines.pop_front();
 	if (lines.empty())
 		eventInput.Reset();
-	cs.Leave();
 	return true;
 }
 
@@ -211,15 +117,9 @@ CGameX::CGameX(CComputerDefaults cd) {
 	Initialize("8");
 
 	// start up the thread that will give us messages
-#ifdef _WIN32
-	DWORD threadId;
-	CreateThread(NULL, 0, MoveCinToDeque, NULL, 0, &threadId);
-#else
-    boost::thread cinthread(MoveCinToDeque);
-#endif
+    std::thread cinthread(MoveCinToDeque);
 
 	std::string sLine;
-//	while (getline(std::cin,sLine)) {
 	while (GetLineFromThread(sLine)) {
 		// save value of GameOver so that we know whether to learn the game
 		const bool fGameWasOver=GameOver();
@@ -271,6 +171,12 @@ CGameX::CGameX(CComputerDefaults cd) {
 			std::cout << "pong " << n << std::endl;
 		}
 		else if (sCommand=="quit") {
+			// We can't really kill a thread which blocks on stdio.
+#ifdef _WIN32
+			_exit(0);
+#else
+			exit(0);
+#endif
 			break;
 		}
 		else if (sCommand=="remove_tree") {
