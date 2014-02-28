@@ -202,8 +202,8 @@ uint64_t colmask;
 uint64_t colmult;
 uint64_t d7mask;
 uint64_t d7mult;
-uint8_t d9b;
-uint8_t d7b;
+uint32_t d9b;
+uint32_t d7b;
 };
 
 static struct magicFlip flipArray[64] = {

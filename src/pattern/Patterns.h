@@ -76,8 +76,8 @@ u4 TritsToConfig(int* trits, int length);
 void InitConfigToPotMob();
 void CleanConfigToPotMob();
 
-extern u1 *configToPotMob[2][9];
-extern u1 *configToPotMobTriangle[2];
+extern uint32_t *configToPotMob[2][9];
+extern uint32_t *configToPotMobTriangle[2];
 const int rowMovesTableSize=6561;
 
 //////////////////////////////////////////
