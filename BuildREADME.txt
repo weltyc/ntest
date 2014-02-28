@@ -11,8 +11,7 @@ c) CMake, from http://www.cmake.org , version 2.8.12 or newer. When you install 
 Linux:
 
 a) gcc and g++, version 4.7 or newer, capable of building x86-64 (aka amd64) binaries.
-b) boost C++ libraries, version 1.50 or newer
-c) cmake
+b) cmake
 
 --------
 Building
