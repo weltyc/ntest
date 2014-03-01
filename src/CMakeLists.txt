@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.5)
 
 project(ntest)
 
-if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
     add_definitions(-D_M_AMD64 -m64 -msse4 -O3 -std=c++0x -g3 -Wno-unused-result -Wno-deprecated)
     set(CMAKE_CXX_LINK_FLAGS "-m64 -msse4 -O3 -std=c++0x -g3")
 endif()
@@ -34,3 +34,14 @@ add_executable(randomEvalGen randomEvalGen.cpp)
 target_link_libraries(randomEvalGen mainlib core game patterns odk n64)
 
 add_test(ntest_basic ntest o)
+
+if(${UNIX})
+    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/coefficients"
+                 "${CMAKE_BINARY_DIR}")
+    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/TestGames.ggf"
+                 "${CMAKE_BINARY_DIR}")
+    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource"
+                 "${CMAKE_BINARY_DIR}")
+    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/parameters.txt"
+                 "${CMAKE_BINARY_DIR}")
+endif()
