@@ -34,4 +34,7 @@ add_executable(randomEvalGen randomEvalGen.cpp)
 target_link_libraries(randomEvalGen mainlib core game patterns odk n64)
 
 add_test(ntest_basic ntest o)
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
