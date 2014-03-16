@@ -189,8 +189,7 @@ inline int rowFlipIndex(int row, int col, u64 mover, u64 enemy) {
     const int shift = row<<3;
     const u64 enemy256 = (enemy>>shift)&0xFF;
     const int out = outsides[col][enemy256];
-    const u64 mover256 = (mover>>shift)&0xFF;
-    const int flipIndex = insides[col][mover256&out];
+    const int flipIndex = insides[col][(mover>>shift)&out];
     return flipIndex;
 }
 
