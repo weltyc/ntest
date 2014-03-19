@@ -451,8 +451,8 @@ char* CMap::ConfigToString(u2 config) const {
 // potential mobility calculations
 //////////////////////////////////////////
 
-u1 *configToPotMob[2][9];
-u1 *configToPotMobTriangle[2];
+uint32_t *configToPotMob[2][9];
+uint32_t *configToPotMobTriangle[2];
 
 void InitJCoeffStarts() {
 	int map;
@@ -509,7 +509,7 @@ void InitConfigToPotMob() {
 		// fill configToPotMob[0] with black mobility and configToPotMob[1] with white mobility
 		for (length=3, nConfigs=27; length<=N; length++, nConfigs*=3) {
 			for (color=0; color<2; color++) {
-				configToPotMob[color][length]=new u1[nConfigs];
+				configToPotMob[color][length]=new uint32_t[nConfigs];
 				CHECKNEW(configToPotMob[color][length]!=0);
 			}
 			for (config=0; config<nConfigs; config++) {
@@ -527,8 +527,8 @@ void InitConfigToPotMob() {
 
 		// fill configToPotMobTriangle with potential mobilities for G-corner patterns
 		nConfigs=mapsJ[8].NConfigs();
-		configToPotMobTriangle[0]=new u1[nConfigs];
-		configToPotMobTriangle[1]=new u1[nConfigs];
+		configToPotMobTriangle[0]=new uint32_t[nConfigs];
+		configToPotMobTriangle[1]=new uint32_t[nConfigs];
 		CHECKNEW(configToPotMobTriangle[0] && configToPotMobTriangle[1]);
 		for (config=0; config<nConfigs; config++) {
 			subconfig=D4Subconfig(config);

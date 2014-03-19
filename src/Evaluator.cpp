@@ -120,7 +120,7 @@ static void ConvertFile(FILE*& fp, std::string fn, int& iVersion, u4& fParams) {
 CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 	int map,  iFile, coeffStart, packedCoeff;
 	int nIDs, nConfigs, id, config, cid;
-	u2 configpm1, configpm2, mapsize;
+	uint32_t configpm1, configpm2, mapsize;
 	bool fHasPotMobs;
 	float* rawCoeffs=0;	//!< for use with raw (float) coeffs
 	i2* i2Coeffs=0;		//!< for use with converted (packed) coeffs
@@ -347,10 +347,10 @@ static INLINE_HINT TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig confi
 	value=0;
 
     configs2x5=row1To2x5[config1]+row2To2x5[config2];
-	configXX=config1+(config1<<1)+row2ToXX[config2];
+	configXX=config1 * 3 +row2ToXX[config2];
 	value+=ConfigValue(pcmove, configs2x5&0xFFFF, C2x5J, offsetJC5);
 	value+=ConfigValue(pcmove, configs2x5>>16,    C2x5J, offsetJC5);
-	value+=ConfigValue(pcmove, config1+(config1<<1)+row2ToXX[config2],CR1XXJ, offsetJEX);
+	value+=ConfigValue(pcmove, config1 * 3 +row2ToXX[config2],CR1XXJ, offsetJEX);
 
 	// in J-configs, the values are multiplied by 65536
 	//assert((value&0xFFFF)==0);
@@ -417,7 +417,7 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
     // Type B diagonals run NESW, with a bit step of 7.
     // Diag 8A and 8B
     value += pD8[BB_EXTRACT_STEP_PATTERN(0, 8, 9)];
-    int32_t Diag8B =
+    uint32_t Diag8B =
         base2ToBase3Table[extract_second_diagonal(empty)] +
         base2ToBase3Table[extract_second_diagonal(mover)] * 2;
     value += pD8[Diag8B]; 
@@ -450,11 +450,11 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
     value += pD5[Diag5A2];
 
 
-    int32_t Diag5B1 =  
+    uint64_t Diag5B1 =  
          ((((empty & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57) +
          2 * ((((mover & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57);
     value += pD5[Diag5B1];
-    int32_t Diag5B2 = 
+    uint64_t Diag5B2 = 
          ((((empty & meta_repeated_bit<uint64_t, 31, 5, 7>::value) >> 27) * 0x20c49ba2000000) >> 57) +
          2 * ((((mover & meta_repeated_bit<uint64_t, 31, 5, 7>::value) >> 27) * 0x20c49ba2000000) >> 57);
     value += pD5[Diag5B2];
@@ -521,8 +521,8 @@ static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoef
 
 
 	// Take apart packed information about pot mobilities
-	int nPMO=(value>>8) & 0xFF;
-	int nPMP=value&0xFF;
+	unsigned nPMO=(value>>8) & 0xFF;
+	unsigned nPMP=value&0xFF;
 	if (iDebugEval>1)
 		printf("Raw pot mobs: %d, %d\n", nPMO,nPMP);
 	nPMO=(nPMO+potMobAdd)>>potMobShift;
