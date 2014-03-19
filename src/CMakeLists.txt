@@ -27,8 +27,8 @@ add_library(mainlib GameX.cpp Evaluator.cpp EvalTest.cpp MPCCalc.cpp NtestStream
 
 add_executable(ntest main.cpp)
 target_link_libraries(ntest mainlib core game patterns odk n64)
-if(MSVC)
-    target_link_libraries(ntest WSock32)
+if(MSVC OR ${NTEST_MINGW_BUILD})
+    target_link_libraries(ntest wsock32)
 endif(MSVC)
 
 add_executable(randomEvalGen randomEvalGen.cpp)
