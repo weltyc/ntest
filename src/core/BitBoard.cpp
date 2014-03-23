@@ -6,7 +6,10 @@
 // board source code
 
 #include <cstring>
-#ifdef _WIN32
+#if __GNUC__ >= 4 && defined(__x86_64__)
+#include <xmmintrin.h>
+#include <smmintrin.h>
+#elif defined(_WIN32)
 #include <nmmintrin.h>
 #endif
 
@@ -80,7 +83,7 @@ bool CBitBoard::Read(FILE* fp) {
 }
 
 u4 CBitBoard::Hash() const {
-#ifdef _WIN32
+#if (__GNUC__ >= 4 && defined(__x86_64__)) || defined(_WIN32)
 	uint64_t crc = _mm_crc32_u64(0, empty);
 	return static_cast<u4>(_mm_crc32_u64(crc, mover));
 #else

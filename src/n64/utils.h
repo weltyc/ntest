@@ -60,7 +60,9 @@ inline u64 bitCount(u64 bits) {
 }
 
 inline void storeLowBitIndex(unsigned long& result, u64 bits) {
-#ifdef _WIN32
+#if __GNUC__ >= 4
+    result = bits? __builtin_ctzll(bits) : 0;
+#elif defined(_WIN32)
 #ifdef _M_AMD64
 	_BitScanForward64(&result, bits);
 #else 
@@ -69,8 +71,6 @@ inline void storeLowBitIndex(unsigned long& result, u64 bits) {
 		result+=32;
 	}
 #endif
-#elif __GNUC__ >= 4
-    result = bits? __builtin_ctzll(bits) : 0;
 #else
 #error "Unknown compiler"
 #endif
