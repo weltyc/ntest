@@ -6,6 +6,9 @@
 // board source code
 
 #include <cstring>
+#ifdef _WIN32
+#include <nmmintrin.h>
+#endif
 
 #include "BitBoard.h"
 #include "Moves.h"
@@ -77,6 +80,10 @@ bool CBitBoard::Read(FILE* fp) {
 }
 
 u4 CBitBoard::Hash() const {
+#ifdef _WIN32
+	uint64_t crc = _mm_crc32_u64(0, empty);
+	return static_cast<u4>(_mm_crc32_u64(crc, mover));
+#else
 	u4 a,b,c,d;
 	a=u4(empty);
 	b=u4(empty>>32);
@@ -84,6 +91,7 @@ u4 CBitBoard::Hash() const {
 	d=u4(mover>>32);
 	bobLookup(a,b,c,d);
 	return d;
+#endif
 }
 
 CBitBoard CBitBoard::Symmetry(int sym) const {

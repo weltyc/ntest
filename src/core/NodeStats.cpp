@@ -97,7 +97,7 @@ void CNodeStats::OutShort(ostream& os) const {
 		os << int(nNodes*1e-9) << "G";
 	os << "n/";
 	std::streamsize precision=os.precision(3);
-	_Ios_Fmtflags flags=os.setf(ios::fixed, ios::floatfield);
+	auto flags=os.setf(ios::fixed, ios::floatfield);
 	int knps=int(nNodes/t*1E-3);
 	os << t << "s = " << std::setw(4) << knps << "kn/s; ";
 	double dUspn=t/nNodes*1e6;
