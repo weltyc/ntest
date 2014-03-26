@@ -9,6 +9,13 @@
 #ifndef __CORE_BITBOARD_H
 #define __CORE_BITBOARD_H
 
+#if __GNUC__ >= 4 && defined(__x86_64__)
+#include <xmmintrin.h>
+#include <smmintrin.h>
+#elif defined(_WIN32)
+#include <nmmintrin.h>
+#endif
+
 #include <cassert>
 #include <stdio.h>
 #include "../n64/utils.h"
@@ -48,7 +55,21 @@ public:
 	char* GetSBoard(char sBoard[NN+1], bool fBlackMove) const;
 
 	// statistics
-	u4 Hash() const;
+	u4 Hash() const {
+#if (__GNUC__ >= 4 && defined(__x86_64__)) || defined(_WIN32)
+		uint64_t crc = _mm_crc32_u64(0, empty);
+		return static_cast<u4>(_mm_crc32_u64(crc, mover));
+#else
+		u4 a, b, c, d;
+		a = u4(empty);
+		b = u4(empty >> 32);
+		c = u4(mover);
+		d = u4(mover >> 32);
+		bobLookup(a, b, c, d);
+		return d;
+#endif
+	}
+
 	int NEmpty() const { return bitCountInt(empty); }
 	int NMover() const { return bitCountInt(mover); }
 	void NDiscs(bool fBlackMove, int& nBlack, int& nWhite, int& nEmpty) const;

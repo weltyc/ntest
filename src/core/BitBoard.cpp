@@ -6,12 +6,6 @@
 // board source code
 
 #include <cstring>
-#if __GNUC__ >= 4 && defined(__x86_64__)
-#include <xmmintrin.h>
-#include <smmintrin.h>
-#elif defined(_WIN32)
-#include <nmmintrin.h>
-#endif
 
 #include "BitBoard.h"
 #include "Moves.h"
@@ -80,21 +74,6 @@ bool CBitBoard::Write(FILE* fp) const {
 
 bool CBitBoard::Read(FILE* fp) {
 	return fread(&mover,sizeof(mover),1,fp)  && fread(&empty,sizeof(empty),1,fp);
-}
-
-u4 CBitBoard::Hash() const {
-#if (__GNUC__ >= 4 && defined(__x86_64__)) || defined(_WIN32)
-	uint64_t crc = _mm_crc32_u64(0, empty);
-	return static_cast<u4>(_mm_crc32_u64(crc, mover));
-#else
-	u4 a,b,c,d;
-	a=u4(empty);
-	b=u4(empty>>32);
-	c=u4(mover);
-	d=u4(mover>>32);
-	bobLookup(a,b,c,d);
-	return d;
-#endif
 }
 
 CBitBoard CBitBoard::Symmetry(int sym) const {
