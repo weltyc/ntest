@@ -553,7 +553,7 @@ CValue ChildValue(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune)
 	else {
 		CMoves moves;
 		int pass;
-
+		cache->Prefetch(pos2.GetBB().Hash());
 		pass=pos2.CalcMovesAndPassBB(moves);
 
 		switch(pass) {
