@@ -279,6 +279,7 @@ private:
 
 	void Read();
 	void ReadErr();
+    void ReadAndCheckHash(Reader& in);
 	void ReadVersion1(Reader& in);
 	void ReadVersion2(Reader& in);
 	void ReadTree2(Reader& in, const CMinimalReflection& mr);
