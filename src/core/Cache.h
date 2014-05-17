@@ -100,6 +100,7 @@ public:
 		hash &= nBuckets - 1;
 		_mm_prefetch(reinterpret_cast<const char *>(buckets + hash), _MM_HINT_NTA);
 #elif __GNUC__ >=4 
+		hash &= nBuckets - 1;
 		__builtin_prefetch(reinterpret_cast<const char *>(buckets + hash), 0, 0);
 #endif
 	}
