@@ -23,10 +23,10 @@ class Address:
 
     def is_stack_based(self):
         if self.reg1 is not None:
-            if self.reg1 == "%rsp" or self.reg1 == "%rbp":
+            if self.reg1 == "%rsp":
                 return True
         if self.reg2 is not None:
-            if self.reg2 == "%rsp" or self.reg2 == "%rbp":
+            if self.reg2 == "%rsp":
                 return True
         return False
 class Parameter:

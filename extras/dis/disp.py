@@ -14,8 +14,12 @@ DISASSEMBLER = ["objdump", "-d", "-C",  "--no-show-raw-insn"]
 
 FUNC_START_RE = re.compile("\s*[0-9a-f]+\s+<(.*)>:")
 
-def ProcessFuncLines(func, lines):
+def ProcessFuncLines(func, lines, show_dis):
     print(func)
+    if show_dis:
+        for line in lines:
+            print(line)
+        print()
     line_errors = 0
     branches = 0
     stores = 0
@@ -64,7 +68,17 @@ def ProcessFuncLines(func, lines):
                 stack_stores += 1
             elif insn.opcode == "lea":
                 alu_ops += 1
-            elif insn.opcode in ["and", "or", "xor", "shr", "shl", "sar", "add", "sub", "test", "not"]:
+            elif insn.opcode == "test":
+                alu_ops += 1
+                assert len(insn.params) == 2
+                for p in insn.params:
+                    if p.addr is not None:
+                        total_count += 1
+                        if p.addr.is_stack_based():
+                            stack_loads += 1
+                        else:
+                            loads += 1
+            elif insn.opcode in ["and", "or", "xor", "shr", "shl", "sar", "add", "sub", "not"]:
                 alu_ops += 1
                 if len(insn.params) == 1:
                     assert insn.params[0].addr is None
@@ -101,7 +115,7 @@ def ProcessFuncLines(func, lines):
     if len(unhandled_opcodes) > 0:
         print("WARNING: there are unhandled opcodes:", " ".join(unhandled_opcodes), file=sys.stderr)
 
-def HandleFunction(filename, funcname):
+def HandleFunction(filename, funcname, show_dis):
     dis_subproc = subprocess.Popen(DISASSEMBLER + [filename], stdout = subprocess.PIPE, stderr = None)
     last_func = None
     good_lines = []
@@ -112,7 +126,7 @@ def HandleFunction(filename, funcname):
         if match is not None:
             line_func_name = match.group(1)
             if last_func is not None:
-                ProcessFuncLines(last_func, good_lines)
+                ProcessFuncLines(last_func, good_lines, show_dis)
             good_lines = []
             if line_func_name.startswith(funcname + "("):
                 last_func = line_func_name
@@ -132,8 +146,9 @@ def main():
     parser = argparse.ArgumentParser("Disassembly inspector")
     parser.add_argument("filename")
     parser.add_argument("funcname")
+    parser.add_argument("-d", "--dis", action="store_true", default=False)
     args = parser.parse_args()
-    HandleFunction(args.filename, args.funcname)
+    HandleFunction(args.filename, args.funcname, args.dis)
 
 if __name__ == "__main__":
     main()
