@@ -1,0 +1,9 @@
+To be able to run the disp tool, you need yapps2, a LL(1) parser generator.
+
+Run:
+
+yapps basic_asm.g
+
+which will produce basic_asm.py
+
+Then you can run ./disp.py <binary file> function_name
