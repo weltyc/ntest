@@ -32,6 +32,7 @@ def ProcessFuncLines(func, lines, show_dis):
     popcnts = 0
     total_count = 0
     unhandled_opcodes = set()
+    opcode_count = {}
     for line in lines:
         if line != "": 
             insn = basic_asm.parse('instruction', line)
@@ -106,12 +107,20 @@ def ProcessFuncLines(func, lines, show_dis):
             else:
                 unhandled_opcodes.add(insn.opcode)
             total_count += 1
+            if insn.opcode not in opcode_count:
+                opcode_count[insn.opcode] = 1
+            else:
+                opcode_count[insn.opcode] += 1
+
     for header in ["Total", "Branches", "stores", "st stores", "loads", "st loads", "moves", "alu", "mult", "popcnt"]:
         print("%10s" % header, end=" ")
     print()
     for count in [total_count, branches, stores, stack_stores, loads, stack_loads, moves, alu_ops, mults, popcnts]:
         print("%10d" % count, end=" ")
     print()
+    print()
+    for opcode in sorted(opcode_count):
+        print("%7s %5d" % (opcode, opcode_count[opcode]))
     if len(unhandled_opcodes) > 0:
         print("WARNING: there are unhandled opcodes:", " ".join(unhandled_opcodes), file=sys.stderr)
 
