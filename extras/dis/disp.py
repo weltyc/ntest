@@ -37,12 +37,36 @@ def ProcessFuncLines(func, lines, show_dis):
         if line != "": 
             insn = basic_asm.parse('instruction', line)
             if insn is None:
-                print >> sys.stderr, "Parse error for ", line
+                print("Parse error for ", line, file=sys.stderr)
                 line_errors += 1
+                continue
             if insn.opcode.startswith("nop") or insn.opcode == "retq":
                 continue
             elif insn.opcode in [ "jmp", "jne", "jnz", "ja", "jb", "je", "jmpq", "callq"]:
                 branches += 1
+            elif insn.opcode in ["and", "or", "xor", "shr", "shl", "sar", "add", "sub", "not", "inc", "dec", "movzbl", "movzwl"]:
+                alu_ops += 1
+                if len(insn.params) == 1:
+                    assert insn.params[0].addr is None
+                elif len(insn.params) == 2:
+                    p1 = insn.params[0] 
+                    p2 = insn.params[1]
+                    if p1.addr is not None:
+                        assert p2.addr is None
+                        total_count += 1
+                        if p1.addr.is_stack_based():
+                            stack_loads += 1
+                        else:
+                            loads += 1
+                    elif p2.addr is not None:
+                        assert p1.addr is None
+                        total_count += 2
+                        if p2.addr.is_stack_based():
+                            stack_stores += 1
+                            stack_loads += 1
+                        else:
+                            stores += 1
+                            loads += 1
             elif insn.opcode.startswith("mov"):
                 assert len(insn.params) == 2
                 p1 = insn.params[0] 
@@ -79,27 +103,6 @@ def ProcessFuncLines(func, lines, show_dis):
                             stack_loads += 1
                         else:
                             loads += 1
-            elif insn.opcode in ["and", "or", "xor", "shr", "shl", "sar", "add", "sub", "not"]:
-                alu_ops += 1
-                if len(insn.params) == 1:
-                    assert insn.params[0].addr is None
-                elif len(insn.params) == 2:
-                    p1 = insn.params[0] 
-                    p2 = insn.params[1]
-                    if p1.addr is not None:
-                        assert p2.addr is None
-                        total_count += 1
-                        if p1.addr.is_stack_based():
-                            stack_loads += 1
-                        else:
-                            loads += 1
-                    elif p2.addr is not None:
-                        assert p1.addr is None
-                        total_count += 1
-                        if p2.addr.is_stack_based():
-                            stack_stores += 1
-                        else:
-                            stores += 1
             elif insn.opcode == "popcnt":
                 popcnts += 1
             elif insn.opcode in ["mul", "imul"]:
@@ -148,7 +151,7 @@ def HandleFunction(filename, funcname, show_dis):
 
     exit_code = dis_subproc.wait()
     if exit_code != 0:
-        print >> sys.stderr, "Disassembler command failed with code", exit_code
+        print("Disassembler command failed with code", exit_code, file=sys.stderr)
         sys.exit(1)
 
 def main():
