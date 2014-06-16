@@ -43,7 +43,7 @@ static std::string TempPath(const std::string& path) {
 	return std::string(fnTemp);
 #else
     char buff[] = "/tmp/tempbkXXXXX";
-    return std::string(mktemp(buff));
+    return std::string(tmpnam(buff));
 #endif
 
 }
