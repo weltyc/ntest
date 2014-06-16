@@ -166,7 +166,7 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 		for (iSubset=0; iSubset<nSubsets; iSubset++) {
 			// allocate memory for the black and white versions of the coefficients
 			coeffs[nSets]=new TCoeff[nCoeffsJ];
-			CHECKNEW(coeffs[nSets]);
+			CHECKNEW(coeffs[nSets] != NULL);
 
 			// put the coefficients in the proper place
 			for (map=0; map<nMapsJ; map++) {
@@ -275,7 +275,7 @@ CEvaluator::CEvaluator(const std::string& fnBase, int nFiles) {
 }
 
 CEvaluator::~CEvaluator() {
-	int color, set;
+	int set;
 
 	// delete the coeffs array
 	for (set=0; set<nSets; set++) {
@@ -320,23 +320,23 @@ INLINE_HINT TCoeff ConfigPMValue(const TCoeff* pcmove, TConfig config, int map, 
 
 
 // offsetJs for coefficients
-const int offsetJR1=0, sizeJR1=6561,
-	offsetJR2=offsetJR1+sizeJR1, sizeJR2=6561,
-	offsetJR3=offsetJR2+sizeJR2, sizeJR3=6561,
-	offsetJR4=offsetJR3+sizeJR3, sizeJR4=6561,
-	offsetJD8=offsetJR4+sizeJR4, sizeJD8=6561,
-	offsetJD7=offsetJD8+sizeJD8, sizeJD7=2187,
-	offsetJD6=offsetJD7+sizeJD7, sizeJD6= 729,
-	offsetJD5=offsetJD6+sizeJD6, sizeJD5= 243,
-	offsetJTriangle=offsetJD5+sizeJD5, sizeJTriangle=  9*6561,
-	offsetJC4=offsetJTriangle+sizeJTriangle, sizeJC4=6561,
-	offsetJC5=offsetJC4+sizeJC4, sizeJC5=6561*9,
-	offsetJEX=offsetJC5+sizeJC5, sizeJEX=6561*9,
-	offsetJMP=offsetJEX+sizeJEX, sizeJMP=64,
-	offsetJMO=offsetJMP+sizeJMP, sizeJMO=64,
-	offsetJPMP=offsetJMO+sizeJMO, sizeJPMP=64,
-	offsetJPMO=offsetJPMP+sizeJPMP, sizeJPMO=64,
-	offsetJPAR=offsetJPMO+sizeJPMO, sizeJPAR=2;
+const int offsetJR1 = 0, sizeJR1 = 6561,
+offsetJR2 = offsetJR1 + sizeJR1, sizeJR2 = 6561,
+offsetJR3 = offsetJR2 + sizeJR2, sizeJR3 = 6561,
+offsetJR4 = offsetJR3 + sizeJR3, sizeJR4 = 6561,
+offsetJD8 = offsetJR4 + sizeJR4, sizeJD8 = 6561,
+offsetJD7 = offsetJD8 + sizeJD8, sizeJD7 = 2187,
+offsetJD6 = offsetJD7 + sizeJD7, sizeJD6 = 729,
+offsetJD5 = offsetJD6 + sizeJD6, sizeJD5 = 243,
+offsetJTriangle = offsetJD5 + sizeJD5, sizeJTriangle = 9 * 6561,
+offsetJC4 = offsetJTriangle + sizeJTriangle, sizeJC4 = 6561,
+offsetJC5 = offsetJC4 + sizeJC4, sizeJC5 = 6561 * 9,
+offsetJEX = offsetJC5 + sizeJC5, sizeJEX = 6561 * 9,
+offsetJMP = offsetJEX + sizeJEX, sizeJMP = 64,
+offsetJMO = offsetJMP + sizeJMP, sizeJMO = 64,
+offsetJPMP = offsetJMO + sizeJMO, sizeJPMP = 64,
+offsetJPMO = offsetJPMP + sizeJPMP, sizeJPMO = 64,
+offsetJPAR = offsetJPMO + sizeJPMO; // sizeJPAR = 2;
 
 // value all the edge patterns. return the sum of the values.
 static INLINE_HINT TCoeff ValueEdgePatternsJ(const TCoeff* pcmove, TConfig config1, TConfig config2) {
@@ -386,7 +386,7 @@ static INLINE_HINT uint64_t diagonal_flip(uint64_t v) {
         | ((v & 0x5500550055005500ULL) >> 7);
 }
 
-static CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs, u4 nMovesPlayer, u4 nMovesOpponent) {
+static INLINE_HINT CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs, u4 nMovesPlayer, u4 nMovesOpponent) {
 	TCoeff value = 0;
 
 	if (iDebugEval>1) {
