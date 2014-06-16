@@ -25,9 +25,6 @@ int hSolveNoParity=6;
 extern int hNegascout;
 
 // debugging constants
-const bool fCNAPrintEvents = false;
-const bool fCNAPrintTree = false;
-const bool fCNAPrintPositions = false;
 extern int nEmptyCNAPrint;
 extern bool fPrintWLD;
 const bool fPrintBookReads=false;
@@ -49,7 +46,6 @@ bool ValueMove(Pos2& pos2, int height, int hChild, CValue alpha, CValue beta, CM
 //////////////////////////////////
 
 const bool fCapturePositions=false;
-const int cpLeftShift=21;
 extern FILE* cpFile;
 extern int nCapturedPositions;
 int nCaptureWait=0;
