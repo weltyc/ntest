@@ -11,7 +11,7 @@ if (CMAKE_COMPILER_IS_GNUCC OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "$
     endif()
 endif()
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     add_definitions(-stdlib=libc++)
 	set(CMAKE_CXX_LINK_FLAGS "${CMAKE_CXX_LINK_FLAGS} -stdlib=libc++")
 endif()
