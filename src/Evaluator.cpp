@@ -1,4 +1,4 @@
-// Copyright Chris Welty
+// Copyright Chris Welty, Vlad Petric
 //	All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files
 // GPLv3.txt and License.txt in the instructions subdirectory for details.
@@ -371,22 +371,42 @@ static INLINE_HINT TCoeff ValueTrianglePatternsJ(const TCoeff* pcmove, TConfig c
 	return value;
 }
 
-static INLINE_HINT uint64_t diagonal_flip(uint64_t v) {
-    // flip 4-by-4 bits
-    v = (v & 0xf0f0f0f00f0f0f0fULL)
-        | ((v >> 28) & 0xf0f0f0f0ULL)
-        | ((v & 0xf0f0f0f0ULL) << 28);
-    // flip 2-by-2 bits
-    v = (v & 0xcccc3333cccc3333ULL)
-        | ((v & 0x0000cccc0000ccccULL) << 14)
-        | ((v & 0x3333000033330000ULL) >> 14);
-    // flip 1-by-1 bits
-    return (v & 0xaa55aa55aa55aa55ULL)
-        | ((v & 0x00aa00aa00aa00aaULL) << 7)
-        | ((v & 0x5500550055005500ULL) >> 7);
-}
-
 static INLINE_HINT CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlackMove, TCoeff *const pcoeffs, u4 nMovesPlayer, u4 nMovesOpponent) {
+// This function implements a linear pattern evaluator. 
+//
+// Most of the work is in extracting base-3 patterns such as rows, columns,
+// diagonals, and certain corner regions. These base-3 values index into the
+// pcoeffs array. The sum for the resulting pcoeffs values is the main
+// component of the static evaluation.
+//
+// The other three components of the static evaluation are:
+// * mobility (nMovesPlayer and nMovesOpponent are passed to this function)
+// * potential mobility (the potential mobility values are baked into the
+//   base-3 patterns, as the lower-order bits of the resulting value)
+// * parity
+// 
+// There are several strategies for extracting the patterns:
+// * For rows: shift, mask and conversion to base 3 via base2ToBase3Table
+//   table lookup - see  BB_EXTRACT_ROW_PATTERN macro
+// * For columns, diagonally flip the position and then use a strategy
+//   similar to the row one - see BB_EXTRACT_FLIPPED_ROW_PATTERN
+// * For most of the diagonals, the magic multiply trick (a.k.a. kindergarten
+//   bitboards or bit gather via multiplication) is used to gather the bits,
+//   then base2ToBase3Table converts to base 3.
+// * For some of the smaller diagonals, the bit gather operation can be
+//   combined directly with base 2-to-base 3 conversion, eliminating the need
+//   for a table lookup. The mechanism is described here:
+//   http://drpetric.blogspot.com/2014/03/bit-gathering-and-base-2-to-base-3.htm
+// * For corner regions, table lookups convert the row (or column) base 3
+//   patterns to their corner region formats.
+//
+// The layout of this function may seem "funky". The intent is to minimize the
+// number of overlapping live values, in order to reduce the number of
+// potential register spills onto the stack (amd64 a.k.a. x86_64 has only 15
+// GPRs). That is why we start with diagonals - we only need the diagonals for
+// their corresponding pattern values. The rows, on the other hand, are needed
+// for corner areas.
+// 
 	TCoeff value = 0;
 
 	if (iDebugEval>1) {
@@ -431,6 +451,14 @@ static INLINE_HINT CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlac
     value += pD6[BB_EXTRACT_STEP_PATTERN(5, 6, 7)];
     value += pD6[BB_EXTRACT_STEP_PATTERN(23, 6, 7)];
 
+    // The 0x2030486ca2f300 multiplier will perform the bit gather +
+    // base 3 conversion for the 6-long diagonal starting on bit 2, with
+    // a step of 9 bits (a.k.a. Diag 6A1).
+    // Similar multipliers can be determined for diagonals 6A2, 5A1 and 5A2.
+    // However, it is cheaper to reduce 6A2, 5A1 and 5A2 to 6A1 via a
+    // shift, rather than load a different constant every single time.
+    // The compiler reuses the constants quite effectively.
+
     uint64_t Diag6A1 =
         (((empty & meta_repeated_bit<uint64_t, 2, 6, 9>::value) * 0x2030486ca2f300) >> 55) +
         2 * (((mover & meta_repeated_bit<uint64_t, 2, 6, 9>::value) * 0x2030486ca2f300) >> 55);
@@ -449,7 +477,9 @@ static INLINE_HINT CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlac
          2 * ((((mover & meta_repeated_bit<uint64_t, 24, 5, 9>::value) >> 22) * 0x2030486ca2f300) >> 55);
     value += pD5[Diag5A2];
 
-
+    // The 0x20c49ba2000000 multiplier performs bit gather + base 3 conversion
+    // for the 5-long diagonal starting on bit 4, with a step of 7 bits 5(a.k.a.
+    // Diag5B1). Similarly, we reduce 5B2 to 5B1 via a shift.
     uint64_t Diag5B1 =  
          ((((empty & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57) +
          2 * ((((mover & meta_repeated_bit<uint64_t, 4, 5, 7>::value)) * 0x20c49ba2000000) >> 57);
@@ -492,8 +522,8 @@ static INLINE_HINT CValue ValueJMobs(const CBitBoard &bb, int nEmpty, bool fBlac
     valueEdge += ValueEdgePatternsJ(pcoeffs, Row7, Row6);
 #undef BB_EXTRACT_ROW_PATTERN
     
-    uint64_t flippedMover = diagonal_flip(mover);
-    uint64_t flippedEmpty = diagonal_flip(empty);
+    uint64_t flippedMover = flipDiagonal(mover);
+    uint64_t flippedEmpty = flipDiagonal(empty);
 
 #define BB_EXTRACT_FLIPPED_ROW_PATTERN(ROW) \
     base2ToBase3Table[(flippedEmpty >> (8 * (ROW))) & 0xff] + \

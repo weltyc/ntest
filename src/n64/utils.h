@@ -124,7 +124,21 @@ inline u64 flipVertical(u64 a) {
 }
 
 u64 flipHorizontal(u64 bits);
-u64 flipDiagonal(u64 bits);
+
+inline u64 flipDiagonal(u64 v) {
+    // flip 4-by-4 bits
+    v = (v & 0xf0f0f0f00f0f0f0fULL)
+        | ((v >> 28) & 0xf0f0f0f0ULL)
+        | ((v & 0xf0f0f0f0ULL) << 28);
+    // flip 2-by-2 bits
+    v = (v & 0xcccc3333cccc3333ULL)
+        | ((v & 0x0000cccc0000ccccULL) << 14)
+        | ((v & 0x3333000033330000ULL) >> 14);
+    // flip 1-by-1 bits
+    return (v & 0xaa55aa55aa55aa55ULL)
+        | ((v & 0x00aa00aa00aa00aaULL) << 7)
+        | ((v & 0x5500550055005500ULL) >> 7);
+}
 
 
 void printBitBoard(u64 bits);

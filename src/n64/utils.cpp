@@ -414,28 +414,6 @@ const u64 dflipmask2R=0x3333000033330000ULL;
 const u64 dflipmask1L=0x00AA00AA00AA00AAULL;
 const u64 dflipmask1R=0x5500550055005500ULL;
 
-u64 flipDiagonal(u64 bits) {
-	u64 templ, tempr;
-
-	templ=dflipmask4L&bits;
-	tempr=dflipmask4R&bits;
-	bits^=(templ|tempr);
-	bits|=(templ<<28)|(tempr>>28);
-
-	templ=dflipmask2L&bits;
-	tempr=dflipmask2R&bits;
-	bits^=(templ|tempr);
-	bits|=(templ<<14)|(tempr>>14);
-
-	templ=dflipmask1L&bits;
-	tempr=dflipmask1R&bits;
-	bits^=(templ|tempr);
-	bits|=(templ<<7)|(tempr>>7);
-
-	return bits;
-}
-
-
 
 // Copyright Chris Welty
 //	All Rights Reserved
