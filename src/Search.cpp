@@ -726,7 +726,7 @@ void ValueMulti(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune, u
 		std::cout << "\nmvsEvaluated: " << mvsEvaluated << "\nmvsLow" << mvsLow << "\n";
 
 	// prepare to return
-	nValued=mvsEvaluated.size();
+	nValued = static_cast<u4>(mvsEvaluated.size());
 	if (nValued<nBest && !abortRound) {
 		if (alpha>-kInfinity)
 			nValued=nBest;
