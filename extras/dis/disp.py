@@ -114,6 +114,10 @@ def ProcessFuncLines(func, lines, show_dis):
                 popcnts += 1
             elif insn.opcode in ["mul", "imul"]:
                 mults += 1
+            elif insn.opcode == "xchg" and len(insn.prefixes) == 0 and len(insn.params) == 2 and\
+                 insn.params[0].reg is not None and insn.params[1].reg is not None and\
+                 insn.params[0].reg == insn.params[1].reg:
+                continue   
             else:
                 unhandled_opcodes.add(insn.opcode)
             total_count += 1
@@ -123,10 +127,10 @@ def ProcessFuncLines(func, lines, show_dis):
                 opcode_count[insn.opcode] += 1
 
     for header in ["Total", "Branches", "stores", "st stores", "loads", "st loads", "moves", "alu", "mult", "popcnt"]:
-        print("%10s" % header, end=" ")
+        print("%9s" % header, end=" ")
     print()
     for count in [total_count, branches, stores, stack_stores, loads, stack_loads, moves, alu_ops, mults, popcnts]:
-        print("%10d" % count, end=" ")
+        print("%9d" % count, end=" ")
     print()
     print()
     for opcode in sorted(opcode_count):
