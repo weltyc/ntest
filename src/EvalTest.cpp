@@ -72,6 +72,6 @@ void GoldenValueEvalTest() {
         u64 enemyMoveBits = mobility(b.getEnemy(), b.mover);
         Pos2 pp;
         pp.Initialize(b, e.blackMove);
-        TEST(e.expectedEval == eval->EvalMobs(pp, bitCount(moveBits), bitCount(enemyMoveBits)));
+        TEST(e.expectedEval == eval->EvalMobs(pp, static_cast<u4>(bitCount(moveBits)), static_cast<u4>(bitCount(enemyMoveBits))));
     }
 }

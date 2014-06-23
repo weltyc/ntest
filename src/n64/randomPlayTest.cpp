@@ -124,7 +124,7 @@ void generateMoveMask(const CBitBoard bb, DirectionalMask *dm) {
 }
 
 CBitBoard performMove(const CBitBoard bb, const DirectionalMask &mask, uint64_t move) {
-    TEST(mask.ored_mask & move);
+    TEST((mask.ored_mask & move) != 0);
     TEST((move & (move - 1)) == 0);
     CBitBoard r = bb;
 

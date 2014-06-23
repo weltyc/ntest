@@ -42,7 +42,7 @@ void testOsGameResult() {
     const COsBoard board = game2.GetPos().board;
     const int result = board.Result();
     
-    assertEquals(-2., game2.Result().dResult);
+    assertEquals(-2.0, game2.Result().dResult, 0.001);
     std::ostringstream out;
     out << game2;
     assertTrue(strstr(out.str().c_str(), "RE[-2]")!=NULL);

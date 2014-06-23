@@ -155,7 +155,7 @@ void Pos2::FPrint(FILE* fp) const {
 }
 
 char* Pos2::GetText(char* sBoard) const {
-	int row,col,sq,item,pattern;
+	int row,col,sq,item;
 
     uint64_t black;
     if (this->BlackMove()) {

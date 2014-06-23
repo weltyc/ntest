@@ -62,10 +62,6 @@ string OutWithCommas(double n) {
 	return os.str();
 }
 
-#if defined(_WIN32) || defined(_LIBCPP_VERSION)
-#define _Ios_Fmtflags int
-#endif
-
 void CNodeStats::Out(ostream& os) const {
 	double seconds=Seconds();
 	double nodes=Nodes();
@@ -75,7 +71,7 @@ void CNodeStats::Out(ostream& os) const {
 	double epi = nInodes?nEvals/nInodes:0;
 
 	std::streamsize precision = os.precision();
-	_Ios_Fmtflags flags = os.setf(ios::fixed, ios::floatfield);
+	auto flags = os.setf(ios::fixed, ios::floatfield);
 
 	os << setw(12) << OutWithCommas(nodes).c_str() << " ";
 	os << setw(8) << setprecision(3) << seconds << "s = ";
@@ -101,7 +97,7 @@ void CNodeStats::OutShort(ostream& os) const {
 		os << int(nNodes*1e-9) << "G";
 	os << "n/";
 	std::streamsize precision=os.precision(3);
-	_Ios_Fmtflags flags=os.setf(ios::fixed, ios::floatfield);
+	auto flags=os.setf(ios::fixed, ios::floatfield);
 	int knps=int(nNodes/t*1E-3);
 	os << t << "s = " << std::setw(4) << knps << "kn/s; ";
 	double dUspn=t/nNodes*1e6;

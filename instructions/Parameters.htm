@@ -69,19 +69,25 @@
 					Option line</th><th>Default</th><th>Description</th></tr>
 			<tr>
 				<th>
-					BookWriteFormat #</th><td>2</td>
+					BookWriteFormat {#}</th><td>2</td>
 				<td>1: store in old uncompressed format.
 				<br> 2: store in compressed format</td>
 			</tr>
 			<tr>
-				<th>EdmundLevel #</th><td>1</td>
-				<td>Sets the default edmund level for redoing close games. See  <a href="Modes.htm">Modes</a>
-                    to understand Edmund levels.</td>
+				<th>EdmundLevel {#}</th><td>1</td>
+				<td>Edmund level for redoing close games. This is a sum of the following flags:<br/>
+					<ul>
+						<li> 1 Edmundize probable solve nodes </li>
+						<li> 2 Edmundize midgame nodes </li>
+						<li> 4 Edmundize draw nodes even if a draw has
+							already been played </li>
+					</ul>
+				</td>
 			</tr>
             <tr>
                 <th>DrawTreeLimit {draw} {deviation}</th>
                 <td>draw=3.00<br> deviation=3.50</td>
-                <td></td>
+                <td>Sets the maximum value of nodes that will be expanded in draw tree search mode.</td>
             </tr>
 		</table>
 	</BODY>

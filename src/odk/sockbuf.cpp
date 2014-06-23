@@ -37,7 +37,7 @@ sockbuf::sockbuf() {
 	fConnected=false;
 }
 
-sockbuf::~sockbuf() {
+sockbuf::~sockbuf() throw() {
 	if (fConnected)
 		disconnect();
 

@@ -17,7 +17,7 @@ void TemplateTestBitGather() {
             if (boardIndex & (1ULL << i))
                 rboard |= bit; // set it if also in boardIndex
         }
-        unsigned extractedBoardIndex = EXTRACT_BITS_U64(rboard, start, count, step);
+        unsigned extractedBoardIndex = static_cast<unsigned>(EXTRACT_BITS_U64(rboard, start, count, step));
         assertEquals(boardIndex, extractedBoardIndex);
     }
 }

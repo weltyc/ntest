@@ -16,7 +16,7 @@ int counts[8][256];
 *              1.....1.
 * If there is a mover disk in these spots, it will cause a flip.
 **/
-static int outsides[8][256];
+static uint8_t outsides[8][256];
 
 /**
 * insides[index][outsideBitPattern] is the disks that will be flipped if the mover had an outside disk in the given spots.
@@ -24,7 +24,7 @@ static int outsides[8][256];
 *   O.....O. , the inside (or flipped bit pattern) will be
 *   .**.**..
 */
-static int insides[8][256];
+static uint8_t insides[8][256];
 
 /**
 * rowFlips[row][insideBitPattern] is the bitboard containing the disks that will be flipped
@@ -189,8 +189,7 @@ inline int rowFlipIndex(int row, int col, u64 mover, u64 enemy) {
     const int shift = row<<3;
     const u64 enemy256 = (enemy>>shift)&0xFF;
     const int out = outsides[col][enemy256];
-    const u64 mover256 = (mover>>shift)&0xFF;
-    const int flipIndex = insides[col][mover256&out];
+    const int flipIndex = insides[col][(mover>>shift)&out];
     return flipIndex;
 }
 
@@ -202,8 +201,9 @@ uint64_t colmask;
 uint64_t colmult;
 uint64_t d7mask;
 uint64_t d7mult;
-uint8_t d9b;
-uint8_t d7b;
+uint32_t d9b;
+uint32_t d7b;
+uint64_t _;  // filler so that the structure has 64 bytes
 };
 
 static struct magicFlip flipArray[64] = {

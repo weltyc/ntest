@@ -1,9 +1,6 @@
 #include "stdafx.h"
 #include "hash.h"
 
-const bool debug = false;
-
-
 #if __GNUC__ >= 4
 inline u64 _byteswap_uint64(u64 a) {
     return __builtin_bswap64(a);

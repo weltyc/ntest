@@ -153,6 +153,10 @@ inline void ValueMerge(CValue& maxval, CValue newval) {
 	if (maxval<newval)
 		maxval=newval;
 }
+inline void ValueMerge(CValueCompact& maxval, CValue newval) {
+	if (maxval<newval)
+		maxval=newval;
+}
 
 // Merge - updates a node's values given a subnode value
 // inputs:
@@ -605,7 +609,7 @@ void CBook::WriteVersion1(Writer& out) {
 void CBook::ReadVersion1(Reader& in) {
 	CBitBoard board;
 	CBookData bd;
-	int nSize, nRead, nHashCheck;
+	int nSize, nRead;
 
 	if (!in.read(&nSize, sizeof(nSize), 1)) {
 		ReadErr();
@@ -624,11 +628,19 @@ void CBook::ReadVersion1(Reader& in) {
 	if (nRead!=nSize) {
 		ReadErr();
 	}
+    ReadAndCheckHash(in);
+}
+
+void CBook::ReadAndCheckHash(Reader& in) {
+    int nHashCheck;
 	if (!in.read(&nHashCheck, sizeof(nHashCheck), 1)) {
 		ReadErr();
 	}
 	m_nHashErr=nHashCheck-hash_a;
-	assert(m_nHashErr==0);
+    if (m_nHashErr !=0) {
+        std::cerr << "Book is corrupt, hash err = " << m_nHashErr << "\n";
+        exit(-1);
+    }
 }
 
 class CBookDataCompressed {
@@ -842,12 +854,8 @@ void CBook::ReadVersion2(Reader& in) {
 		ReadErr();
 	}
 
-	// check hash vs hash data element written at the end of the file
-	if (!in.read(&nHashCheck, sizeof(nHashCheck), 1)) {
-		ReadErr();
-	}
-	m_nHashErr=nHashCheck-hash_a;
-	assert(m_nHashErr==0);
+    // read and check hash
+    ReadAndCheckHash(in);
 
 	// Need to negamax the book to return data that was taken out by compression.
 	NegamaxAll();

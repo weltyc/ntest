@@ -17,7 +17,7 @@ ggsstream::ggsstream() : iostream(NULL) {
 	psockbuf=NULL;
 }
 
-ggsstream::~ggsstream() {
+ggsstream::~ggsstream() throw() {
 	if (IsLoggedIn())
 		Logout();
 	if (IsConnected())

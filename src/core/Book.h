@@ -45,7 +45,7 @@ std::istream& operator>>(std::istream& is, CBoni& boni);
 //! draws are scored as +100 for vMover and -100 for vOpponent.
 class CBookValue {
 public:
-	CValue vHeuristic, vMover, vOpponent;
+	CValueCompact vHeuristic, vMover, vOpponent;
 
     CBookValue() : vHeuristic(0), vMover(0), vOpponent(0), fSet(false), fAssigned(false), fWldProven(false) {}
 	// setting v values
@@ -279,6 +279,7 @@ private:
 
 	void Read();
 	void ReadErr();
+    void ReadAndCheckHash(Reader& in);
 	void ReadVersion1(Reader& in);
 	void ReadVersion2(Reader& in);
 	void ReadTree2(Reader& in, const CMinimalReflection& mr);

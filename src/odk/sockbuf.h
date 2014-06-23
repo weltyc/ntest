@@ -21,7 +21,7 @@ class sockbuf : public std::streambuf {
 public:
 	// construction/destruction
 	sockbuf();
-	virtual ~sockbuf();
+	virtual ~sockbuf() throw();
 
 	// overrides
 	virtual int underflow();

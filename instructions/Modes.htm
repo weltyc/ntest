@@ -80,25 +80,9 @@ The character after the 'a' is the game format:
     deviation is better than the best played line in the WLD sense. It then plays a
     game from each of the found Edmund nodes. This process of playing new games can
     create new Edmund nodes, so if Edmund games were played it's good idea to run
-    this mode again afterwards.</P>
+    this mode again afterwards.</P>	
 
-<P>Optionally you can give an edmund mode after the 'e', for instance "NTest e7" is
-    the most agressive mode and takes the longest. The edmund mode is a sum of the
-    following flags:</P>
-<ul>
-    <li>
-        1 Edmundize probable solve nodes
-    <li>
-        2 Edmundize midgame nodes
-    <li>
-        4 Edmundize draw nodes even if a draw has already been played
-    </li>
-</ul>
-<p>If no mode is specified the default mode is 1 (Edmundize probable solve nodes,
-    don't edmundize midgame nodes, and don't fill out the draw tree).</p>
-
-<P>It is strongly recommended that you negamax the book before and after running
-    this mode (setting the negamax flag for computer1 in params.txt will do this).</P>
+<P>The EdmundLevel parameter in parameters.txt controls exactly which nodes are edmundized; see <a href="Parameters.txt">parameters</a> for details.	
 
 <H2>[m]erge books</H2>
 <p>Merges coefficients/merge.book into the main computer's book. This allows you to create a book
