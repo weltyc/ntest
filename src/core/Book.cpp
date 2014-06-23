@@ -153,6 +153,10 @@ inline void ValueMerge(CValue& maxval, CValue newval) {
 	if (maxval<newval)
 		maxval=newval;
 }
+inline void ValueMerge(CValueCompact& maxval, CValue newval) {
+	if (maxval<newval)
+		maxval=newval;
+}
 
 // Merge - updates a node's values given a subnode value
 // inputs:

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include <cmath>
 #include <cstring>
 #include <iostream>
 
@@ -53,7 +54,7 @@ void assertEquals(i64 a, i64 b) {
 }
 
 void assertEquals(float expected, float actual, float tol) {
-	if (!(abs(expected-actual)<=tol)) {
+	if (!(std::abs(expected-actual)<=tol)) {
 		std::ostringstream s;
 		s << "Expected " << expected << " but was " << actual;
 		fail(s);

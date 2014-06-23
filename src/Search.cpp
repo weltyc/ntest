@@ -25,9 +25,6 @@ int hSolveNoParity=6;
 extern int hNegascout;
 
 // debugging constants
-const bool fCNAPrintEvents = false;
-const bool fCNAPrintTree = false;
-const bool fCNAPrintPositions = false;
 extern int nEmptyCNAPrint;
 extern bool fPrintWLD;
 const bool fPrintBookReads=false;
@@ -49,7 +46,6 @@ bool ValueMove(Pos2& pos2, int height, int hChild, CValue alpha, CValue beta, CM
 //////////////////////////////////
 
 const bool fCapturePositions=false;
-const int cpLeftShift=21;
 extern FILE* cpFile;
 extern int nCapturedPositions;
 int nCaptureWait=0;
@@ -553,7 +549,7 @@ CValue ChildValue(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune)
 	else {
 		CMoves moves;
 		int pass;
-
+		cache->Prefetch(pos2.GetBB().Hash());
 		pass=pos2.CalcMovesAndPassBB(moves);
 
 		switch(pass) {
@@ -730,7 +726,7 @@ void ValueMulti(Pos2& pos2, int height, CValue alpha, CValue beta, int iPrune, u
 		std::cout << "\nmvsEvaluated: " << mvsEvaluated << "\nmvsLow" << mvsLow << "\n";
 
 	// prepare to return
-	nValued=mvsEvaluated.size();
+	nValued = static_cast<u4>(mvsEvaluated.size());
 	if (nValued<nBest && !abortRound) {
 		if (alpha>-kInfinity)
 			nValued=nBest;

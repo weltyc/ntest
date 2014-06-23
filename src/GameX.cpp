@@ -16,27 +16,19 @@
 ///////////////////////////////////
 
 //! Stored commands from NBoard.
+std::mutex cs;
 static std::deque<std::string> lines;
 
-std::mutex cs;
 
 //! A waitable event
-class Event {
-public:
-	Event() : val(false) {}
+static std::mutex cvcs;
+static std::condition_variable cv;
+static bool val = false;
+static bool IsValSet() {
+    return val;
+}
 
-	void Set();
-	void Reset();
-	void Wait();
-private:
-    std::mutex cvcs;
-    std::condition_variable cv;
-    bool val;
-    bool IsValSet() { return val; }
-} eventInput;
-
-//! Set an event to true.
-void Event::Set() {
+static void EventSet() {
     {
 		std::unique_lock<std::mutex> guard(cvcs);
         val = true;
@@ -46,16 +38,15 @@ void Event::Set() {
 }
 
 //! Set an event to false
-void Event::Reset() {
+static void EventReset() {
 	std::unique_lock<std::mutex> guard(cvcs);
 	val = false;
 }
 
-//! Wait on an event (forever)
-void Event::Wait() {
+void EventWait() {
 	std::unique_lock<std::mutex> guard(cvcs);
     while (!val) {
-		cv.wait(guard, std::bind(&Event::IsValSet, this));
+		cv.wait(guard, IsValSet);
     }
 }
 
@@ -70,11 +61,11 @@ bool HasInput() {
 	return fHasInput;
 }
 
-//! Add an input line to the deque, and set the eventInput if the deque was empty before
+//! Add an input line to the deque, and set the event if the deque was empty before
 static void AddStringToDeque(const std::string& s) {
 	std::unique_lock<std::mutex> guard(cs);
 	if (lines.empty()) {
-		eventInput.Set();
+		EventSet();
 	}
 	lines.push_back(s);
 }
@@ -92,12 +83,12 @@ static void MoveCinToDeque() {
 
 //! Get a line of input from the thread that's parsing lines for us.
 static bool GetLineFromThread(std::string& sLine) {
-	eventInput.Wait();
+	EventWait();
 	std::unique_lock<std::mutex> guard(cs);
 	sLine=lines.front();
 	lines.pop_front();
 	if (lines.empty())
-		eventInput.Reset();
+		EventReset();
 	return true;
 }
 

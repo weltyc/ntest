@@ -76,16 +76,6 @@ bool CBitBoard::Read(FILE* fp) {
 	return fread(&mover,sizeof(mover),1,fp)  && fread(&empty,sizeof(empty),1,fp);
 }
 
-u4 CBitBoard::Hash() const {
-	u4 a,b,c,d;
-	a=u4(empty);
-	b=u4(empty>>32);
-	c=u4(mover);
-	d=u4(mover>>32);
-	bobLookup(a,b,c,d);
-	return d;
-}
-
 CBitBoard CBitBoard::Symmetry(int sym) const {
 	CBitBoard bb=*this;
 	if (sym&1)
@@ -192,14 +182,6 @@ char* CBitBoard::GetSBoard(char sBoard[NN+1], bool fBlackMove) const {
 	}
 	sBoard[square]=0;
 	return sBoard;
-}
-
-int CBitBoard::NEmpty() const {
-	return bitCountInt(empty);
-}
-
-int CBitBoard::NMover() const {
-	return bitCountInt(mover);
 }
 
 void CBitBoard::NDiscs(bool fBlackMove, int& nBlack, int& nWhite, int& nEmpty) const {

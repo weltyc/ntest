@@ -272,7 +272,7 @@ void CPlayerComputer::Hint(const CQPosition& pos, int nBest) {
 		}
 
 		// calculate remaining number of moves to value
-		nBest-=mvs.size();
+		nBest-= static_cast<int>(mvs.size());
 	}
 	if (nBest>0) {
 		const u4 fNeeds=CSearchInfo::kNeedNoAddSoloUnsolvedToBook
@@ -441,7 +441,7 @@ void CPlayerComputer::PrintAnalysis(const COsGame& game) {
 	CNodeStats start, end;
 
 	start.Read();
-	nMoves=game.ml.size();
+	nMoves = static_cast<int>(game.ml.size());
 
 	cout << "----------- Analyzing Game -----------\n";
 	for (iMove=0; iMove<nMoves; iMove++) {

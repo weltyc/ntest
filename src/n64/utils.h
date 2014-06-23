@@ -46,21 +46,23 @@ inline u32 hi32(u64 n) {
 * @return number of '1' bits in the bitboard.
 */
 inline u64 bitCount(u64 bits) {
-#ifdef _WIN32
+#if __GNUC__ >= 4
+    return __builtin_popcountll(bits);
+#elif defined(_WIN32)
 #ifdef _M_AMD64
 	return __popcnt64(bits);
 #else
 	return __popcnt(u32(bits)) + __popcnt(u32(bits>>32));
 #endif
-#elif __GNUC__ >= 4
-    return __builtin_popcountll(bits);
 #else 
 #error "Unknown compiler"
 #endif
 }
 
 inline void storeLowBitIndex(unsigned long& result, u64 bits) {
-#ifdef _WIN32
+#if __GNUC__ >= 4
+    result = bits? __builtin_ctzll(bits) : 0;
+#elif defined(_WIN32)
 #ifdef _M_AMD64
 	_BitScanForward64(&result, bits);
 #else 
@@ -69,8 +71,6 @@ inline void storeLowBitIndex(unsigned long& result, u64 bits) {
 		result+=32;
 	}
 #endif
-#elif __GNUC__ >= 4
-    result = bits? __builtin_ctzll(bits) : 0;
 #else
 #error "Unknown compiler"
 #endif
@@ -114,17 +114,31 @@ inline u64 mask(int row, int col) {
 }
 
 inline u64 flipVertical(u64 a) {
-#ifdef _WIN32
-	return _byteswap_uint64(a);
-#elif __GNUC__ >= 4
+#if __GNUC__ >= 4
     return __builtin_bswap64(a);
+#elif defined(_WIN32)
+    return _byteswap_uint64(a);
 #else
-#errror "Unknown compiler"
+#error "Unknown compiler"
 #endif
 }
 
 u64 flipHorizontal(u64 bits);
-u64 flipDiagonal(u64 bits);
+
+inline u64 flipDiagonal(u64 v) {
+    // flip 4-by-4 bits
+    v = (v & 0xf0f0f0f00f0f0f0fULL)
+        | ((v >> 28) & 0xf0f0f0f0ULL)
+        | ((v & 0xf0f0f0f0ULL) << 28);
+    // flip 2-by-2 bits
+    v = (v & 0xcccc3333cccc3333ULL)
+        | ((v & 0x0000cccc0000ccccULL) << 14)
+        | ((v & 0x3333000033330000ULL) >> 14);
+    // flip 1-by-1 bits
+    return (v & 0xaa55aa55aa55aa55ULL)
+        | ((v & 0x00aa00aa00aa00aaULL) << 7)
+        | ((v & 0x5500550055005500ULL) >> 7);
+}
 
 
 void printBitBoard(u64 bits);

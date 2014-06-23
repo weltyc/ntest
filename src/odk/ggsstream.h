@@ -20,7 +20,7 @@ class ggsstream : public std::iostream {
 public:
 	// construction/destruction
 	ggsstream();
-	virtual ~ggsstream();
+	virtual ~ggsstream() throw();
 
 	// Connection, disconnection
 	virtual int Connect(const std::string& sServer, int nPort);

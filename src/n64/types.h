@@ -14,8 +14,8 @@ typedef int64_t i8;
 const int N=8;
 const int NN=N*N;
 
-typedef i2 CValue;
-
+typedef int16_t CValueCompact;
+typedef int32_t CValue;
 
 typedef uint64_t u64;
 typedef int64_t i64;
