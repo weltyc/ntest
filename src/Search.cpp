@@ -14,12 +14,10 @@
 
 // book search depths
 const int kBookReadDepth=6;	// maximum depth to read from book
-const int kBookWriteDepth=1; // maximum depth to write to book
 extern int hBookRead, hBookWrite;
 const int nAbortCheck=1<<14; // check for aborts every few evals
 
 // search params
-const int khSortDefault=3;
 extern int hSort;
 int hSolveNoParity=6;
 extern int hNegascout;
@@ -774,7 +772,7 @@ void IterativeValue(Pos2& pos2, CMoves moves, const CCalcParams& cp,
 	// set hi.iPrune to 0 in this case so it displays nicely.
 	int iPrune=pos2.NEmpty()<=hSolverStart+1?0:si.iPruneMidgame;
 	CHeightInfo hi(1,iPrune,false, pos2.NEmpty());
-	double tElapsed;
+	double tElapsed = 0.0;
 	CValue alpha, beta;
 	CNodeStats nsStart, nsEnd;
 	std::vector<CMoveValue> mvsOld, mvsNew;

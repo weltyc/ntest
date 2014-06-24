@@ -12,7 +12,6 @@
 #include "n64/utils.h"
 
 #include "pattern/Patterns.h"
-#include "pattern/types.h"
 
 #include "Pos2.h"
 

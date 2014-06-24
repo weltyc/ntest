@@ -43,8 +43,6 @@ void SetupStuff(CMPCStats*& mpcs, CEvaluator*& eval, int& iPruneMidgame, int& iP
 	}
 }
 
-const int nReps=1000;
-
 int roundsign(int n) {
 	if (n<-5)
 		return -1;
