@@ -202,7 +202,7 @@ void ValueCacheOrTree(Pos2& pos2, int height, CValue alpha, CValue beta, CMoves&
 						   int iPrune, CMoveValue& best) {
 	CValue searchAlpha, searchBeta;
 	CCacheData* cd;
-	u4 hash;
+	u64 hash;
 	int iffCache;
 
 	// initialize search values

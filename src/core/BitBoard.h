@@ -55,10 +55,10 @@ public:
 	char* GetSBoard(char sBoard[NN+1], bool fBlackMove) const;
 
 	// statistics
-	u4 Hash() const {
+	u64 Hash() const {
 #if (__GNUC__ >= 4 && defined(__x86_64__)) || defined(_WIN32)
 		uint64_t crc = _mm_crc32_u64(0, empty);
-		return static_cast<u4>(_mm_crc32_u64(crc, mover));
+		return _mm_crc32_u64(crc, mover);
 #else
 		u4 a, b, c, d;
 		a = u4(empty);
