@@ -836,7 +836,7 @@ void CBook::ReadTree2(Reader& in, const CMinimalReflection& mr) {
 
 void CBook::ReadVersion2(Reader& in) {
 	CBookDataCompressed bdc;
-	int nSize, nHashCheck;
+	int nSize;
 
 	if (!in.read(&nSize, sizeof(nSize), 1))
 		ReadErr();

@@ -57,6 +57,7 @@ class Instruction:
         return self.pc  + " ".join(self.prefixes) + " " + self.opcode + " " + ",".join([str(x) for x in self.params])
 %%
 parser AsmInsn:
+    ignore: '[ \t]*Disassembly of section .*:[ \t\r\n]*'
     ignore: '[ \r\t\n]+'    # white space
     ignore: '#.*\r?\n?'     # line comment via #
     ignore: '<[^>]*>' # decoded branch targets

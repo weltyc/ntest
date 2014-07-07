@@ -407,14 +407,6 @@ u64 flipHorizontal(u64 bits) {
 	return bits;
 }
 
-const u64 dflipmask4L=0x00000000F0F0F0F0ULL;
-const u64 dflipmask4R=0x0F0F0F0F00000000ULL;
-const u64 dflipmask2L=0x0000CCCC0000CCCCULL;
-const u64 dflipmask2R=0x3333000033330000ULL;
-const u64 dflipmask1L=0x00AA00AA00AA00AAULL;
-const u64 dflipmask1R=0x5500550055005500ULL;
-
-
 // Copyright Chris Welty
 //	All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files

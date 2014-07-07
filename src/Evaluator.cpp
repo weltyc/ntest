@@ -7,7 +7,6 @@
 #include <sstream>
 #include "core/QPosition.h"
 #include "n64/bitextractor.h"
-#include "pattern/types.h"
 
 #include "Evaluator.h"
 
@@ -18,11 +17,17 @@ using namespace std;
 //////////////////////////////////////////////////
 
 #if defined(__clang__)
-#define INLINE_HINT 
+#define INLINE_HINT
+typedef unsigned long TConfig;
 #elif __GNUC__ >= 4
 #define INLINE_HINT inline __attribute__((always_inline)) 
+typedef unsigned long TConfig;
+#elif defined(WIN32)
+#define INLINE_HINT __forceinline
+typedef uint64_t TConfig;
 #else
 #define INLINE_HINT inline
+typedef unsigned long TConfig;
 #endif
 
 class CEvaluatorList: public std::map<CEvaluatorInfo, CEvaluator*> {
