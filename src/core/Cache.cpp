@@ -265,7 +265,7 @@ void CCache::ClearStats() {
 
 // FindOld -- find an entry in the cache. If there is no entry return NULL.
 //	If there is an entry set its stale flag to false and return it.
-CCacheData* CCache::FindOld(const CBitBoard& board, u4 hash) {
+CCacheData* CCache::FindOld(const CBitBoard& board, u64 hash) {
 	CCacheData* result, *result2;
 
 	hash&=nBuckets-1;
@@ -288,7 +288,7 @@ CCacheData* CCache::FindOld(const CBitBoard& board, u4 hash) {
 
 // FindNew -- find an entry in the cache. If there is no entry create one, with height and iPrune preset.
 //	Return the cache entry.
-CCacheData* CCache::FindNew(const CBitBoard& board, u4 hash, int height, int aPrune, int anEmpty) {
+CCacheData* CCache::FindNew(const CBitBoard& board, u64 hash, int height, int aPrune, int anEmpty) {
 	CCacheData* result, *result2;
 
 	hash&=nBuckets-1;

@@ -95,18 +95,17 @@ public:
 	void Clear();
 	void Verify();
 
-	void Prefetch(u4 hash) {
+	void Prefetch(u64 hash) {
+		hash &= nBuckets - 1;
 #if defined(_WIN32)
-		hash &= nBuckets - 1;
-		_mm_prefetch(reinterpret_cast<const char *>(buckets + hash), _MM_HINT_NTA);
-#elif __GNUC__ >=4 
-		hash &= nBuckets - 1;
+		_mm_prefetch(reinterpret_cast<const char *>(buckets + hash), _MM_HINT_T0);
+#elif __GNUC__ >=4
 		__builtin_prefetch(reinterpret_cast<const char *>(buckets + hash), 0, 0);
 #endif
 	}
 
-	CCacheData* FindOld(const CBitBoard& pos, u4 hash);
-	CCacheData* FindNew(const CBitBoard& pos, u4 hash, int height, int iPrune, int nEmpty);
+	CCacheData* FindOld(const CBitBoard& pos, u64 hash);
+	CCacheData* FindNew(const CBitBoard& pos, u64 hash, int height, int iPrune, int nEmpty);
 
 	int NBuckets() { return nBuckets; }
 private:
