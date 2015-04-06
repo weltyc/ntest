@@ -622,10 +622,14 @@ void CBook::ReadVersion1(Reader& in) {
 			entries[nEmpty][board]=bd;
 		}
 		else {
+            std::cerr << "\nBook error at entry #" << nRead << ": Board with " << nEmpty << " empties detected\n";
+            board.Print(true);
+            std::cerr << bd << "\n";
 			ReadErr();
 		}
 	}
 	if (nRead!=nSize) {
+        std::cerr << "Book is corrupt, expected size = " << nRead << ", actual size = " << nSize << " entries\n";
 		ReadErr();
 	}
     ReadAndCheckHash(in);

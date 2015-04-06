@@ -204,18 +204,9 @@
 			<tr>
 				<th>analyze</th>
 				<td>Perform a retrograde analysis of the current game.
-					<p><b>Required:</b> Perform a retrograde analysis of the current game. For each board position occurring in the game, the 
+					<p><b>Optional:</b> Perform a retrograde analysis of the current game. For each board position occurring in the game, the 
 						engine sends back a line of the form <code>analysis {movesMade:int} {eval:double}</code>. movesMade = 0 corresponds
 						to the start position. Passes count towards movesMade, so movesMade can go above 60.</p>
-					<p><b>Since:</b>Protocol version 2.</b></p>
-				</td>
-			</tr>
-			<tr>
-				<th>clear</th>
-				<td>Clear the transposition table and other search data.
-					<p><b>Optional:</b> Clear the program's hash table, killer moves, etc. This is normally used for testing engines - for
-						example playing games between two engines with colors reversed; the second game is not as interesting if the engines
-						retain moves in their hash table.
 					<p><b>Since:</b>Protocol version 2.</b></p>
 				</td>
 			</tr>
