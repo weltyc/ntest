@@ -10,15 +10,27 @@ static const bool printTestDebug = false;
 static std::ostream* const s_out = printTestDebug ? &std::cerr : NULL;
 
 //! Write the book to a Store and read it in again. Make sure that the new book is the same as the old book.
-void CBook::TestMyIO() {
+//! @param contents expected file contents, or NULL to not check the expected file contents.
+void CBook::TestMyIO(std::vector<char>* contents) {
 	NegamaxAll();
 
 	std::vector<char> bytes;
-	std::auto_ptr<Store> store = std::auto_ptr<Store>(new MemoryStore(bytes));
+	MemoryStore* memoryStore = new MemoryStore(bytes);
+	std::auto_ptr<Store> store = std::auto_ptr<Store>(memoryStore);
 	std::auto_ptr<Writer> out = store->getWriter();
 	WriteVersion2(*out);
 
 	CBook book2(store, s_out);
+	if (!(*this == book2)) {
+		memoryStore->Print();
+	}
+	if (contents != NULL) {
+		if (*contents != bytes) {
+			fail("file was not stored correctly");
+		} else {
+			std::cout << "file was stored correctly\n";
+		}
+	}
 	TEST(*this==book2);
 }
 
@@ -61,6 +73,20 @@ void CBook::TestIO() {
 		pos.MakeMove(CMove(045));
 		book.StoreLeaf(pos.BitBoard(), CHeightInfoX(10, 4, false, 59), -32);
 		book.TestMyIO();
+	}
+	{
+		// test book with two entries in a tree with a cutoff
+		CBook book(NULL, s_out);
+		CQPosition pos;
+		pos.Initialize();
+		pos.MakeMove(CMove(045));
+
+		book.StoreRoot(pos.BitBoard(), CHeightInfoX(10, 4, false, 60), 32, -400);
+		pos.MakeMove(CMove(053));
+		book.StoreLeaf(pos.BitBoard(), CHeightInfoX(10, 4, false, 59), -32);
+		char fileBytes[] = {2, 0, 0, 0, 2, 0, 0, 0, -1, -1, -1, -25, -25, -17, -1, -1, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0, 0, 0, -94, 16, 112, -2, 29, 0, 0, 0, 0, -96, 16, -32, -1, -1, -1, -31, 63, 63, -79};
+		std::vector<char> contents(fileBytes, fileBytes + sizeof(fileBytes));
+		book.TestMyIO(&contents);
 	}
 }
 

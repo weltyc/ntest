@@ -302,7 +302,7 @@ const int iDebugEval=0;
 INLINE_HINT TCoeff ConfigValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
-		printf("Config: %5u, Id: %5hu, Value: %4d\n", config, mapsJ[map].ConfigToID(u2(config)), value);
+		printf("Config: %5lu, Id: %5hu, Value: %4d\n", config, mapsJ[map].ConfigToID(u2(config)), value);
 	return value;
 }
 
@@ -310,7 +310,7 @@ INLINE_HINT TCoeff PatternValue(TConfig configs[], const TCoeff* pcmove, int pat
 	TConfig config=configs[pattern];
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
-		printf("Pattern: %2d - Config: %5u, Id: %5hu, Value: %4d (pms %2d, %2d)\n",
+		printf("Pattern: %2d - Config: %5lu, Id: %5hu, Value: %4d (pms %2d, %2d)\n",
 				pattern, config, mapsJ[map].ConfigToID(u2(config)), value>>16, (value>>8)&0xFF, value&0xFF);
 	return value;
 }
@@ -318,7 +318,7 @@ INLINE_HINT TCoeff PatternValue(TConfig configs[], const TCoeff* pcmove, int pat
 INLINE_HINT TCoeff ConfigPMValue(const TCoeff* pcmove, TConfig config, int map, int offset) {
 	TCoeff value=pcmove[config+offset];
 	if (iDebugEval>1)
-		printf("Config: %5u, Id: %5hu, Value: %4d (pms %2d, %2d)\n",
+		printf("Config: %5lu, Id: %5hu, Value: %4d (pms %2d, %2d)\n",
 				config, mapsJ[map].ConfigToID(u2(config)), value>>16, (value>>8)&0xFF, value&0xFF);
 	return value;
 }

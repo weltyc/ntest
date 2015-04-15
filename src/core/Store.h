@@ -6,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <string>
+#include <iostream>
 
 //! Abstract interface for a stream to write information (FILE* or memory)
 class Writer {
@@ -161,6 +162,14 @@ public:
 
 	std::string ToString() {
 		return "Memory Store";
+	}
+	
+	void Print() const {
+		std::cout << "char[] fileBytes = {";
+		for (std::vector<char>::iterator it = m_bytes.begin(); it != m_bytes.end(); ++it) {
+			std::cout << (short)(*it) << ", ";
+		}
+		std::cout << "};\n";
 	}
 };
 

@@ -658,7 +658,7 @@ private:
 
 	enum { kWldSolved=1, kRoot=2, kWld=4, kKnownSolve=8 };
 	u2 flags; //!< packed value containing sum of enum flags plus (height<<4)+(iPrune<<10)
-	u2 v;
+	i2 v;
 };
 
 CBookDataCompressed::CBookDataCompressed(const CBookData& bd) {

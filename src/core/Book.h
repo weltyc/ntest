@@ -241,7 +241,7 @@ public:
 
 	// testing
 	static void TestIO();
-	void TestMyIO();
+	void TestMyIO(std::vector<char>* contents = NULL);
 	bool operator==(const CBook& b) const;
 
 	//! Dangerous
