@@ -13,6 +13,7 @@
 float coefficients.zip
 [Bb]uildLog.htm
 *.exe
+draws.txt
 
 # CMake files
 *.cmake

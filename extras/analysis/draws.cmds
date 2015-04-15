@@ -1,0 +1,3 @@
+set depth 30
+draw_tree
+quit
