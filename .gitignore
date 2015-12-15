@@ -97,6 +97,8 @@ packages/
 /winbuild
 /build-*
 /build
+/run
+
 # Python stuf
 /extras/dis/basic_asm.py
 /extras/dis/basic_asm.pyc

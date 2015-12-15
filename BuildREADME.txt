@@ -17,6 +17,15 @@ b) cmake
 Building
 --------
 
+The quick way on Linux and Mac:
+
+> cd ntest
+> source build.sh
+
+This will compile ntest and put all required resources in the run subdirectory.
+
+The slow way:
+
 Create a directory named build that parallels the src directory. From within the build directory, run cmake:
 
 Windows:
@@ -41,7 +50,7 @@ The following are needed in the directory in which you run ntest:
 parameters.txt file
 TestGames.ggf file
 coefficients/ subdirectory
-resources/ subdirectory, just with the solver*.txt files
+resource/ subdirectory, just with the solver*.txt files
 
 You can find all of them in the resources subdirectory
 
