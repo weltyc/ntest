@@ -119,7 +119,10 @@ CGameX::CGameX(CComputerDefaults cd) {
 		std::string sCommand;
 		is >> sCommand;
 
-		if (sCommand=="go") {
+		if (sCommand=="analyze") {
+			std::cout << "status NTest does not support retrograde analysis" << std::endl;
+		}
+		else if (sCommand=="go") {
 			// engine tells viewer what move it would make.
 			// do NOT update the board, the engine has no idea whether the viewer thinks the computer should move
 			// (e.g. in nboard, the user could switch to "user plays both colors" mode while the engine is thinking).
