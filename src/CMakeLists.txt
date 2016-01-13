@@ -46,12 +46,6 @@ target_link_libraries(randomEvalGen mainlib core game patterns odk n64)
 add_test(ntest_basic ntest o)
 
 if(${UNIX})
-    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/coefficients"
-                 "${CMAKE_BINARY_DIR}")
-    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/TestGames.ggf"
-                 "${CMAKE_BINARY_DIR}")
-    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource"
-                 "${CMAKE_BINARY_DIR}")
-    EXEC_PROGRAM(ln ARGS -sf "${CMAKE_SOURCE_DIR}/../resource/parameters.txt"
+    EXEC_PROGRAM(ln ARGS -sf "../src/resource/*"
                  "${CMAKE_BINARY_DIR}")
 endif()

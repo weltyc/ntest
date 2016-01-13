@@ -1,4 +1,8 @@
-# Build ntest for the local machine
+# Build ntest for Windows-x64
+# on Linux
+#
+# Uses a docker cross-compiler which is enormous (3GB), beware.
+#
 
 set -eu
 
@@ -12,12 +16,12 @@ echo "---------------"
 echo "Compiling ntest"
 echo "---------------"
 
-mkdir -p build
-cd build
+mkdir -p build-windows-x64
+docker run -i -v `pwd`/src:/usr/src:ro -v `pwd`/build-windows-x64:/usr/build:rw thewtex/cross-compiler-windows-x64 <<EOF
+cd ../build
 cmake -DCMAKE_BUILD_TYPE=Release ../src
 make
-make test
-cd ..  # person who ran build.sh expects its working directory here
+EOF
 
 echo
 echo "---------------"

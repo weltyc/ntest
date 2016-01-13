@@ -94,9 +94,9 @@ packages/
 
 #Test files
 *.testsettings
-/winbuild
-/build-*
-/build
+/winbuild/
+/build-*/
+/build/
 /run
 
 # Python stuf
