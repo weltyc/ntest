@@ -21,6 +21,7 @@ docker run -i -v `pwd`/src:/usr/src:ro -v `pwd`/build-windows-x64:/usr/build:rw 
 cd ../build
 cmake -DCMAKE_BUILD_TYPE=Release ../src
 make
+mv ntest ntest.exe
 EOF
 
 echo
