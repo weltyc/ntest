@@ -15,7 +15,7 @@ class CNtestStream: public ggsstream {
 public:
 	CNtestStream();
 
-	virtual void HandleGGS				(const CMsg& msg);
+	virtual void HandleGGS				(const CMsg* msg);
 	virtual void HandleGGSLogin			();
 	virtual void HandleGGSTell			(const CMsgGGSTell& msg);
 	virtual void HandleGGSUnknown		(const CMsgGGSUnknown& msg);

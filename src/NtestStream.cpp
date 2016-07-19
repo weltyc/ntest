@@ -13,8 +13,8 @@
 
 using namespace std;
 
-void CNtestStream::HandleGGS(const CMsg& msg) {
-	cout << msg.sRawText << "\n";
+void CNtestStream::HandleGGS(const CMsg* msg) {
+	cout << msg->sRawText << "\n";
 }
 
 void CNtestStream::HandleGGSLogin() {
@@ -44,7 +44,7 @@ void CNtestStream::HandleGGSTell(const CMsgGGSTell& msg) {
 
 void CNtestStream::HandleGGSUnknown(const CMsgGGSUnknown& msg) {
 	cout << "Unknown GGS message: \n";
-	HandleGGS(msg);
+	HandleGGS(&msg);
 }
 
 ////////////////////////////
@@ -115,7 +115,7 @@ void CNtestStream::HandleOsRequestDelta(const CMsgOsRequestDelta& msg) {
 
 void CNtestStream::HandleOsUnknown(const CMsgOsUnknown& msg) {
 	cout << "Unknown /os message: ";
-	HandleGGS(msg);
+	HandleGGS(&msg);
 }
 
 void CNtestStream::HandleOsUpdate(const CMsgOsUpdate& msg) {
