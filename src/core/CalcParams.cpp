@@ -43,7 +43,7 @@ bool CCalcParams::RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, do
 }
 
 void CCalcParams::SetAbortTime(const CNodeStats& nsStart, int nEmpty, double tRemaining) const {
-	::SetAbortTime(1e6);
+	::SetAbortTime(INFINITE_TIME);
 }
 
 int CCalcParams::LogCacheSize(int aPrune) const {
@@ -272,7 +272,7 @@ void CCalcParamsAverageTime::SetAbortTime(const CNodeStats& nsStart, int nEmpty,
 
 bool CCalcParamsAverageTime::RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, double tRemaining) const {
 	if (nEmpty<=nEmptyMinSolve && !hi.ExactProven(nEmpty)) {
-		::ResetAbortTime(1e6);
+		::ResetAbortTime(INFINITE_TIME);
 		return true;
 	}
 	::ResetAbortTime(TTypical(nEmpty)*1.5);

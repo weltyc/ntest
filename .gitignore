@@ -20,10 +20,15 @@ draws.txt
 CMakeFiles/
 Makefile
 CMakeCache.txt
+CMakeLists.txt
+cmake-build-debug/
 
 #OS junk files
 [Tt]humbs.db
 *.DS_Store
+
+# CLion files
+.idea/
 
 # XCode (Mac)
 ntest.xcodeproj/

@@ -281,7 +281,7 @@ void CPlayerComputer::Hint(const CQPosition& pos, int nBest) {
 				|CSearchInfo::kPrintRound
 				|CSearchInfo::kPrintPondering;
 
-		CSearchInfo si=DefaultSearchInfo(pos.BlackMove(), fNeeds, 1e6, 0);
+		CSearchInfo si=DefaultSearchInfo(pos.BlackMove(), fNeeds, INFINITE_TIME, 0);
 		CMVK mvk;
 		Pos2 pos2;
 		pos2.Initialize(pos.BitBoard(),pos.BlackMove());

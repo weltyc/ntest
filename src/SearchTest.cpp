@@ -9,6 +9,7 @@
 #include "Search.h"
 #include "Evaluator.h"
 #include "PlayerComputer.h"
+#include "core/options.h"
 
 
 const int nEndgames=113;
@@ -170,7 +171,7 @@ void TestEndgameAccuracy(){
 		start1.Read();
 
 		CMVK mvk;
-		CSearchInfo si=computer.DefaultSearchInfo(fBlackMove, CSearchInfo::kNeedValue+CSearchInfo::kNeedMove, 1e6, 0);
+		CSearchInfo si=computer.DefaultSearchInfo(fBlackMove, CSearchInfo::kNeedValue+CSearchInfo::kNeedMove, INFINITE_TIME, 0);
 		CQPosition qpos(pos2.GetBB(), pos2.BlackMove());
 		computer.GetChosen(si,qpos,mvk, true);
 		value=mvk.value/kStoneValue;

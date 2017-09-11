@@ -139,7 +139,7 @@ void CSmartBook::NegamaxAndCorrectPosition(CQPosition pos, CBookData* bd, int& n
 			else {
 				// need to value a nonbook node to get the cutoff down
 				CSearchInfo si(m_pComputer->cd.iPruneMidgame, m_pComputer->cd.iPruneEndgame,
-					0, 0, CSearchInfo::kNeedMove +CSearchInfo::kNeedValue, 1e6, 0, 0);
+					0, 0, CSearchInfo::kNeedMove +CSearchInfo::kNeedValue, INFINITE_TIME, 0, 0);
 
 				CCalcParamsFixedHeight cp(bd->Hi());
 				CMVK mvk;
@@ -288,7 +288,7 @@ void CSmartBook::IncreaseHeight(CQPosition pos, CBookData* bd, CHeightInfo hi, i
 				<< bd->Hi() << "->" << hi << ")\n";
 		}
 		CSearchInfo si(m_pComputer->cd.iPruneMidgame, m_pComputer->cd.iPruneEndgame,
-			0, 0, CSearchInfo::kNeedValue, 1e6, 0, 0);
+			0, 0, CSearchInfo::kNeedValue, INFINITE_TIME, 0, 0);
 
 		abortOnInput=false;
 		IterativeValue(pos2, moves, cp, si, mvk, false, 1);

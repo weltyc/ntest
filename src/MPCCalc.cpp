@@ -8,6 +8,7 @@
 
 #include "PlayerComputer.h"
 #include "MPCCalc.h"
+#include "core/options.h"
 
 //////////////////////////////////////////////////////////////////////
 // Routines
@@ -20,7 +21,7 @@ void AnalyzePosition(CPlayerComputer* computer, CQPosition& pos) {
 	computer->Clear();
 
 	u4 fNeed=CSearchInfo::kNeedMove+CSearchInfo::kNeedValue+CSearchInfo::kNeedMPCStats;
-	CSearchInfo si=computer->DefaultSearchInfo(pos.BlackMove(), fNeed,1e6, 0);
+	CSearchInfo si = computer->DefaultSearchInfo(pos.BlackMove(), fNeed, INFINITE_TIME, 0);
 	computer->GetChosen(si, pos, mvk, true);
 	printf("\n");
 	std::cerr << ".";
@@ -150,7 +151,9 @@ void CalcPosValues(CPlayerComputer* computer, bool fAppend) {
 					else {
 						tStart=time(0);
 
-						CSearchInfo si=computer->DefaultSearchInfo(pos.BlackMove(), CSearchInfo::kNeedMove+CSearchInfo::kNeedValue,1e6, 0);
+						CSearchInfo si = computer->DefaultSearchInfo(pos.BlackMove(),
+																	 CSearchInfo::kNeedMove + CSearchInfo::kNeedValue,
+																	 INFINITE_TIME, 0);
 						computer->GetChosen(si, pos, mvk, true);
 						if (pass==1)
 							mvk.value=-mvk.value;

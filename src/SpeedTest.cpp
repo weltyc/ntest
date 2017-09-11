@@ -124,7 +124,8 @@ void TestMidgameSpeed(int nEmpty, CHeightInfo hi, int nGames, int flags) {
 		start1.Read();
 
 		// calc move and value
-		CSearchInfo si=computer.DefaultSearchInfo(pos.BlackMove(),CSearchInfo::kNeedMove+CSearchInfo::kNeedValue,1e6, 0);
+		CSearchInfo si = computer.DefaultSearchInfo(pos.BlackMove(), CSearchInfo::kNeedMove + CSearchInfo::kNeedValue,
+													INFINITE_TIME, 0);
 		si.SetPrintLevel(0);
 		computer.GetChosen(si, pos, mvk, true);
 
@@ -206,7 +207,8 @@ void TestLogStuff(int hMax) {
 
 	CQPosition qpos("..................*O**....**O*....*OOO....OOOO......O...........", false);
 
-	CSearchInfo si=computer.DefaultSearchInfo(qpos.BlackMove(),CSearchInfo::kNeedMove+CSearchInfo::kNeedValue,1e6,0);
+	CSearchInfo si = computer.DefaultSearchInfo(qpos.BlackMove(), CSearchInfo::kNeedMove + CSearchInfo::kNeedValue,
+												INFINITE_TIME, 0);
 	computer.GetChosen(si, qpos, mvk, true);
 	computer.pcp=pcpOld;
 }
@@ -248,7 +250,8 @@ void FFOTest() {
 		start1.Read();
 
 		// calc move and value
-		CSearchInfo si=computer.DefaultSearchInfo(pos.BlackMove(),CSearchInfo::kNeedMove+CSearchInfo::kNeedValue,1e6,0);
+		CSearchInfo si = computer.DefaultSearchInfo(pos.BlackMove(), CSearchInfo::kNeedMove + CSearchInfo::kNeedValue,
+													INFINITE_TIME, 0);
 		computer.GetChosen(si, pos, mvk, true);
 
 		// calc timing
