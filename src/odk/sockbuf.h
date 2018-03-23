@@ -1,5 +1,5 @@
 // Copyright 2001 Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 
 #pragma once
 
@@ -19,34 +19,34 @@
 
 class sockbuf : public std::streambuf {
 public:
-	// construction/destruction
-	sockbuf();
-	virtual ~sockbuf() throw();
+    // construction/destruction
+    sockbuf();
+    virtual ~sockbuf() throw();
 
-	// overrides
-	virtual int underflow();
-	virtual int overflow(int c=EOF);
-	virtual int sync();
+    // overrides
+    virtual int underflow();
+    virtual int overflow(int c=EOF);
+    virtual int sync();
 
-	// errors
-	enum { kErrUnknown=0x8600, kErrCantStartup, kErrNoHost, kErrNoProtocol, kErrNoSocket,
-				kErrCantConnect, kErrConnectionReset, kErrConnectionClosed,
-				kErrNotConnected, kErrAlreadyConnected };
-	int Err() const;
+    // errors
+    enum { kErrUnknown=0x8600, kErrCantStartup, kErrNoHost, kErrNoProtocol, kErrNoSocket,
+    			kErrCantConnect, kErrConnectionReset, kErrConnectionClosed,
+    			kErrNotConnected, kErrAlreadyConnected };
+    int Err() const;
 
-	bool IsConnected() const;
+    bool IsConnected() const;
 
-	int connect(const std::string& sServer, int nPort);
-	int disconnect();
+    int connect(const std::string& sServer, int nPort);
+    int disconnect();
 
 protected:
-	enum { fLogging=1, nBufSize=1024 };
+    enum { fLogging=1, nBufSize=1024 };
 
-	bool fConnected;
+    bool fConnected;
 
-	SOCKET sock;
-	std::ofstream *fplog;
-	enum {kLogNone, kLogRecv, kLogSend} loglast;
-	char *buf;
-	int err;
+    SOCKET sock;
+    std::ofstream *fplog;
+    enum {kLogNone, kLogRecv, kLogSend} loglast;
+    char *buf;
+    int err;
 };

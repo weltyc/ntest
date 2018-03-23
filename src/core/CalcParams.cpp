@@ -1,5 +1,5 @@
 // Copyright Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files
 // GPLv3.txt and License.txt in the instructions subdirectory for details.
 
@@ -18,18 +18,18 @@ using namespace std;
 // global timing parameters
 //////////////////////////////
 
-double tMatch;	// total time available for a match
-double dGHz;	//	double dGHz - Approx processor speed
-double tSetStale=0.17;	// time to SetStale() in seconds... so we don't lose on time
+double tMatch;    // total time available for a match
+double dGHz;    //	double dGHz - Approx processor speed
+double tSetStale=0.17;    // time to SetStale() in seconds... so we don't lose on time
 
 // maximum memory for cache
 int maxCacheMem=25<<20; // can be up to 90<<20 on 128MB NT machine
 
 void SetMatchTime(double aMatchTime) {
-	if (aMatchTime<=0)
-		tMatch=10+maxCacheMem*2E-9/dGHz*60;
-	else
-		tMatch=aMatchTime;
+    if (aMatchTime<=0)
+    	tMatch=10+maxCacheMem*2E-9/dGHz*60;
+    else
+    	tMatch=aMatchTime;
 }
 
 //////////////////////////////////////////
@@ -39,54 +39,54 @@ void SetMatchTime(double aMatchTime) {
 // base class. most subclasses don't set abort time, so we won't need to override this
 
 bool CCalcParams::RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, double tRemaining) const {
-	return hi<=MinHeight(nEmpty);
+    return hi<=MinHeight(nEmpty);
 }
 
 void CCalcParams::SetAbortTime(const CNodeStats& nsStart, int nEmpty, double tRemaining) const {
-	::SetAbortTime(INFINITE_TIME);
+    ::SetAbortTime(INFINITE_TIME);
 }
 
 int CCalcParams::LogCacheSize(int aPrune) const {
-	return 60;	// ridiculously large cache size will be cut down to max cache size
+    return 60;	// ridiculously large cache size will be cut down to max cache size
 }
 
 void CCalcParams::Name(ostream& os) const {
-	Out(os);
+    Out(os);
 }
 
 CHeightInfo CCalcParams::MinHeight(int nEmpty) const {
-	return CHeightInfo(1, 4, false, nEmpty);
+    return CHeightInfo(1, 4, false, nEmpty);
 }
 
 CCalcParams* CCalcParams::NewFromString(const string& sCalcParams) {
-	char c;
-	int nMinutesOrDepth, nEmptyMinSolve;
-	CCalcParams* pcp;
-	istringstream is(sCalcParams);
+    char c;
+    int nMinutesOrDepth, nEmptyMinSolve;
+    CCalcParams* pcp;
+    istringstream is(sCalcParams);
 
-	pcp=NULL;
-	if (is >> c) {
-		nMinutesOrDepth=15;
-		is >> nMinutesOrDepth;
+    pcp=NULL;
+    if (is >> c) {
+    	nMinutesOrDepth=15;
+    	is >> nMinutesOrDepth;
 
-		switch(c) {
-		case 'f': pcp=new CCalcParamsFixedHeight(CHeightInfo(nMinutesOrDepth,4,false)); break;
-		case 's': pcp=new CCalcParamsStandard(nMinutesOrDepth); break;
-		case 't': pcp=new CCalcParamsTurbo(nMinutesOrDepth); break;
-		case 'm': pcp=new CCalcParamsMatchTime(); tMatch=60*nMinutesOrDepth; break;
-		case 'a':
-			nEmptyMinSolve=0;
-			is >> c >> nEmptyMinSolve;
-			pcp=new CCalcParamsAverageTime(nMinutesOrDepth,nEmptyMinSolve);
-			break;
-		}
-	}
-	if (pcp==NULL) {
-		cerr << "Unable to parse time control parameter " << sCalcParams.c_str() << "\n";
-		exit(-2);
-	}
+    	switch(c) {
+    	case 'f': pcp=new CCalcParamsFixedHeight(CHeightInfo(nMinutesOrDepth,4,false)); break;
+    	case 's': pcp=new CCalcParamsStandard(nMinutesOrDepth); break;
+    	case 't': pcp=new CCalcParamsTurbo(nMinutesOrDepth); break;
+    	case 'm': pcp=new CCalcParamsMatchTime(); tMatch=60*nMinutesOrDepth; break;
+    	case 'a':
+    		nEmptyMinSolve=0;
+    		is >> c >> nEmptyMinSolve;
+    		pcp=new CCalcParamsAverageTime(nMinutesOrDepth,nEmptyMinSolve);
+    		break;
+    	}
+    }
+    if (pcp==NULL) {
+    	cerr << "Unable to parse time control parameter " << sCalcParams.c_str() << "\n";
+    	exit(-2);
+    }
 
-	return pcp;
+    return pcp;
 }
 
 //////////////////////////////////////
@@ -94,30 +94,30 @@ CCalcParams* CCalcParams::NewFromString(const string& sCalcParams) {
 //////////////////////////////////////
 
 CCalcParamsFixedHeight::CCalcParamsFixedHeight(CHeightInfo hi) {
-	hiMax=hi;
+    hiMax=hi;
 }
 
 void CCalcParamsFixedHeight::SetHeight(CHeightInfo hi) {
-	hiMax=hi;
+    hiMax=hi;
 }
 
 int CCalcParamsFixedHeight::LogCacheSize(int aPrune) const {
-	if (aPrune)
-		return 17+(hiMax.height-12)/2;	// appropriate for MPC searcher
-	else
-		return 7+(hiMax.height*3)/2;	// appropriate for full-width searcher
+    if (aPrune)
+    	return 17+(hiMax.height-12)/2;	// appropriate for MPC searcher
+    else
+    	return 7+(hiMax.height*3)/2;	// appropriate for full-width searcher
 }
 
 void CCalcParamsFixedHeight::Out(ostream& os) const {
-	os << "f" << hiMax.height;
+    os << "f" << hiMax.height;
 }
 
 CHeightInfo CCalcParamsFixedHeight::MinHeight(int nEmpty) const {
-	return hiMax;
+    return hiMax;
 }
 
 int CCalcParamsFixedHeight::Strength() const {
-	return hiMax.height;
+    return hiMax.height;
 }
 
 //////////////////////////////////////
@@ -125,20 +125,20 @@ int CCalcParamsFixedHeight::Strength() const {
 //////////////////////////////////////
 
 CCalcParamsFixedNEmpty::CCalcParamsFixedNEmpty(CHeightInfo hi) {
-	hiMax=hi;
+    hiMax=hi;
 }
 
 void CCalcParamsFixedNEmpty::Out(ostream& os) const {
-	os << "e" << hiMax.height;
+    os << "e" << hiMax.height;
 }
 
 CHeightInfo CCalcParamsFixedNEmpty::MinHeight(int nEmpty) const {
-	int hSolve=nEmpty-hSolverStart;
-	return hiMax+hSolve;
+    int hSolve=nEmpty-hSolverStart;
+    return hiMax+hSolve;
 }
 
 int CCalcParamsFixedNEmpty::Strength() const {
-	return 20;
+    return 20;
 }
 
 //////////////////////////////////////
@@ -146,85 +146,85 @@ int CCalcParamsFixedNEmpty::Strength() const {
 //////////////////////////////////////
 
 CCalcParamsStandard::CCalcParamsStandard(int ahMidgame) {
-	hMidgame=ahMidgame;
-	CalcHeights();
+    hMidgame=ahMidgame;
+    CalcHeights();
 }
 
 CHeightInfo CCalcParamsStandard::MinHeight(int nEmpty) const {
-	int i;
+    int i;
 
-	for (i=0; i<=5 && nEmpty>hWLD[i]; i++);
-	switch(i) {
-	case 6:
-		return CHeightInfo(hMidgame, 4, false, nEmpty);
-	case 0:
-		return CHeightInfo(nEmpty-hSolverStart, 0, nEmpty>hWLD[i]-4, nEmpty);
-	default:
-		return CHeightInfo(nEmpty-hSolverStart, i, true, nEmpty);
-	}
+    for (i=0; i<=5 && nEmpty>hWLD[i]; i++);
+    switch(i) {
+    case 6:
+    	return CHeightInfo(hMidgame, 4, false, nEmpty);
+    case 0:
+    	return CHeightInfo(nEmpty-hSolverStart, 0, nEmpty>hWLD[i]-4, nEmpty);
+    default:
+    	return CHeightInfo(nEmpty-hSolverStart, i, true, nEmpty);
+    }
 }
 
 void CCalcParamsStandard::CalcHeights() {
-	int i;
-	// cIncrease = ln(time to depth D+1/time to depth D)
-	const double cIncrease[6]= { 0.738, 0.601, 0.549, 0.495, 0.438, 0.400 };
-	const double cIncreaseMidgame = 0.500;
+    int i;
+    // cIncrease = ln(time to depth D+1/time to depth D)
+    const double cIncrease[6]= { 0.738, 0.601, 0.549, 0.495, 0.438, 0.400 };
+    const double cIncreaseMidgame = 0.500;
 
-	// times are roughly equal at depth 8
-	for (i=0; i<=5; i++)
-		hWLD[i]=int(15+(hMidgame-6)*cIncreaseMidgame/cIncrease[i]);
+    // times are roughly equal at depth 8
+    for (i=0; i<=5; i++)
+    	hWLD[i]=int(15+(hMidgame-6)*cIncreaseMidgame/cIncrease[i]);
 
-	// increase solve height since we won't have to calculate a deviation
-	// check that heights are still in order
-	hWLD[0]++;
-	for (i=1; i<=5; i++) {
-		if (hWLD[i]<hWLD[0])
-			hWLD[i]=hWLD[0];
-	}
+    // increase solve height since we won't have to calculate a deviation
+    // check that heights are still in order
+    hWLD[0]++;
+    for (i=1; i<=5; i++) {
+    	if (hWLD[i]<hWLD[0])
+    		hWLD[i]=hWLD[0];
+    }
 
-	// above ~26 empties, time to reach probable solve levels 5 and 4 are dominated
-	//	by the midgame search, so they take about the same amount of time. Therefore
-	//	set heights equal
-	if (hWLD[5]>26) {
-		if (hWLD[4]>=26)
-			hWLD[5]=hWLD[4];
-		else
-			hWLD[5]=26;
-	}
+    // above ~26 empties, time to reach probable solve levels 5 and 4 are dominated
+    //	by the midgame search, so they take about the same amount of time. Therefore
+    //	set heights equal
+    if (hWLD[5]>26) {
+    	if (hWLD[4]>=26)
+    		hWLD[5]=hWLD[4];
+    	else
+    		hWLD[5]=26;
+    }
 
-	extern int nSolvePct[6];
+    extern int nSolvePct[6];
 
-	cout << "---- Heights ----\n";
-	cout << "midgame : " << hMidgame << "\n";
-	for (i=0; i<=5; i++)
-		cout << setw(3) << nSolvePct[i] << "% WLD: " << hWLD[i] << "\n";
-	cout << "\n";
+    cout << "---- Heights ----\n";
+    cout << "midgame : " << hMidgame << "\n";
+    for (i=0; i<=5; i++)
+    	cout << setw(3) << nSolvePct[i] << "% WLD: " << hWLD[i] << "\n";
+    cout << "\n";
 }
 
 int CCalcParamsStandard::LogCacheSize(int aPrune) const {
-	if (aPrune)
-		return 17+(hMidgame-12)/2;	// appropriate for MPC searcher
-	else
-		return 7+(hMidgame*3)/2;	// appropriate for full-width searcher
+    if (aPrune)
+    	return 17+(hMidgame-12)/2;	// appropriate for MPC searcher
+    else
+    	return 7+(hMidgame*3)/2;	// appropriate for full-width searcher
 }
 
 void CCalcParamsStandard::Out(ostream& os) const {
-	os << "s" << hMidgame;
+    os << "s" << hMidgame;
 }
 
 void CCalcParamsStandard::Name(ostream& os) const {
-	switch(hMidgame) {
+    switch(hMidgame) {
 #if !defined(EXTERNAL)
-	case  2: os << "pamphlet"; break;
-	case  8: os << "leaflet"; break;
-	case 12: os << "booklet"; break;
+    case  2: os << "pamphlet"; break;
+    case  8: os << "leaflet"; break;
+    case 12: os << "booklet"; break;
 #endif
-	default: Out(os);
-	}
+    default: Out(os);
+    }
 }
 
 int CCalcParamsStandard::Strength() const {
-	return hMidgame;
+    return hMidgame;
 }
 
 //////////////////////////////////////
@@ -232,22 +232,22 @@ int CCalcParamsStandard::Strength() const {
 //////////////////////////////////////
 
 CCalcParamsTurbo::CCalcParamsTurbo(int ahMidgame) : CCalcParamsStandard(ahMidgame+4) {
-	hMidgame=ahMidgame;
+    hMidgame=ahMidgame;
 }
 
 void CCalcParamsTurbo::Out(ostream& os) const {
-	os << "t" << hMidgame;
+    os << "t" << hMidgame;
 }
 
 void CCalcParamsTurbo::Name(ostream& os) const {
-	switch(hMidgame) {
-	case 12: os << "booklet+"; break;
-	default: Out(os);
-	}
+    switch(hMidgame) {
+    case 12: os << "booklet+"; break;
+    default: Out(os);
+    }
 }
 
 int CCalcParamsTurbo::Strength() const {
-	return hMidgame+4;
+    return hMidgame+4;
 }
 
 
@@ -257,44 +257,44 @@ int CCalcParamsTurbo::Strength() const {
 //////////////////////////////////////
 
 CCalcParamsAverageTime::CCalcParamsAverageTime(double atAverage) {
-	tAverage=atAverage;
-	nEmptyMinSolve=0;
+    tAverage=atAverage;
+    nEmptyMinSolve=0;
 }
 
 CCalcParamsAverageTime::CCalcParamsAverageTime(double atAverage, int anEmptyMinSolve) {
-	tAverage=atAverage;
-	nEmptyMinSolve=anEmptyMinSolve;
+    tAverage=atAverage;
+    nEmptyMinSolve=anEmptyMinSolve;
 }
 
 void CCalcParamsAverageTime::SetAbortTime(const CNodeStats& nsStart, int nEmpty, double tRemaining) const {
-	::SetAbortTime(TTypical(nEmpty)*1.5);
+    ::SetAbortTime(TTypical(nEmpty)*1.5);
 }
 
 bool CCalcParamsAverageTime::RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, double tRemaining) const {
-	if (nEmpty<=nEmptyMinSolve && !hi.ExactProven(nEmpty)) {
-		::ResetAbortTime(INFINITE_TIME);
-		return true;
-	}
-	::ResetAbortTime(TTypical(nEmpty)*1.5);
-	return (tElapsed<=TTypical(nEmpty)*0.5);
+    if (nEmpty<=nEmptyMinSolve && !hi.ExactProven(nEmpty)) {
+    	::ResetAbortTime(INFINITE_TIME);
+    	return true;
+    }
+    ::ResetAbortTime(TTypical(nEmpty)*1.5);
+    return (tElapsed<=TTypical(nEmpty)*0.5);
 }
 
 double CCalcParamsAverageTime::TTypical(int nEmpty) const {
-	return fInBook?tAverage+tAverage:tAverage;
+    return fInBook?tAverage+tAverage:tAverage;
 }
 
 int CCalcParamsAverageTime::LogCacheSize(int aPrune) const {
-	return int(log(dNPS*dGHz*tAverage*0.5)/log(2.0));
+    return int(log(dNPS*dGHz*tAverage*0.5)/log(2.0));
 }
 
 void CCalcParamsAverageTime::Out(ostream& os) const {
-	os << "a" << tAverage;
-	if (nEmptyMinSolve)
-		os << ";" << nEmptyMinSolve;
+    os << "a" << tAverage;
+    if (nEmptyMinSolve)
+    	os << ";" << nEmptyMinSolve;
 }
 
 int CCalcParamsAverageTime::Strength() const {
-	return LogCacheSize(4)*2-20;
+    return LogCacheSize(4)*2-20;
 }
 
 //////////////////////////////////////
@@ -302,48 +302,48 @@ int CCalcParamsAverageTime::Strength() const {
 //////////////////////////////////////
 
 void CCalcParamsMatchTime::SetAbortTime(const CNodeStats& nsStart, int nEmpty, double tRemaining) const {
-	::SetAbortTime(std::min(TTypical(nEmpty, tRemaining)*2.0,tRemaining*0.5));
+    ::SetAbortTime(std::min(TTypical(nEmpty, tRemaining)*2.0,tRemaining*0.5));
 }
 
 bool CCalcParamsMatchTime::RoundOK(const CHeightInfo& hi, int nEmpty, double tElapsed, double tRemaining) const {
-	double tt = TTypical(nEmpty, tRemaining);
-	double tStop=tt*0.5;
-	double tStopSpecial=tt*.3;
+    double tt = TTypical(nEmpty, tRemaining);
+    double tStop=tt*0.5;
+    double tStopSpecial=tt*.3;
 
-	if (hi.WldProven(nEmpty)) {
-		if (tElapsed>tStopSpecial && tElapsed<=tStop && false)
-			cout << "special stop criterion for WLD round\n";
-		return tElapsed<=tStopSpecial;
-	}
-	else
-		return tElapsed<=tStop;
+    if (hi.WldProven(nEmpty)) {
+    	if (tElapsed>tStopSpecial && tElapsed<=tStop && false)
+    		cout << "special stop criterion for WLD round\n";
+    	return tElapsed<=tStopSpecial;
+    }
+    else
+    	return tElapsed<=tStop;
 }
 
 double CCalcParamsMatchTime::TTypical(int nEmpty, double tRemaining) const {
-	double t;
+    double t;
 
-	// subtract buffer for clearing cache
-	tRemaining-=nEmpty*tSetStale;
+    // subtract buffer for clearing cache
+    tRemaining-=nEmpty*tSetStale;
 
-	if (tRemaining<=0)
-		t=2;
-	else if (nEmpty>=24)
-		t=tRemaining*2/(nEmpty-20);
-	else
-		t=tRemaining*0.5;
+    if (tRemaining<=0)
+    	t=2;
+    else if (nEmpty>=24)
+    	t=tRemaining*2/(nEmpty-20);
+    else
+    	t=tRemaining*0.5;
 
-	return fInBook?t+t:t;
+    return fInBook?t+t:t;
 }
 
 void CCalcParamsMatchTime::Out(ostream& os) const {
-	os << "m";
+    os << "m";
 }
 
 void CCalcParamsMatchTime::Name(ostream& os) const {
-	os << "ntest";
+    os << "ntest";
 }
 
 int CCalcParamsMatchTime::Strength() const {
-	return 20;
+    return 20;
 }
 
