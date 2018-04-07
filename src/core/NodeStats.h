@@ -1,5 +1,5 @@
 // Copyright Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files
 // GPLv3.txt and License.txt in the instructions subdirectory for details.
 
@@ -20,17 +20,17 @@ extern double nEvals, nSNodes, nINodes, nKFlips, nBBFlips;
 
 class CNodeStats {
 public:
-	double nINodes, nSNodes, nKFlips, nBBFlips, nEvals;
+    double nINodes, nSNodes, nKFlips, nBBFlips, nEvals;
 
-	i8 time;
+    i8 time;
 
-	void Read();
-	void Out(std::ostream& os) const;
-	void OutShort(std::ostream& os) const;
+    void Read();
+    void Out(std::ostream& os) const;
+    void OutShort(std::ostream& os) const;
 
-	CNodeStats operator-(const CNodeStats& b) const;
-	double Seconds() const;
-	double Nodes() const;
+    CNodeStats operator-(const CNodeStats& b) const;
+    double Seconds() const;
+    double Nodes() const;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const CNodeStats& ns) { ns.Out(os); return os; }

@@ -1,5 +1,5 @@
 // Copyright 2001 Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 
 #include "types.h"
 
@@ -15,7 +15,7 @@ using namespace std;
 ///////////////////////////////////
 
 void CMsg::In(istream& is) {
-	assert(0);
+    assert(0);
 }
 
 ///////////////////////////////////
@@ -23,19 +23,19 @@ void CMsg::In(istream& is) {
 ///////////////////////////////////
 
 void CMsgGGSAlias::In(istream& is) {
-	char c;
-	CGGSAlias alias;
+    char c;
+    CGGSAlias alias;
 
-	is >> nAlias1 >> c >> nAlias2;
-	assert(c=='/');
-	while (is >> alias)
-		valiases.push_back(alias);
+    is >> nAlias1 >> c >> nAlias2;
+    assert(c=='/');
+    while (is >> alias)
+    	valiases.push_back(alias);
 
-	assert(nAlias2==valiases.size());
+    assert(nAlias2==valiases.size());
 }
 
 void CMsgGGSAlias::Handle() {
-	pgs->HandleGGSAlias(this);
+    pgs->HandleGGSAlias(this);
 }
 
 ///////////////////////////////////
@@ -43,7 +43,7 @@ void CMsgGGSAlias::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSDisconnect::Handle() {
-	pgs->HandleGGSDisconnect();
+    pgs->HandleGGSDisconnect();
 }
 
 ///////////////////////////////////
@@ -51,16 +51,16 @@ void CMsgGGSDisconnect::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSErr::In(istream& is) {
-	string sLine;
-	getline(is, sLine);
-	if (sLine.find("not recognized")!=sLine.npos)
-		err=kErrCommandNotRecognized;
-	else
-		err=kErrUnknown;
+    string sLine;
+    getline(is, sLine);
+    if (sLine.find("not recognized")!=sLine.npos)
+    	err=kErrCommandNotRecognized;
+    else
+    	err=kErrUnknown;
 }
 
 void CMsgGGSErr::Handle() {
-	pgs->HandleGGSErr(this);
+    pgs->HandleGGSErr(this);
 }
 
 ///////////////////////////////////
@@ -68,42 +68,42 @@ void CMsgGGSErr::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSFinger::In(istream& is) {
-	string sLine, sKey, sValue;
+    string sLine, sKey, sValue;
 
-	is >> ws;
+    is >> ws;
 
-	// first section, key : value
-	while (getline(is, sLine)) {
-		if (!is)
-			break;
-		if (sLine.find(':')==string::npos)
-			break;
+    // first section, key : value
+    while (getline(is, sLine)) {
+    	if (!is)
+    		break;
+    	if (sLine.find(':')==string::npos)
+    		break;
 
-		istrstream isLine(sLine.c_str());
+    	istrstream isLine(sLine.c_str());
 
-		// get key and strip terminal spaces
-		getline(isLine, sKey, ':');
-		sKey.resize(1+sKey.find_last_not_of(' '));
+    	// get key and strip terminal spaces
+    	getline(isLine, sKey, ':');
+    	sKey.resize(1+sKey.find_last_not_of(' '));
 
-		// get value. No value means this is the separator row
-		//	between the first section and the second section
-		isLine >> ws;
-		getline(isLine, sValue);
+    	// get value. No value means this is the separator row
+    	//	between the first section and the second section
+    	isLine >> ws;
+    	getline(isLine, sValue);
 
-		// insert (key, value) pair
-		map<string,string>::iterator i=keyToValue.find(sKey);
-		if (i==keyToValue.end())
-			keyToValue[sKey]=sValue;
-		else {
-			(*i).second+="\n";
-			(*i).second+=sValue;
-		}
-	}
+    	// insert (key, value) pair
+    	map<string,string>::iterator i=keyToValue.find(sKey);
+    	if (i==keyToValue.end())
+    		keyToValue[sKey]=sValue;
+    	else {
+    		(*i).second+="\n";
+    		(*i).second+=sValue;
+    	}
+    }
 
 }
 
 void CMsgGGSFinger::Handle() {
-	pgs->HandleGGSFinger(this);
+    pgs->HandleGGSFinger(this);
 }
 
 ///////////////////////////////////
@@ -111,11 +111,11 @@ void CMsgGGSFinger::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSHelp::In(istream& is) {
-	getline(is, sText, (char)EOF);
+    getline(is, sText, (char)EOF);
 }
 
 void CMsgGGSHelp::Handle() {
-	pgs->HandleGGSHelp(this);
+    pgs->HandleGGSHelp(this);
 }
 
 ///////////////////////////////////
@@ -123,7 +123,7 @@ void CMsgGGSHelp::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSLogin::Handle() {
-	pgs->HandleGGSLogin();
+    pgs->HandleGGSLogin();
 }
 
 ///////////////////////////////////
@@ -131,11 +131,11 @@ void CMsgGGSLogin::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSTell::In(istream& is) {
-	getline(is, sText, (char)EOF);
+    getline(is, sText, (char)EOF);
 }
 
 void CMsgGGSTell::Handle() {
-	pgs->HandleGGSTell(this);
+    pgs->HandleGGSTell(this);
 }
 
 ///////////////////////////////////
@@ -143,11 +143,11 @@ void CMsgGGSTell::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSUnknown::In(istream& is) {
-	getline(is, sText, (char)EOF);
+    getline(is, sText, (char)EOF);
 }
 
 void CMsgGGSUnknown::Handle() {
-	pgs->HandleGGSUnknown(this);
+    pgs->HandleGGSUnknown(this);
 }
 
 ///////////////////////////////////
@@ -155,15 +155,15 @@ void CMsgGGSUnknown::Handle() {
 ///////////////////////////////////
 
 CMsgGGSUserDelta::CMsgGGSUserDelta(bool afPlus) {
-	fPlus=afPlus;
+    fPlus=afPlus;
 }
 
 void CMsgGGSUserDelta::In(istream& is) {
-	is >> sLogin;
+    is >> sLogin;
 }
 
 void CMsgGGSUserDelta::Handle() {
-	pgs->HandleGGSUserDelta(this);
+    pgs->HandleGGSUserDelta(this);
 }
 
 ///////////////////////////////////
@@ -171,17 +171,17 @@ void CMsgGGSUserDelta::Handle() {
 ///////////////////////////////////
 
 void CMsgGGSWho::In(istream& is) {
-	CGGSWhoUser wu;
+    CGGSWhoUser wu;
 
-	is >> nUsers;
-	is.ignore(1000, '\n');
-	while (is >> wu) {
-		wus.push_back(wu);
-	}
-	assert(wus.size()==nUsers);
+    is >> nUsers;
+    is.ignore(1000, '\n');
+    while (is >> wu) {
+    	wus.push_back(wu);
+    }
+    assert(wus.size()==nUsers);
 }
 
 void CMsgGGSWho::Handle() {
-	pgs->HandleGGSWho(this);
+    pgs->HandleGGSWho(this);
 }
 

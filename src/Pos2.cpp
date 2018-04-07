@@ -1,5 +1,5 @@
 // Copyright Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 // This file is distributed subject to GNU GPL version 3. See the files
 // GPLv3.txt and License.txt in the instructions subdirectory for details.
 
@@ -33,21 +33,21 @@ using namespace std;
 
 // initialize position.
 void Pos2::InitializeToStartPosition() {
-	Initialize("...........................O*......*O...........................", true);
+    Initialize("...........................O*......*O...........................", true);
 }
 
 // inputs:
-//	text representing the board
+//    text representing the board
 void Pos2::Initialize(const char* sBoard, bool fBlackMove) {
-	m_fBlackMove=fBlackMove;
-	m_bb.Initialize(sBoard, m_fBlackMove);
+    m_fBlackMove=fBlackMove;
+    m_bb.Initialize(sBoard, m_fBlackMove);
 }
 
 void Pos2::Initialize(const CBitBoard& m_bb, bool m_fBlackMove) {
-	char sBoard[NN+1];
+    char sBoard[NN+1];
 
-	m_bb.GetSBoard(sBoard, m_fBlackMove);
-	Initialize(sBoard, m_fBlackMove);
+    m_bb.GetSBoard(sBoard, m_fBlackMove);
+    Initialize(sBoard, m_fBlackMove);
 }
 
 
@@ -58,58 +58,58 @@ void Pos2::Initialize(const CBitBoard& m_bb, bool m_fBlackMove) {
 // make a move on the board. Update m_fBlackMove and remove the square from the empty list.
 // precondition: this is a legal move
 void Pos2::MakeMoveBB(int square, int& nFlipped, CUndoInfo& ui) {
-	nFlipped=GetCountAndFlipBB(square, ui);
+    nFlipped=GetCountAndFlipBB(square, ui);
 #ifdef _DEBUG
-	if(!nFlipped) {
-		Print();
-		char buf[65];
-		cout << "Board Text: " << GetText(buf) << "\n";
-		printf("move %c%c flips no discs\n",ColText(square),RowText(square));
-		assert(0);
-	}
+    if(!nFlipped) {
+    	Print();
+    	char buf[65];
+    	cout << "Board Text: " << GetText(buf) << "\n";
+    	printf("move %c%c flips no discs\n",ColText(square),RowText(square));
+    	assert(0);
+    }
 #endif
-	m_fBlackMove=!m_fBlackMove;
-	m_bb.InvertColors();
-	nBBFlips++;
+    m_fBlackMove=!m_fBlackMove;
+    m_bb.InvertColors();
+    nBBFlips++;
 }
 
 void Pos2::MakeMoveBB(int square) {
-	CUndoInfo ui;
-	int nFlipped;
+    CUndoInfo ui;
+    int nFlipped;
 
-	MakeMoveBB(square, nFlipped, ui);
+    MakeMoveBB(square, nFlipped, ui);
 }
 
 void Pos2::MakeMoveAndPassBB(CMove move, int& nFlipped, CUndoInfo& ui, int& pass) {
-	CMoves moves;
+    CMoves moves;
 
-	MakeMoveBB(move.Square(), nFlipped, ui);
-	pass=CalcMovesAndPassBB(moves);
+    MakeMoveBB(move.Square(), nFlipped, ui);
+    pass=CalcMovesAndPassBB(moves);
 }
 
 // undo a move on the board.
 // inputs:
-//		square - square number of the previous move
-//		nFlipped - number of discs flipped by the previous move
-//		ui - undo information from the previous move
+//    	square - square number of the previous move
+//    	nFlipped - number of discs flipped by the previous move
+//    	ui - undo information from the previous move
 // side effects:
-//		Update m_configs, m_bb, m_fBlackMove, and remove the square from the empty list.
+//    	Update m_configs, m_bb, m_fBlackMove, and remove the square from the empty list.
 // output:
-//		undo info needed for undo info
+//    	undo info needed for undo info
 // return:
-//		the number of discs flipped (0 if not a legal move)
+//    	the number of discs flipped (0 if not a legal move)
 
 void Pos2::UndoMoveBB(int square, int nFlipped, CUndoInfo& ui) {
-	m_bb.InvertColors();
+    m_bb.InvertColors();
     ui.FlipBB(m_bb);
-	m_fBlackMove=!m_fBlackMove;
-	assert(nFlipped);
+    m_fBlackMove=!m_fBlackMove;
+    assert(nFlipped);
 }
 
 void Pos2::UndoMoveAndPassBB(CMove move, int nFlipped, CUndoInfo& ui, int& nPass) {
-	if (nPass)
-		PassBB();
-	UndoMoveBB(move.Square(), nFlipped, ui);
+    if (nPass)
+    	PassBB();
+    UndoMoveBB(move.Square(), nFlipped, ui);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -123,13 +123,13 @@ void PrintSquareDirectionToPattern();
 void PrintSquareDirectionToValue();
 
 void Pos2::Print() const {
-	FPrint(stdout);
+    FPrint(stdout);
 }
 
 void Pos2::FPrint(FILE* fp) const {
-	int row, nColors[3];
+    int row, nColors[3];
 
-	FPrintHeader(fp);
+    FPrintHeader(fp);
 
     uint64_t black;
     if (this->BlackMove()) {
@@ -139,7 +139,7 @@ void Pos2::FPrint(FILE* fp) const {
     }
 
 
-	nColors[0]=nColors[1]=nColors[2]=0;
+    nColors[0]=nColors[1]=nColors[2]=0;
     for (row=0; row<N; row++) {
         int16_t rowPattern =
                 base2ToBase3Table[(m_bb.empty >> (row * 8))& 0xff] +
@@ -148,14 +148,14 @@ void Pos2::FPrint(FILE* fp) const {
         FPrintRow(fp, row, rowPattern, nColors);
     }
 
-	FPrintHeader(fp);
+    FPrintHeader(fp);
 
-	fprintf(fp, "\nBlack: %d  White: %d  Empty: %d\n\n",nColors[2],nColors[0],nColors[1]);
-	fprintf(fp, "%s to move\n",m_fBlackMove?"Black":"White");
+    fprintf(fp, "\nBlack: %d  White: %d  Empty: %d\n\n",nColors[2],nColors[0],nColors[1]);
+    fprintf(fp, "%s to move\n",m_fBlackMove?"Black":"White");
 }
 
 char* Pos2::GetText(char* sBoard) const {
-	int row,col,sq,item;
+    int row,col,sq,item;
 
     uint64_t black;
     if (this->BlackMove()) {
@@ -164,19 +164,19 @@ char* Pos2::GetText(char* sBoard) const {
         black = ~(m_bb.mover | m_bb.empty);
     }
 
-	for (sq=row=0; row<N; row++) {
+    for (sq=row=0; row<N; row++) {
         int16_t pattern =
                 base2ToBase3Table[(m_bb.empty >> (row * 8))& 0xff] +
                 base2ToBase3Table[(black >> (row * 8))& 0xff] * 2;
-		for (col=0; col<N; col++) {
-			item=pattern%3;
-			pattern=(pattern-item)/3;
-			sBoard[sq++]=ValueToText(item);
-		}
-	}
+    	for (col=0; col<N; col++) {
+    		item=pattern%3;
+    		pattern=(pattern-item)/3;
+    		sBoard[sq++]=ValueToText(item);
+    	}
+    }
 
-	sBoard[sq]=0;
-	return sBoard;
+    sBoard[sq]=0;
+    return sBoard;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -184,19 +184,19 @@ char* Pos2::GetText(char* sBoard) const {
 ///////////////////////////////////////////////////////////////////////////////
 
 void Pos2::GetFlips(int square, CUndoInfo& ui) const {
-	// get flips
+    // get flips
     ui.InitPrfs(m_bb, square);
 }
 
 int Pos2::GetCountAndFlipBB(int square, CUndoInfo& ui) {
-	int nFlipped;
+    int nFlipped;
 
-	GetFlips(square, ui);
-	nFlipped=ui.NFlipped();
-	if (nFlipped)
+    GetFlips(square, ui);
+    nFlipped=ui.NFlipped();
+    if (nFlipped)
         ui.FlipBB(m_bb);
 
-	return nFlipped;
+    return nFlipped;
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -204,64 +204,64 @@ int Pos2::GetCountAndFlipBB(int square, CUndoInfo& ui) {
 ///////////////////////////////////////////////////////////////////
 
 void FPrintHeader(FILE* fp) {
-	int col;
+    int col;
 
-	fprintf(fp, "  ");
-	for (col=0; col<N; col++)
-		fprintf(fp, "%c ",col+'A');
-	fprintf(fp, "\n");
+    fprintf(fp, "  ");
+    for (col=0; col<N; col++)
+    	fprintf(fp, "%c ",col+'A');
+    fprintf(fp, "\n");
 }
 
 void FPrintRow(FILE* fp, int row, int config, int nColors[3]) {
-	int col, item;
+    int col, item;
 
-	// print row number
-	fprintf(fp, "%-2d", row+1);
+    // print row number
+    fprintf(fp, "%-2d", row+1);
 
-	// break row apart into values and print value
-	for (col=0; col<N; col++) {
-		item=config%3;
-		config=(config-item)/3;
-		fprintf(fp, "%c ",ValueToText(item));
-		nColors[item]++;
-	}
+    // break row apart into values and print value
+    for (col=0; col<N; col++) {
+    	item=config%3;
+    	config=(config-item)/3;
+    	fprintf(fp, "%c ",ValueToText(item));
+    	nColors[item]++;
+    }
 
-	//print row number at right of row
-	fprintf(fp, "%2d\n", row+1);
+    //print row number at right of row
+    fprintf(fp, "%2d\n", row+1);
 }
 
 // CalcMovesAndPass - calc moves. decide if the mover needs to pass, and pass if he does
 // inputs:
-//	none
+//    none
 // outputs:
-//	moves - the moves available
-//	pass -	0 if the next player can move
-//			1 if the next player must pass but game is not over
-//			2 if both players must pass and game is over
-//	If pass>0 the position is left with one move passed
-//		(and you must call UndoPass before UndoMove)
+//    moves - the moves available
+//    pass -	0 if the next player can move
+//    		1 if the next player must pass but game is not over
+//    		2 if both players must pass and game is over
+//    If pass>0 the position is left with one move passed
+//    	(and you must call UndoPass before UndoMove)
 int Pos2::CalcMovesAndPassBB(CMoves& moves) {
-	if (CalcMoves(moves))
-		return 0;
-	else {
-		PassBB();
-		if (CalcMoves(moves))
-			return 1;
-		else
-			return 2;
-	}
+    if (CalcMoves(moves))
+    	return 0;
+    else {
+    	PassBB();
+    	if (CalcMoves(moves))
+    		return 1;
+    	else
+    		return 2;
+    }
 }
 
 int Pos2::CalcMovesAndPassBB(CMoves& moves, const CMoves& submoves) {
-	if (submoves.HasMoves()) {
-		moves=submoves;
-		return 0;
-	}
-	else {
-		PassBB();
-		if (CalcMoves(moves))
-			return 1;
-		else
-			return 2;
-	}
+    if (submoves.HasMoves()) {
+    	moves=submoves;
+    	return 0;
+    }
+    else {
+    	PassBB();
+    	if (CalcMoves(moves))
+    		return 1;
+    	else
+    		return 2;
+    }
 }

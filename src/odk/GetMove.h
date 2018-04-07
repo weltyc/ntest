@@ -1,5 +1,5 @@
 // Copyright 2001 Chris Welty
-//	All Rights Reserved
+//  All Rights Reserved
 
 #ifndef ODK_GETMOVE_H
 #define ODK_GETMOVE_H
@@ -11,4 +11,4 @@ class COsGame;
 
 void GetMove(const COsGame& game, COsMoveListItem& mli);
 
-#endif	//ODK_GETMOVE_H
+#endif    //ODK_GETMOVE_H
